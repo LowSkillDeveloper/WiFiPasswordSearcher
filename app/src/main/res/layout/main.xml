@@ -16,7 +16,7 @@
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="50dp"
-			android:text="Refresh"
+			android:text="Refresh WiFi"
 			android:maxLines="1"
 			android:id="@+id/btnRefresh"
 			android:onClick="btnRefreshOnClick"
