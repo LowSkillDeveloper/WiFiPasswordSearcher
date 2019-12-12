@@ -1,7 +1,7 @@
 # Unofficial 3WiFi Locator for Android
 This version support android 9 and 10 (except WPS connection, because it is cut from android since version 9)
 
-ROOT version of Locator: soon
+ROOT version of Locator: https://github.com/LowSkillDeveloper/Root-3WiFiLocator-Unofficial
 
 Original locator source: https://github.com/FusixGit/WiFiPasswordSearcher
 
