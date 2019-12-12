@@ -135,7 +135,7 @@
 				android:id="@+id/sw_check_upd"
 				android:textSize="21dp"
 				android:enabled="true"
-				android:checked="true"/>
+				android:checked="false"/>
 
 		</LinearLayout>
 

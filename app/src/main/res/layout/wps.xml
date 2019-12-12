@@ -23,7 +23,7 @@
 		<Button
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text="Generate"
+			android:text="Offline generator"
 			android:layout_weight="1.0"
 			android:onClick="btnGenerate"
 			android:id="@+id/wpsButton1"/>

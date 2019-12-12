@@ -25,7 +25,7 @@
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="50dp"
-			android:text="3WiFi"
+			android:text="Check 3WiFi base"
 			android:maxLines="1"
 			android:enabled="false"
 			android:id="@+id/btnCheckFromBase"
@@ -33,14 +33,18 @@
 			android:layout_weight="1.0"/>
 
 		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="50dp"
-			android:text="GPS sniff (soon...)"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			android:text="GPS sniff (soon)"
 			android:id="@+id/btnStartGPSLog"
 			android:layout_gravity="center_horizontal"
 			android:enabled="false"
-			android:textSize="12dp"
-			android:layout_weight="1.0"/>
+			android:textSize="0dp"
+			android:layout_weight="0"/>
+
+	<!--	android:textSize="12dp"
+		android:layout_height="50dp"
+		android:layout_width="wrap_content" -->
 
 		<ImageButton
 			android:layout_width="wrap_content"
