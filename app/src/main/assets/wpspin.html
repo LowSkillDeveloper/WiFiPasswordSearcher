@@ -1,11 +1,16 @@
 <html>
 <head>
-<title>3WiFi: WPS PIN generator</title>
-<meta http-equiv=Content-Type content="text/html;charset=UTF-8">
-<meta name="keywords" content="3wifi, wifi, router, scan, Router Scan, access point, map, internet, free"/>
-<script type="text/javascript">
-function isMobile() 
-{ 
+    <title>3WiFi: WPS PIN generator</title>
+    <meta http-equiv=Content-Type content="text/html;charset=UTF-8">
+    <meta name="keywords" content="3wifi, wifi, router, scan, Router Scan, access point, map, internet, free"/>
+    <link rel=stylesheet href="css/style.css?2017-06-25" type="text/css">
+    <style type="text/css">
+body { margin: 0px }
+</style>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+function isMobile()
+{
 	if( navigator.userAgent.match(/Android/i)
 	|| navigator.userAgent.match(/webOS/i)
 	|| navigator.userAgent.match(/iPhone/i)
@@ -17,7 +22,7 @@ function isMobile()
 	{
 		return true;
 	}
-	if(window.innerWidth <= 800 && window.innerHeight <= 600) 
+	if(window.innerWidth <= 800 && window.innerHeight <= 600)
 	{
 		return true;
 	}
@@ -54,6 +59,8 @@ function errorStr(error)
 		return 'Token is incorrect, clear your browser cache and try again';
 		case 'notfound':
 		return 'Not found';
+		case 'cooldown':
+		return 'Time limitation encountered, please try again';
 		default:
 		return 'Unknown error';
 	}
@@ -74,28 +81,9 @@ function loadForm(frm, callback)
 	switch (frm)
 	{
 		case '#win_login':
-		$(frm).load('?fetch=' + frm.substr(1), function(response, status, xhr)
-		{
-			if (status == "error")
-			{
-				$(frm).html('');
-				return false;
-			}
-			callback();
-		});
-		break;
 		case '#win_reg':
-		$(frm).load('?fetch=' + frm.substr(1), function(response, status, xhr)
-		{
-			if (status == "error")
-			{
-				$(frm).html('');
-				return false;
-			}
-			callback();
-		});
-		break;
 		case '#win_newpass':
+		case '#win_wait':
 		$(frm).load('?fetch=' + frm.substr(1), function(response, status, xhr)
 		{
 			if (status == "error")
@@ -115,8 +103,21 @@ function showModal(frm)
 		$('#win_login').css({left: '-9999px'});
 		$('#win_reg').css({left: '-9999px'});
 		$('#win_newpass').css({left: '-9999px'});
-		$(frm).css({left: '50%'});
-		$(frm).css({top: '50%'});
+		$('#win_wait').css({left: '-9999px'});
+		if (frm == '#win_wait')
+		{
+			$(frm).css({left: '0'});
+			$(frm).css({top: '0'});
+			$(frm).css({width: '100%'});
+			$(frm).css({height: '100%'});
+			wait_sec = 10;
+			timeoutWaitSec();
+		}
+		else
+		{
+			$(frm).css({left: '50%'});
+			$(frm).css({top: '50%'});
+		}
 		$('.modal').show();
 		$('.modal').animate({opacity: 1}, 250);
 	});
@@ -241,7 +242,7 @@ function getCookie(cname)
 	var name = cname + "=";
 	var decodedCookie = decodeURIComponent(document.cookie);
 	var ca = decodedCookie.split(';');
-	for(var i = 0; i <ca.length; i++)
+	for(var i = 0; i < ca.length; i++)
 	{
 		var c = ca[i];
 		while (c.charAt(0) == ' ')
@@ -258,6 +259,15 @@ function getCookie(cname)
 function delCookie(name)
 {
 	document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+function getQueryStringValue(key)
+{
+	var k = encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&");
+
+	if (window.location.search.search("[\?&]" + k + "=") == -1)
+		return null;
+
+	return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + k + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
 }
 function settingsGetBool(name, def)
 {
@@ -327,7 +337,7 @@ function initmenu()
 }
 </script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 function zeroFill(number, width)
 {
 	width -= number.toString().length;
@@ -685,9 +695,9 @@ function detect()
 		$('button').prop('disabled', false);
 		if (!d.result)
 		{
-			if (d.error == 'database')
+			if (d.error == 'unauthorized')
 			{
-				$('#fdata > tr:first-child > :first-child').text('Database cannot handle request.');
+				$('#fdata > tr:first-child > :first-child').html(loginRequireMsg());
 			}
 			else if (d.error == 'bssid')
 			{
@@ -695,13 +705,8 @@ function detect()
 			}
 			else
 			{
-				$('#fdata > tr:first-child > :first-child').text('Unknown error.');
+				$('#fdata > tr:first-child > :first-child').text(errorStr(d.error));
 			}
-			return;
-		}
-		if (!d.auth)
-		{
-			$('#fdata > tr:first-child > :first-child').html(loginRequireMsg());
 			return;
 		}
 		if (d.scores.length > 0)
@@ -900,7 +905,7 @@ function get_all_combs(pin, nic, sn)
 }
 function intersect(a, b)
 {
-	return a.filter((n) => b.includes(n));
+	return a;
 }
 function intersect_combs(a, b)
 {
@@ -1120,6 +1125,7 @@ function initAlgos()
 	algos.push({id: "pinDSL2740R", name: "DSL-2740R", mode: ALGO_STATIC, func: function (mac) {return 6817554;}});
 	algos.push({id: "pinRealtek1", name: "Realtek 1", mode: ALGO_STATIC, func: function (mac) {return 9566146;}});
 	algos.push({id: "pinRealtek2", name: "Realtek 2", mode: ALGO_STATIC, func: function (mac) {return 9571911;}});
+	algos.push({id: "pinRealtek3", name: "Realtek 3", mode: ALGO_STATIC, func: function (mac) {return 4856371;}});
 	algos.push({id: "pinUpvel", name: "Upvel", mode: ALGO_STATIC, func: function (mac) {return 2085483;}});
 	algos.push({id: "pinUR814AC", name: "UR-814AC", mode: ALGO_STATIC, func: function (mac) {return 4397768;}});
 	algos.push({id: "pinUR825AC", name: "UR-825AC", mode: ALGO_STATIC, func: function (mac) {return 0529417;}});
@@ -1127,6 +1133,7 @@ function initAlgos()
 	algos.push({id: "pinEdimax", name: "Edimax", mode: ALGO_STATIC, func: function (mac) {return 3561153;}});
 	algos.push({id: "pinThomson", name: "Thomson", mode: ALGO_STATIC, func: function (mac) {return 6795814;}});
 	algos.push({id: "pinHG532x", name: "HG532x", mode: ALGO_STATIC, func: function (mac) {return 3425928;}});
+	algos.push({id: "pinH108L", name: "H108L", mode: ALGO_STATIC, func: function (mac) {return 9422988;}});
 	algos.push({id: "pinONO", name: "CBN ONO", mode: ALGO_STATIC, func: function (mac) {return 9575521;}});
 }
 function initpage()
@@ -1147,11 +1154,11 @@ function initpage()
 </head>
 <body onload="initmenu(); initpage()">
 <div class=header>
-	
-	<div class=mainmenu>
-		<a href="home"><img class=menulogo src="img/logo.png"></a>
-		<div class="menubtn logoplace"><p></p></div>
-		<span class=multi>
+
+    <div class=mainmenu>
+        <a href="home"><img class=menulogo src="img/logo.png"></a>
+        <div class="menubtn logoplace"><p></p></div>
+        <span class=multi>
 			<a href="home"><div class="menubtn"><p>About</p></div></a>
 			<span class=submenu>
 				<a href="home"><div class="submbtn"><p>Home</p></div></a>
@@ -1160,9 +1167,9 @@ function initpage()
 				<a href="rules"><div class="submbtn"><p>Site rules</p></div></a>
 			</span>
 		</span>
-		<a href="map"><div class="menubtn"><p>Map</p></div></a>
-		<a href="find"><div class="menubtn"><p>Search</p></div></a>
-		<span class=multi>
+        <a href="map"><div class="menubtn"><p>Map</p></div></a>
+        <a href="find"><div class="menubtn"><p>Search</p></div></a>
+        <span class=multi>
 			<a href="ranges"><div class="menubtn mbsel"><p>Tools</p></div></a>
 			<span class=submenu>
 				<a href="ranges"><div class="submbtn"><p>Search IP ranges</p></div></a>
@@ -1170,71 +1177,72 @@ function initpage()
 				<a href="wpspin"><div class="submbtn smsel"><p>WPS PIN generator</p></div></a>
 			</span>
 		</span>
-		<a href="upload"><div class="menubtn"><p>Upload</p></div></a>
-		<span class=multi>
+        <a href="upload"><div class="menubtn"><p>Upload</p></div></a>
+        <span class=multi>
 			<a href="stat"><div class="menubtn"><p>State</p></div></a>
 			<span class=submenu>
 				<a href="stat"><div class="submbtn"><p>Statistics</p></div></a>
 				<a href="graph"><div class="submbtn"><p>Dynamics</p></div></a>
 			</span>
 		</span>
-		<a href="javascript://" onclick="loginBtn(false)" style="float: right"><div class=menubtn><p>Login</p></div></a>
-		<a href="user"><div class="menubtn" style="float: right" id=nickname><p></p></div></a>
-	</div>
+        <a href="javascript://" onclick="loginBtn(false)" style="float: right"><div class=menubtn><p>Login</p></div></a>
+        <a href="user"><div class="menubtn" style="float: right" id=nickname><p></p></div></a>
+    </div>
 </div>
 
 
 <div class="content wpspin">
-<table width=100%>
-	<tr><td width=50% style="vertical-align: top">
-		<p>Offline WPS PIN Companion from Router Scan.</p>
-		<p>Uses known algorithms, does not use database.</p>
-		<table>
-			<tr><td>
-				<textarea id=bssids rows=3 cols=32 autofocus>12:34:56:78:9A:BC</textarea>
-			</td><td>
-				<button onclick="pinSuggest()">Suggest</button> <button onclick="getAll()">Get All</button>
-			</td></tr>
+    <table width=100%>
+        <tr><td width=50% style="vertical-align: top">
+            <p>Offline WPS PIN Companion from Router Scan.</p>
+            <p>Uses known algorithms, does not use database.</p>
+            <table>
+                <tr><td>
+                    <textarea id=bssids rows=3 cols=32 autofocus>12:34:56:78:9A:BC</textarea>
+                </td><td>
+                    <button onclick="pinSuggest()">Suggest</button> <button onclick="getAll()">Get All</button>
+                </td></tr>
 
-			<tr><td colspan=2>
-				<textarea id=result readonly rows=14 cols=52></textarea>
-			</td></tr>
-		</table>
+                <tr><td colspan=2>
+                    <textarea id=result readonly rows=14 cols=52></textarea>
+                </td></tr>
+            </table>
 
-		<div>Implemented algorithms (choose for info):</div>
+            <div>Implemented algorithms (choose for info):</div>
 
-		<select id=algosel onchange="showAlgo()"><option value=algonone>Not selected</option></select>
+            <select id=algosel onchange="showAlgo()"><option value=algonone>Not selected</option></select>
 
-		&nbsp; <button onclick="crackAlgo()">Check algorithm</button>
-	</td><td width=50% style="vertical-align: top">
-		<p>Online 3WiFi WPS PIN generator.</p>
-		<p>Takes advantage of collected data in the database, detects linear sequences, static PIN codes, and other algorithms.</p>
-		<form id=fdeviceform enctype="multipart/form-data" method="POST" onsubmit="detect(); return false">
-		<table>
-			<tbody>
-				<tr>
-					<td><nobr>BSSID / MAC:</nobr></td>
-					<td><input name="bssid" type="text" value="" pattern="([0-9A-Fa-f]{2}[:-]?){5}[0-9A-Fa-f]{2}" /></td>
-					<td><nobr> (like <tt>00:11:22:33:44:55</tt>)</nobr></td>
-				</tr>
-			</tbody>
-			<tbody>
-				<tr><td><input type=submit value="Detect" /></td><td></td></tr>
-			</tbody>
-		</table>
-		</form>
-		<br>
-		<table class=st1>
-			<tbody id=fhead></tbody>
-			<tbody id=fdata></tbody>
-		</table>
-	</td></tr>
-</table>
+            &nbsp; <button onclick="crackAlgo()">Check algorithm</button>
+        </td><td width=50% style="vertical-align: top">
+            <p>Online 3WiFi WPS PIN generator.</p>
+            <p>Takes advantage of collected data in the database, detects linear sequences, static PIN codes, and other algorithms.</p>
+            <form id=fdeviceform enctype="multipart/form-data" method="POST" onsubmit="detect(); return false">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td><nobr>BSSID / MAC:</nobr></td>
+                        <td><input name="bssid" type="text" value="" pattern="([0-9A-Fa-f]{2}[:-]?){5}[0-9A-Fa-f]{2}" /></td>
+                        <td><nobr> (like <tt>00:11:22:33:44:55</tt>)</nobr></td>
+                    </tr>
+                    </tbody>
+                    <tbody>
+                    <tr><td><input type=submit value="Detect" /></td><td></td></tr>
+                    </tbody>
+                </table>
+            </form>
+            <br>
+            <table class=st1>
+                <tbody id=fhead></tbody>
+                <tbody id=fdata></tbody>
+            </table>
+        </td></tr>
+    </table>
 
-<div style="display: none">
-<textarea id=suggpin rows=14 cols=38></textarea>
+    <div style="display: none">
+        <textarea id=suggpin rows=14 cols=38></textarea>
 
-<textarea id=pin24>ZyXEL NDMS
+        <textarea id=pin24>ZyXEL NDMS
+  04:BF:6D:xx:xx:xx
   0E:5D:4E:xx:xx:xx
   10:7B:EF:xx:xx:xx
   14:A9:E3:xx:xx:xx
@@ -1263,6 +1271,7 @@ function initpage()
   WSC Device Names:
     ZyXEL Internet Center
     Keenetic Giga II
+    Keenetic Lite III
     Keenetic Ultra
     RalinkAPS
 ZyXEL DEL1201-T10A
@@ -1270,8 +1279,14 @@ ZyXEL DEL1201-T10A
 TRENDnet (some firmwares)
 TRENDnet TEW-651BR
   00:14:D1:xx:xx:xx
+TRENDnet TEW-735AP
+  D8:EB:97:xx:xx:xx
+  WSC Device Names:
+    Wireless-N Multi-function AP
 D-Link DIR-300NRU B5
+  1C:7E:E5:xx:xx:xx
   84:C9:B2:xx:xx:xx
+  FC:75:16:xx:xx:xx
   WSC Device Names:
     RalinkAPS
 D-Link DIR-620
@@ -1311,7 +1326,7 @@ Upvel (some firmwares)
   F8:C0:91:xx:xx:xx
 Belkin F5D8231-4v5000
   00:1C:DF:xx:xx:xx
-Belkin F5D8235-4v1000  
+Belkin F5D8235-4v1000
   00:22:75:xx:xx:xx
 Belkin F9K1104v1
   08:86:3B:xx:xx:xx
@@ -1321,7 +1336,7 @@ Tenda W309R
   C8:3A:35:xx:xx:xx
 Conceptronic c300brs4a v2_v1.0.0
   00:22:F7:xx:xx:xx
-Edimax 3G-6210n  
+Edimax 3G-6210n
 Edimax 3G-6220n
   00:1F:1F:xx:xx:xx
 Hitron CDE-30364
@@ -1403,21 +1418,30 @@ Samsung SMT-G7440
 Samsung SWL
   80:1F:02:xx:xx:xx
   E4:7C:F9:xx:xx:xx
-TELDAT iRouter1104-W     
+Sitecom WLR-6000
+  00:0C:F6:xx:xx:xx
+  WSC Device Names:
+    Sitecom Wireless Gigabit Router
+TELDAT iRouter1104-W
   00:A0:26:xx:xx:xx
-TP-Link TD-W8951ND 
+TP-Link TD-W8951ND
   A0:F3:C1:xx:xx:xx
 TP-Link TD-W8961NDv2.1
-  64:70:02:xx:xx:xx  
+  64:70:02:xx:xx:xx
   B0:48:7A:xx:xx:xx
   F8:1A:67:xx:xx:xx
   F8:D1:11:xx:xx:xx
+B+B Smartworx BB-WR-600N
+  34:BA:9A:xx:xx:xx
+  B4:94:4E:xx:xx:xx
+  WSC Device Names:
+    RalinkAPS
 
 Technical details:
 Pin = MAC[7..12]
 http://hellocow.cn/2012/04/get-the-pin-in-router-mac-address-start-with-c83a35-00b00c-081075/</textarea>
 
-<textarea id=pin28>Huawei HG8245H
+        <textarea id=pin28>Huawei HG8245H
   20:0B:C7:xx:xx:xx
   48:46:FB:xx:xx:xx
   D4:6A:A8:xx:xx:xx
@@ -1426,7 +1450,7 @@ http://hellocow.cn/2012/04/get-the-pin-in-router-mac-address-start-with-c83a35-0
 Technical details:
 Pin = MAC[6..12]</textarea>
 
-<textarea id=pin32>D-Link DIR-300 (some firmwares)
+        <textarea id=pin32>D-Link DIR-300 (some firmwares)
   00:07:26:xx:xx:xx
   D8:FE:E3:xx:xx:xx
   FC:8B:97:xx:xx:xx
@@ -1434,7 +1458,10 @@ D-Link DIR-825AC (some firmwares)
   10:62:EB:xx:xx:xx
   1C:5F:2B:xx:xx:xx
   48:EE:0C:xx:xx:xx
+  80:26:89:xx:xx:xx
   90:8D:78:xx:xx:xx
+  WSC Device Names:
+    DIR-825AC
 D-Link DAP-1360 (some firmwares)
   E8:CC:18:xx:xx:xx
 Beeline DIR-300
@@ -1457,72 +1484,72 @@ EDIMAX BR6228GNS
 Technical details:
 Pin = MAC[5..12]</textarea>
 
-<textarea id=pin36>Unknown, for testing
+        <textarea id=pin36>Unknown, for testing
 
 Technical details:
 Pin = MAC[4..12]</textarea>
 
-<textarea id=pin40>Unknown, for testing
+        <textarea id=pin40>Unknown, for testing
 
 Technical details:
 Pin = MAC[3..12]</textarea>
 
-<textarea id=pin44>Unknown, for testing
+        <textarea id=pin44>Unknown, for testing
 
 Technical details:
 Pin = MAC[2..12]</textarea>
 
-<textarea id=pin48>Unknown, for testing
+        <textarea id=pin48>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..12]</textarea>
 
-<textarea id=pin24rh>Unknown, for testing
+        <textarea id=pin24rh>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..7]</textarea>
 
-<textarea id=pin32rh>Unknown, for testing
+        <textarea id=pin32rh>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..5]</textarea>
 
-<textarea id=pin48rh>Unknown, for testing
+        <textarea id=pin48rh>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..1]</textarea>
 
-<textarea id=pin24rn>Unknown, for testing
+        <textarea id=pin24rn>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..7]</textarea>
 
-<textarea id=pin32rn>Unknown, for testing
+        <textarea id=pin32rn>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..5]</textarea>
 
-<textarea id=pin48rn>Unknown, for testing
+        <textarea id=pin48rn>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..1]</textarea>
 
-<textarea id=pin24rb>Unknown, for testing
+        <textarea id=pin24rb>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..7]</textarea>
 
-<textarea id=pin32rb>Unknown, for testing
+        <textarea id=pin32rb>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..5]</textarea>
 
-<textarea id=pin48rb>Unknown, for testing
+        <textarea id=pin48rb>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..1]</textarea>
 
-<textarea id=pinDLink>D-Link DAP-1155 Rev. A1
+        <textarea id=pinDLink>D-Link DAP-1155 Rev. A1
 D-Link DAP-1360 Rev. B1
 D-Link DIR-651
 D-Link DIR-825AC
@@ -1547,7 +1574,7 @@ TRENDnet TEW-731BR
 Technical details:
 http://www.devttys0.com/2014/10/reversing-d-links-wps-pin-algorithm/</textarea>
 
-<textarea id=pinDLink1>D-Link DIR-400
+        <textarea id=pinDLink1>D-Link DIR-400
 D-Link DIR-615 Rev. B2
 D-Link DIR-615 Rev. E4
 D-Link DIR-628 Rev. A2
@@ -1584,7 +1611,7 @@ TRENDnet TEW-673GRU
 Technical details:
 http://www.devttys0.com/2014/10/reversing-d-links-wps-pin-algorithm/</textarea>
 
-<textarea id=pinBelkin>Belkin F5D7234-4 v3
+        <textarea id=pinBelkin>Belkin F5D7234-4 v3
 Belkin F5D7234-4 v4
 Belkin F5D7234-4 v5
 Belkin F5D8233-4 v1
@@ -1622,7 +1649,7 @@ Belkin F9K1118 v2
 Technical details:
 http://www.devttys0.com/2015/04/reversing-belkins-wps-pin-algorithm/</textarea>
 
-<textarea id=pinEasyBox>Vodafone EasyBox 802
+        <textarea id=pinEasyBox>Vodafone EasyBox 802
 Vodafone EasyBox 803
 Vodafone EasyBox 803 A
   00:26:4D:xx:xx:xx
@@ -1632,7 +1659,7 @@ Vodafone EasyBox 803 A
 Technical details:
 https://www.sec-consult.com/fxdata/seccons/prod/temedia/advisories_txt/20130805-0_Vodafone_EasyBox_Default_WPS_PIN_Vulnerability_v10.txt</textarea>
 
-<textarea id=pinLivebox>Arcadyan ARV7519
+        <textarea id=pinLivebox>Arcadyan ARV7519
 Livebox 2.1 (Arcadyan)
 Livebox 2.2 (Arcadyan)
   18:83:BF:xx:xx:xx
@@ -1653,7 +1680,7 @@ Livebox 2.2 (Arcadyan)
 Technical details:
 https://www.wifi-libre.com/topic-869-todo-sobre-al-algoritmo-wps-livebox-arcadyan-orange-xxxx.html</textarea>
 
-<textarea id=pinASUS>ASUS DSL-N10 Rev.C1
+        <textarea id=pinASUS>ASUS DSL-N10 Rev.C1
 ASUS DSL-N10E
 ASUS DSL-N10S
 ASUS DSL-N12E
@@ -1661,6 +1688,7 @@ ASUS DSL-N12E Rev.C1
 ASUS DSL-N12U Rev.C1
 ASUS DSL-N14U
 ASUS RT-AC51U
+ASUS RT-AC53
 ASUS RT-G32
 ASUS RT-G32 Rev.C1
 ASUS RT-N10
@@ -1680,7 +1708,9 @@ ASUS RT-N12+
 ASUS RT-N12E
 ASUS RT-N12LX
 ASUS RT-N12VP
+ASUS RT-N300
 ASUS RX3041 Rev.B
+  04:92:26:xx:xx:xx
   08:60:6E:xx:xx:xx
   08:62:66:9x:xx:xx
   10:7B:44:xx:xx:xx
@@ -1702,6 +1732,7 @@ ASUS RX3041 Rev.B
   70:4D:7B:xx:xx:xx
   74:D0:2B:xx:xx:xx
   78:24:AF:xx:xx:xx
+  88:D7:F6:xx:xx:xx
   9C:5C:8E:xx:xx:xx
   AC:22:0B:xx:xx:xx
   AC:9E:17:xx:xx:xx
@@ -1798,7 +1829,7 @@ D-Link DIR-615
 Technical details:
 https://forum.antichat.ru/posts/3978417/</textarea>
 
-<textarea id=pinAirocon>Airocon Realtek RTL867x
+        <textarea id=pinAirocon>Airocon Realtek RTL867x
   00:07:26:2F:xx:xx
   00:0B:2B:4A:xx:xx
   00:0E:F4:E7:xx:xx
@@ -1821,41 +1852,45 @@ https://forum.antichat.ru/posts/3978417/</textarea>
 Technical details:
 https://forum.antichat.ru/posts/3975451/</textarea>
 
-<textarea id=pinInvNIC>Unknown, for testing
+        <textarea id=pinInvNIC>Unknown, for testing
 
 Technical details:
 Pin = Inv(MAC[7..12])</textarea>
 
-<textarea id=pinNIC2>Unknown, for testing
+        <textarea id=pinNIC2>Unknown, for testing
 
 Technical details:
 Pin = MAC[7..12] * 2</textarea>
 
-<textarea id=pinNIC3>Unknown, for testing
+        <textarea id=pinNIC3>Unknown, for testing
 
 Technical details:
 Pin = MAC[7..12] * 3</textarea>
 
-<textarea id=pinOUIaddNIC>Unknown, for testing
+        <textarea id=pinOUIaddNIC>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..6] + MAC[7..12]</textarea>
 
-<textarea id=pinOUIsubNIC>Unknown, for testing
+        <textarea id=pinOUIsubNIC>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..6] - MAC[7..12]</textarea>
 
-<textarea id=pinOUIxorNIC>Unknown, for testing
+        <textarea id=pinOUIxorNIC>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..6] ^ MAC[7..12]</textarea>
 
-<textarea id=pinEmpty>D-Link DIR-620
+        <textarea id=pinEmpty>D-Link DIR-620
   E4:6F:13:xx:xx:xx
   EC:22:80:xx:xx:xx
   WSC Device Names:
     DIR-620
+D-Link DIR-822
+  58:D5:6E:xx:xx:xx
+  WSC Device Names:
+    DIR-822
 D-Link DIR-825/AC
   10:62:EB:xx:xx:xx
   10:BE:F5:xx:xx:xx
@@ -1887,6 +1922,7 @@ SERCOMM RV6688BCM
   WSC Device Names:
     RV6688BCM
 SERCOMM WiFire S1010
+  3C:98:72:xx:xx:xx
   78:81:02:xx:xx:xx
   78:94:B4:xx:xx:xx
   D4:60:E3:xx:xx:xx
@@ -1904,10 +1940,13 @@ ZTE ZXHN H218N
   70:2E:22:xx:xx:xx
   74:B5:7E:xx:xx:xx
   78:96:82:xx:xx:xx
+  7C:39:53:xx:xx:xx
+  8C:68:C8:xx:xx:xx
   D4:76:EA:xx:xx:xx
   WSC Device Names:
     ADSL Modem/Router
 ZTE ZXHN H298N
+  34:4D:EA:xx:xx:xx
   38:D8:2F:xx:xx:xx
   54:BE:53:xx:xx:xx
   70:9F:2D:xx:xx:xx
@@ -1920,7 +1959,11 @@ Technical details:
 Pin = ""
 https://hg658c.wordpress.com/2015/06/20/obtaining-the-wifi-password-in-a-few-seconds-using-wps/</textarea>
 
-<textarea id=pinCisco>Cisco DPC2420
+        <textarea id=pinCisco>ASUS RT-N12 HG
+  00:1A:2B:xx:xx:xx
+  WSC Device Names:
+    ASUS Wireless Router
+Cisco DPC2420
 Cisco EPC2100R2
 Cisco EPC2325
   00:24:8C:xx:xx:xx
@@ -1937,7 +1980,7 @@ Huawei Technologies HG8245T
 Technical details:
 Pin = 1234567</textarea>
 
-<textarea id=pinBrcm1>Broadcom firmwares
+        <textarea id=pinBrcm1>Broadcom firmwares
 D-Link DSL-2640U
 D-Link DSL-2650U
 D-Link DSL-2740U
@@ -1956,7 +1999,7 @@ Modem Supply MSW41p4 v2.5
 Technical details:
 Pin = 2017252</textarea>
 
-<textarea id=pinBrcm2>D-Link DSL-2600U
+        <textarea id=pinBrcm2>D-Link DSL-2600U
 D-Link DSL-2640U
 D-Link DSL-2640NRU
 D-Link DSL-2740U
@@ -1973,7 +2016,7 @@ D-Link DSL-2740U
 Technical details:
 Pin = 4626484</textarea>
 
-<textarea id=pinBrcm3>D-Link DSL-2600U
+        <textarea id=pinBrcm3>D-Link DSL-2600U
 D-Link DSL-2640U
 D-Link DSL-2640NRU
 D-Link DSL-2740U
@@ -1993,7 +2036,7 @@ Sagemcom F@ST2304v2 MTS
 Technical details:
 Pin = 7622990</textarea>
 
-<textarea id=pinBrcm4>D-Link DSL-2640U
+        <textarea id=pinBrcm4>D-Link DSL-2640U
 D-Link DSL-2640U
 D-Link DSL-2640NRU
 D-Link DSL-2650NRU
@@ -2024,7 +2067,7 @@ Sagemcom F@ST2804V7
 Technical details:
 Pin = 6232714</textarea>
 
-<textarea id=pinBrcm5>D-Link DSL-2640U
+        <textarea id=pinBrcm5>D-Link DSL-2640U
 D-Link DSL-2640U
 D-Link DSL-2640NRU
 D-Link DSL-2650NRU
@@ -2055,7 +2098,7 @@ Sagemcom F@ST2804V7
 Technical details:
 Pin = 1086411</textarea>
 
-<textarea id=pinBrcm6>D-Link DSL-2640U
+        <textarea id=pinBrcm6>D-Link DSL-2640U
 D-Link DSL-2640U
 D-Link DSL-2640NRU
 D-Link DSL-2650NRU
@@ -2086,7 +2129,7 @@ Sagemcom F@ST2804V7
 Technical details:
 Pin = 3195719</textarea>
 
-<textarea id=pinAirc1>Airocon F@st 1744, v2
+        <textarea id=pinAirc1>Airocon F@st 1744, v2
   18:1E:78:xx:xx:xx
   40:F2:01:xx:xx:xx
   44:E9:DD:xx:xx:xx
@@ -2095,7 +2138,7 @@ Pin = 3195719</textarea>
 Technical details:
 Pin = 3043203</textarea>
 
-<textarea id=pinAirc2>Airocon F@st 1744, v2.2
+        <textarea id=pinAirc2>Airocon F@st 1744, v2.2
   84:A4:23:xx:xx:xx
   8C:10:D4:xx:xx:xx
 Airocon F@st 1744, v4
@@ -2104,7 +2147,7 @@ Airocon F@st 1744, v4
 Technical details:
 Pin = 7141225</textarea>
 
-<textarea id=pinDSL2740R>D-Link DSL-2740R
+        <textarea id=pinDSL2740R>D-Link DSL-2740R
   00:26:5A:xx:xx:xx
   1C:BD:B9:xx:xx:xx
   34:08:04:xx:xx:xx
@@ -2115,7 +2158,7 @@ Pin = 7141225</textarea>
 Technical details:
 Pin = 6817554</textarea>
 
-<textarea id=pinRealtek1>Realtek firmwares
+        <textarea id=pinRealtek1>Realtek firmwares
 TRENDnet TEW-432BRP (Realtek)
 TRENDnet TEW-432BRP/C (Realtek)
   00:14:D1:xx:xx:xx
@@ -2127,7 +2170,7 @@ Intellinet 503693 (Realtek)
 Technical details:
 Pin = 9566146</textarea>
 
-<textarea id=pinRealtek2>Netis WF2780
+        <textarea id=pinRealtek2>Netis WF2780
   00:72:63:xx:xx:xx
   E4:BE:ED:xx:xx:xx
   WSC Device Names:
@@ -2136,7 +2179,13 @@ Pin = 9566146</textarea>
 Technical details:
 Pin = 9571911</textarea>
 
-<textarea id=pinUpvel>Upvel (some firmwares)
+        <textarea id=pinRealtek3>Sercomm Wifire S1010 (Realtek)
+  08:C6:B3:xx:xx:xx
+
+Technical details:
+Pin = 4856371</textarea>
+
+        <textarea id=pinUpvel>Upvel (some firmwares)
 Upvel UR-315BN
 Upvel UR-325BN
   F8:C0:91:xx:xx:xx
@@ -2144,13 +2193,13 @@ Upvel UR-325BN
 Technical details:
 Pin = 2085483</textarea>
 
-<textarea id=pinUR814AC>Upvel UR-814AC
+        <textarea id=pinUR814AC>Upvel UR-814AC
   D4:BF:7F:60:xx:xx
 
 Technical details:
 Pin = 4397768</textarea>
 
-<textarea id=pinUR825AC>Upvel UR-825AC
+        <textarea id=pinUR825AC>Upvel UR-825AC
 Upvel UR-825N4G
   D4:BF:7F:5x:xx:xx
   WSC Device Names:
@@ -2159,7 +2208,7 @@ Upvel UR-825N4G
 Technical details:
 Pin = 0529417</textarea>
 
-<textarea id=pinOnlime>Upvel Onlime UR-315BN
+        <textarea id=pinOnlime>Upvel Onlime UR-315BN
 Upvel Onlime UR-319BN
   D4:BF:7F:xx:xx:xx
   F8:C0:91:xx:xx:xx
@@ -2179,7 +2228,7 @@ TRENDnet TEW-638APB
 Technical details:
 Pin = 9995604</textarea>
 
-<textarea id=pinEdimax>EDIMAX BR6228GNS
+        <textarea id=pinEdimax>EDIMAX BR6228GNS
 EDIMAX BR6258GN
 EDIMAX BR6428GN
 EDIMAX BR6428NS
@@ -2189,7 +2238,7 @@ EDIMAX BR6428NS
 Technical details:
 Pin = 3561153</textarea>
 
-<textarea id=pinThomson>Thomson/Technicolor
+        <textarea id=pinThomson>Thomson/Technicolor
   00:26:24:xx:xx:xx
   44:32:C8:xx:xx:xx
   88:F7:C7:xx:xx:xx
@@ -2198,7 +2247,7 @@ Pin = 3561153</textarea>
 Technical details:
 Pin = 6795814</textarea>
 
-<textarea id=pinHG532x>Huawei EchoLife HG532e
+        <textarea id=pinHG532x>Huawei EchoLife HG532e
 Huawei EchoLife HG532n
 Huawei EchoLife HG532s
   00:66:4B:xx:xx:xx
@@ -2222,25 +2271,51 @@ Huawei EchoLife HG532s
 Technical details:
 Pin = 3425928</textarea>
 
-<textarea id=pinONO>CBN CH6640E
+        <textarea id=pinH108L>ZTE ZXV10H108L
+  4C:09:B4:xx:xx:xx
+  4C:AC:0A:xx:xx:xx
+  9C:D2:4B:xx:xx:xx
+  B0:75:D5:xx:xx:xx
+  C8:64:C7:xx:xx:xx
+  DC:02:8E:xx:xx:xx
+  FC:C8:97:xx:xx:xx
+  WSC Device Names:
+    H108L
+
+Technical details:
+Pin = 9422988
+https://forum.antichat.ru/posts/3932800/</textarea>
+
+        <textarea id=pinONO>CBN CH6640E
   5C:35:3B:xx:xx:xx
   DC:53:7C:xx:xx:xx
 
 Technical details:
 Pin = 9575521</textarea>
-</div>
+    </div>
 </div>
 
-<div class=footer>&copy; 2015-2018 akokarev, binarymaster, Felis-Sapiens, Fusix</div>
+<div class=footer>&copy; 2015-2019 akokarev, binarymaster, Felis-Sapiens, Fusix</div>
 
 <div class=modal>
-	<div class=modal_bkg onclick="hideModal()"></div>
-	<div class=modal_cnt align=center id=win_login>
-	</div>
-	<div class=modal_cnt align=center id=win_reg>
-	</div>
-	<div class=modal_cnt align=center id=win_newpass>
-	</div>
+    <div class=modal_bkg onclick="hideModal()"></div>
+    <div class=modal_cnt align=center id=win_login>
+    </div>
+    <div class=modal_cnt align=center id=win_reg>
+    </div>
+    <div class=modal_cnt align=center id=win_newpass>
+    </div>
+    <div style="position: absolute" align=center id=win_wait>
+    </div>
 </div>
-</body>
+<!--Google Analytics-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-133751875-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-133751875-1');
+</script>
+<!--/Google Analytics--></body>
 </html>
