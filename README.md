@@ -1,5 +1,7 @@
-# 3WiFi Locator for Android
+# Unofficial 3WiFi Locator for Android
+ROOT version of Locator: soon
 
-The project is abandoned, gave collaborator rights to binarymaster.
+Original locator source: https://github.com/FusixGit/WiFiPasswordSearcher
 
-**— Fusix**
+3WIFI source: https://github.com/binarymaster/3WiFi
+
