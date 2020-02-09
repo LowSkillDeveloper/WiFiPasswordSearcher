@@ -63,7 +63,7 @@ public class UserInfoActivity extends Activity {
             TextView lReg = (TextView) findViewById(R.id.labRegDate);
             TextView lGroup = (TextView) findViewById(R.id.labGroup);
 
-            Nick = "WPS PIN Companion";
+            Nick = "WPS PIN Generator";
             lReg.setText("Last Updated");
             date = updater.wpsCompanionGetDate();
             lGroup.setText("File Size");

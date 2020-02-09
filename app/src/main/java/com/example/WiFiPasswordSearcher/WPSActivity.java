@@ -619,7 +619,7 @@ public class WPSActivity extends Activity
         }
         wpslist.setEnabled(pins.size() > 0);
         wpslist.setAdapter(new MyAdapterWps(WPSActivity.this, data));
-        toastMessage("Selected source: WPS PIN Companion");
+        toastMessage("Selected source: WPS PIN Generator");
     }
 
     private int findAlgoByPin(String pin)
