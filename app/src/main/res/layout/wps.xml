@@ -23,7 +23,7 @@
 		<Button
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text="Offline generator"
+			android:text="WPS generator"
 			android:layout_weight="1.0"
 			android:onClick="btnGenerate"
 			android:id="@+id/wpsButton1"/>
@@ -31,7 +31,7 @@
 		<Button
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text="Local"
+			android:text="WPS tester"
 			android:layout_weight="1.0"
 			android:onClick="btnLocalClick"
 			android:id="@+id/wpsButton2"/>
