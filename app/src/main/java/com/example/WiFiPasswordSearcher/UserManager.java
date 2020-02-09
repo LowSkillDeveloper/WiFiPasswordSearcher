@@ -62,6 +62,8 @@ public class UserManager {
             return "Database maintenance, try again later";
         if (error.equals("loginfail"))
             return "Username or password incorrect";
+        if (error.equals("cooldown"))
+            return "Сooldown, please wait 10 seconds";
         if (error.equals("form"))
             return "Please fill required form fields";
         return "Unknown Error: " + error;
