@@ -334,7 +334,7 @@ public class MyActivity extends Activity {
         "Network details",
         "Copy ESSID",
         "Copy BSSID",
-        "Copy network key",
+        "Copy password",
         "Store network profile",
         "Generate WPS PIN"
     };
