@@ -10,6 +10,7 @@ also has some updates and changes.**
 <li>Permission fix for wifi on android 9 and 10 (not wps)</li>
 <li>Added cooldown message</li>
 <li>Cosmetic changes to my taste</li>
+<li>Uses the HTTPS protocol by default.</li>
 </ul>
 
 ------------------
