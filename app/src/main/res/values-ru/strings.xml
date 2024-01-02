@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">3WiFi Локатор</string>
+    <string-array name="strings_settings_rows">
+        <item>Настройки приложения</item>
+        <item>WPS PIN Companion</item>
+        <item>О приложении</item>
+        <item>Проверить наличие обновлений</item>
+        <item>Выйти из аккаунта</item>
+    </string-array>
+
+    <string-array name="menu_network">
+        <item>Информация о сети</item>
+        <item>Скопировать ESSID</item>
+        <item>Скопировать BSSID</item>
+        <item>Скопировать пароль</item>
+        <item>Сохранить сетевой профиль</item>
+        <item>Сгенерировать пин-код WPS</item>
+    </string-array>
+
+    <string-array name="menu_wps_pin">
+        <item>Подключится через WPS… (без root)</item>
+        <item>Скопировать пин-код</item>
+    </string-array>
+
+    <string name="label_start">Это приложение нуждается в API-ключе</string>
+    <string name="button_3wifi">3WiFi</string>
+    <string name="button_gps_sniff">GPS sniff (скоро…)</string>
+    <string name="button_offline">Офлайн</string>
+    <string name="button_refresh">Обновить</string>
+    <string name="button_sign_in">Войти</string>
+    <string name="button_start_app">Запустить!</string>
+    <string name="button_user_info">Информация об аккаунте</string>
+    <string name="dialog_already_stored">Сеть %s уже сохранена %d раз.</string>
+    <string name="dialog_are_you_sure">Вы уверены?</string>
+    <string name="dialog_choose_key">Выберите запись:</string>
+    <string name="dialog_choose_key_key">"Ключ: "</string>
+    <string name="dialog_choose_key_wps">" WPS: "</string>
+    <string name="dialog_no">Нет</string>
+    <string name="dialog_work_offline">Вы хотите работать в автономном режиме?</string>
+    <string name="dialog_wps_disabled">У сети \"%s\" отключён WPS.</string>
+    <string name="dialog_yes">Да</string>
+    <string name="hint_password">Пароль</string>
+    <string name="hint_username">Имя пользователя</string>
+    <string name="status_no_internet">Нет интернет-соединения</string>
+    <string name="status_scanning">Сканирование сетей…</string>
+    <string name="status_searching">Поиск в 3WiFi…</string>
+    <string name="status_signing_in">Авторизация…</string>
+    <string name="toast_copied">Скопировано в буфер обмена</string>
+    <string name="toast_database_failure">Сбой базы данных</string>
+    <string name="toast_enter_credentials">Пожалуйста, укажите учетные данные</string>
+    <string name="toast_failed_to_store">Не удалось добавить сетевой профиль</string>
+    <string name="toast_key_not_found">Пароль не найден!</string>
+    <string name="toast_key_not_found_nothing_copy">Пароль не найден! Нечего копировать</string>
+    <string name="toast_network_stored">Сетевой профиль добавлен!</string>
+    <string name="toast_no_api_keys">API-ключи не получены</string>
+    <string name="toast_no_data">Здесь нет данных! Нажмите кнопку 3WiFi, чтобы получить пароли</string>
+    <string name="toast_scan_complete">Сканирование завершено!</string>
+    <string name="toast_wifi_disabled">Интерфейс Wi-Fi отключен</string>
+    <string name="label_registration_date">Дата регистрации</string>
+    <string name="label_access_level">Уровень доступа</string>
+    <string name="access_level_admin">Администратор</string>
+    <string name="access_level_banned">Заблокированный</string>
+    <string name="access_level_developer">Разработчик</string>
+    <string name="access_level_guest">Гость</string>
+    <string name="access_level_no_logged">Неавторизованный</string>
+    <string name="access_level_user">Пользователь</string>
+    <string name="label_app_version">"Версия приложения: "</string>
+    <string name="checkbox_enable_peak_monitor">Издавать звук</string>
+    <string name="label_channel">"Канал: "</string>
+    <string name="label_freq">"Частота: "</string>
+    <string name="label_signal">"Мощность: "</string>
+    <string name="cancel">Отмена</string>
+    <string name="dialog_network_properties">Введите параметры сети</string>
+    <string name="hint_enter_bssid">BSSID (11:22:33:44:55:66)</string>
+    <string name="hint_enter_essid">ESSID</string>
+    <string name="label_file_size">Размер файла</string>
+    <string name="label_last_updated">Последнее обновление</string>
+    <string name="ok">ОК</string>
+    <string name="status_updating">Обновление компонента…</string>
+    <string name="toast_update_failed">Ошибка обновления</string>
+    <string name="toast_updated_successful">Успешно обновлён!</string>
+    <string name="button_revert">Откатить</string>
+    <string name="button_update">Обновить</string>
+    <string name="dialog_message_another_transaction">Другая транзакция WPS находится в процессе выполнения.</string>
+    <string name="dialog_message_generic_failure">Общий сбой — что-то пошло не так. Попробуйте выключить и включить Wi-Fi, а затем повторите попытку. Если это не поможет, попробуйте перезагрузить устройство.</string>
+    <string name="dialog_message_network_did_not_respond">Сеть не отвечает из-за низкого сигнала или по каким-то другим причинам. Вы можете попробовать еще раз.</string>
+    <string name="dialog_message_not_support_empty">Ваше устройство не поддерживает подключение с пустым пин-кодом WPS. Вы можете попробовать еще раз или использовать root-режим.</string>
+    <string name="dialog_message_operation_in_progress">В настоящее время операция продолжается.</string>
+    <string name="dialog_message_tkip_prohibited">TKIP-only шифрование запрещено.</string>
+    <string name="dialog_message_unsupported_android">Для этой функции требуется Android 5.0 (Lollipop) с API 21 или выше. Пожалуйста, обновите вашу систему.</string>
+    <string name="dialog_message_wep_prohibited">Шифрование WEP запрещено.</string>
+    <string name="dialog_message_wifi_busy">Интерфейс Wi-Fi занят.</string>
+    <string name="dialog_message_wps_pin_incorrect">Выбранный WPS пин-код неверен.</string>
+    <string name="dialog_title_error_occurred">Произошла ошибка</string>
+    <string name="dialog_title_oh_shit">ВОТ БЛИН!</string>
+    <string name="dialog_title_unsupported_android">Неподдерживаемая версия Android</string>
+    <string name="dialog_title_wps_failed">Сбой подключения WPS</string>
+    <string name="dialog_title_wps_timeout">Тайм-аут соединения WPS</string>
+    <string name="selected_pin">"Выбранный пин-код: "</string>
+    <string name="selected_source">Выбран источник: %s</string>
+    <string name="status_connecting_to_the_network">Подключение к сети…</string>
+    <string name="status_getting_pins">Получение пин-кодов…</string>
+    <string name="status_please_wait">Пожалуйста подождите…</string>
+    <string name="toast_connected_successfully">Успешно подключено!</string>
+    <string name="toast_connection_canceled">Соединение отменено</string>
+    <string name="toast_pin_copied">Пин-код %s скопирован</string>
+    <string name="toast_no_pins_found">Пин-коды не найдены</string>
+    <string name="toast_reverted_to_init_state">Возвращён в исходное состояние</string>
+    <string name="unexpected_error">Непредвиденная ошибка</string>
+    <string name="connection_failure">Сбой подключения</string>
+    <string name="status_initializing">Инициализация…</string>
+    <string name="dialog_enter_custom_pin">Введите пин-код WPS</string>
+    <string name="source_3wifi">3WiFi</string>
+    <string name="source_local_database">БАЗА</string>
+    <string name="source_local_generator">ГЕНЕРАТОР</string>
+    <string name="check_updates">Проверять обновления</string>
+    <string name="checkbox_unmask_password">Показать</string>
+    <string name="fetch_by_bssid_essid">Искать по ESSID + BSSID</string>
+    <string name="save">Сохранить</string>
+    <string name="label_server_url">Адрес сервера</string>
+    <string name="ask_later">Спросить позже</string>
+    <string name="dialog_title_update">Новая версия доступна: %d</string>
+    <string name="download">Загрузить</string>
+    <string name="toast_using_latest_version">У вас последняя версия</string>
+    <string name="error_database_maintenance">Сейчас проводится обслуживание базы данных, попробуйте позже</string>
+    <string name="error_form_fields">Пожалуйста, заполните необходимые поля формы</string>
+    <string name="error_incorrect_credentials">Неверное имя пользователя или пароль</string>
+    <string name="unknown_error">Неизвестная ошибка: %s</string>
+    <string name="error_cooldown">Действует ограничение по времени, подождите 10 секунд</string>
+    <string name="button_open_settings">Открыть настройки</string>
+    <string name="dialog_message_location_disabled">В Android 9 и выше необходимо включить службы местоположения, чтобы сканировать сети. Включить сейчас?</string>
+    <string name="dialog_message_please_enable_wifi">Необходимо включить Wi-Fi, чтобы сканировать сети</string>
+    <string name="label_signal_graph">График сигнала</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_monitor_network">Мониторинг сети…</string>
+</resources>

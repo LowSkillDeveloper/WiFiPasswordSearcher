@@ -33,7 +33,7 @@
 				android:gravity="left|center_vertical"
 				android:textStyle="bold"
 				android:id="@+id/txtPin"
-				android:textColor="#2856ed"/>
+				android:textColor="#2648B8"/>
 
 			<TextView
 				android:layout_width="130dp"

@@ -1,17 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">3WiFi Locator unofficial</string>
-    <string name="app_version">1.1</string>
-    <string name="SERVER_URI_DEFAULT">https://3wifi.stascorp.com</string>
-    <string name="DEFAULT_DATE_FORMAT">yyyy-MM-dd HH:mm:ss</string>
+    <string name="app_name">3WiFi Locator</string>
+    <string name="app_version" translatable="false">0.6</string>
+    <string name="SERVER_URI_DEFAULT" translatable="false">https://3wifi.stascorp.com</string>
+    <string name="DEFAULT_DATE_FORMAT" translatable="false">yyyy-MM-dd HH:mm:ss</string>
 
     <string-array name="strings_settings_rows">
-        <item>3WIFI account settings</item>
-        <item>Update WPS PIN Generator</item>
-        <item>Monitor a network...</item>
+        <item>Locator Settings</item>
+        <item>WPS PIN Companion</item>
         <item>About</item>
-        <item>Update application (not work)</item>
-        <item>Logout from account</item>
+        <item>Check updates</item>
+        <item>Logout</item>
     </string-array>
 
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+
+    <!-- StartActivity strings -->
+    <string name="label_start">This app requires API keys</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="button_sign_in">Sign in</string>
+    <string name="button_offline">Offline</string>
+    <string name="button_start_app">Start!</string>
+    <string name="button_user_info">User info</string>
+    <string name="status_signing_in">Signing in…</string>
+    <string name="toast_no_api_keys">No API keys received</string>
+    <string name="status_no_internet">No internet connection</string>
+    <string name="dialog_work_offline">Do you want to work in offline mode?</string>
+
+    <!-- MyActivity strings-->
+    <string name="button_refresh">Refresh</string>
+    <string name="button_3wifi">3WiFi</string>
+    <string name="button_gps_sniff">GPS sniff (soon…)</string>
+
+    <string name="dialog_choose_key">Choose key:</string>
+    <string name="dialog_choose_key_key">Key: </string>
+    <string name="dialog_choose_key_wps"> WPS: </string>
+
+    <string-array name="menu_network">
+        <item>Network details</item>
+        <item>Copy ESSID</item>
+        <item>Copy BSSID</item>
+        <item>Copy network key</item>
+        <item>Store network profile</item>
+        <item>Generate WPS PIN</item>
+    </string-array>
+
+    <string name="status_searching">Searching in 3WiFi…</string>
+    <string name="status_scanning">Scanning networks…</string>
+    <string name="toast_no_data">No data here! Click 3WiFi button to fetch some keys</string>
+    <string name="toast_key_not_found_nothing_copy">Key not found! Nothing to copy</string>
+    <string name="toast_key_not_found">Key not found!</string>
+    <string name="toast_wifi_disabled">Wi-Fi interface is disabled</string>
+    <string name="toast_copied">Copied to clipboard</string>
+    <string name="toast_network_stored">Network profile added!</string>
+    <string name="toast_failed_to_store">Failed to add network profile</string>
+    <string name="toast_enter_credentials">Please enter credentials</string>
+    <string name="toast_scan_complete">Scan is complete!</string>
+    <string name="toast_database_failure">Database failure</string>
+    <string name="dialog_are_you_sure">Are you sure?</string>
+    <string name="dialog_already_stored">Network "%s" is already stored %d times.</string>
+    <string name="dialog_wps_disabled">Network "%s" is not WPS enabled.</string>
+    
+    <!-- UserManager strings -->
+    <string name="error_database_maintenance">Database maintenance, try again later</string>
+    <string name="error_incorrect_credentials">Username or password incorrect</string>
+    <string name="error_form_fields">Please fill required form fields</string>
+    <string name="error_cooldown">Account query time limitation, please wait 10 seconds</string>
+    <string name="unknown_error">Unknown Error: %s</string>
+    
+    <!-- user strings -->
+    <string name="label_registration_date">Registration Date</string>
+    <string name="label_access_level">Access Level</string>
+    <string name="access_level_banned">Banned</string>
+    <string name="access_level_no_logged">No logged</string>
+    <string name="access_level_guest">Guest</string>
+    <string name="access_level_user">User</string>
+    <string name="access_level_developer">Developer</string>
+    <string name="access_level_admin">Administrator</string>
+
+    <string name="label_app_version">"App version: "</string>
+
+    <!-- WifiDetails strings -->
+    <string name="checkbox_enable_peak_monitor">Enable signal peak monitor</string>
+    <string name="label_signal">Signal: </string>
+    <string name="label_freq">Freq: </string>
+    <string name="label_channel">Channel: </string>
+
+    <!-- SettingsActivity strings -->
+    <string name="dialog_network_properties">Enter network properties</string>
+    <string name="hint_enter_bssid">BSSID (11:22:33:44:55:66)</string>
+    <string name="hint_enter_essid">ESSID</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
+    <!-- WPS  PIN Companion strings -->
+    <string name="label_last_updated">Last Updated</string>
+    <string name="label_file_size">File Size</string>
+    <string name="button_revert">Revert</string>
+    <string name="button_update">Update</string>
+    <string name="status_updating">Updating component…</string>
+    <string name="toast_updated_successful">Update successful!</string>
+    <string name="toast_update_failed">Update failed</string>
+    <string name="toast_reverted_to_init_state">"Reverted to initial state"</string>
+
+    <!-- WPSActivity strings -->
+    <string-array name="menu_wps_pin">
+        <item>Connect using WPS… (without root)</item>
+        <item>Copy this WPS PIN</item>
+    </string-array>
+
+    <string name="status_connecting_to_the_network">Connecting to the network…</string>
+    <string name="toast_connection_canceled">Connection cancelled</string>
+    <string name="toast_connected_successfully">Connected successfully!</string>
+    <string name="dialog_title_error_occurred">An error occurred</string>
+    <string name="dialog_title_wps_failed">WPS connection failed</string>
+    <string name="dialog_message_not_support_empty">Your device does not support entering &lt;empty&gt; pin via WPS. You could try again, or use root mode.</string>
+    <string name="dialog_message_generic_failure">Generic failure — something went wrong. Try turning your Wi-Fi interface off and on, then try again. If this doesn\'t help, try restarting your device.</string>
+    <string name="dialog_message_operation_in_progress">Operation currently in progress.</string>
+    <string name="dialog_message_wifi_busy">Wi-Fi interface is busy.</string>
+    <string name="dialog_message_another_transaction">Another WPS transaction is in progress.</string>
+    <string name="dialog_message_wep_prohibited">WEP encryption prohibited.</string>
+    <string name="dialog_message_tkip_prohibited">TKIP-only encryption prohibited.</string>
+    <string name="dialog_message_wps_pin_incorrect">Selected WPS PIN is not correct.</string>
+    <string name="dialog_title_wps_timeout">WPS connection timeout</string>
+    <string name="dialog_message_network_did_not_respond">The network did not respond due to low signal or some other reasons. You may try again.</string>
+    <string name="dialog_title_oh_shit">OH SHI*</string>
+    <string name="unexpected_error">Unexpected error </string>
+    <string name="selected_pin">Selected pin: </string>
+    <string name="dialog_title_unsupported_android">Unsupported Android version</string>
+    <string name="dialog_message_unsupported_android">This function requires Android 5.0 (Lollipop) with API 21 or higher. Please upgrade your system.</string>
+    <string name="toast_pin_copied">Pin %s copied</string>
+    <string name="status_getting_pins">Getting pins…</string>
+    <string name="status_please_wait">Please wait…</string>
+    <string name="connection_failure">Connection failure</string>
+    <string name="toast_no_pins_found">No pins found</string>
+    <string name="selected_source">Selected source: %s</string>
+    <string name="status_initializing">Initializing…</string>
+    <string name="dialog_enter_custom_pin">Enter your WPS PIN</string>
+
+    <string name="source_3wifi">3WiFi Base</string>
+    <string name="source_local_generator">Generate</string>
+    <string name="source_local_database">Local</string>
+
+    <!-- Server settings strings -->
+    <string name="checkbox_unmask_password">Unmask</string>
+    <string name="label_server_url">Server URL</string>
+    <string name="fetch_by_bssid_essid">Fetch APs by BSSID + ESSID</string>
+    <string name="check_updates">Check for updates</string>
+    <string name="save">Save</string>
+
+    <!-- AppVersion strings -->
+    <string name="dialog_title_update">New version %d available!</string>
+    <string name="download">Download</string>
+    <string name="ask_later">Ask later</string>
+    <string name="toast_using_latest_version">Using latest version"</string>
+
+    <!-- Other strings -->
+    <string name="dialog_message_location_disabled">On Android 9 and higher you must enable location to scan networks. Enable now?</string>
+    <string name="button_open_settings">Open settings</string>
+    <string name="dialog_message_please_enable_wifi">You must enable Wi-Fi to scan networks</string>
+    <string name="label_signal_graph">Signal graph</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_monitor_network">Monitor a network…</string>
 </resources>
