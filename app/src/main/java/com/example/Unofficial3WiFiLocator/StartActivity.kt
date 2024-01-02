@@ -25,10 +25,9 @@ import java.net.URL
 import java.net.URLEncoder
 import android.widget.EditText
 
-/**
- * Created by пк on 20.12.2015.
- */
+
 class StartActivity : Activity() {
+
     private lateinit var binding: ActivityStartBinding
     private lateinit var mSettings: Settings
     private lateinit var user: UserManager
@@ -61,39 +60,73 @@ class StartActivity : Activity() {
             }
         }.start()
     }
-    private fun updateSpinner(servers: ArrayList<String>) {
+
+    private fun updateSpinner(servers: ArrayList<String>, userServer: String? = null) {
+        if (userServer != null && userServer.isNotEmpty()) {
+            if (servers.contains("Указать свой сервер")) {
+                servers.remove("Указать свой сервер")
+            }
+            servers.add(userServer)
+        }
+
+        if (!servers.contains("Указать свой сервер")) {
+            servers.add("Указать свой сервер")
+        }
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, servers)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerServer.adapter = adapter
+        if (userServer != null && userServer.isNotEmpty()) {
+            val userServerIndex = servers.indexOf(userServer)
+            binding.spinnerServer.setSelection(userServerIndex)
+        }
     }
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityStartBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        loadServerList()
+    private fun setupSpinner() {
         binding.spinnerServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val selectedItem = parent.getItemAtPosition(position).toString()
                 if (selectedItem == "Указать свой сервер") {
-                    val alertDialog = AlertDialog.Builder(this@StartActivity)
-                    alertDialog.setTitle("Введите адрес сервера")
-                    val input = EditText(this@StartActivity)
-                    alertDialog.setView(input)
-                    alertDialog.setPositiveButton("OK") { dialog, whichButton ->
-                        val customServerUrl = input.text.toString()
-                        mSettings.Editor!!.putString(Settings.APP_SERVER_URI, customServerUrl)
-                        mSettings.Editor!!.commit()
-                    }
-                    alertDialog.setNegativeButton("Cancel", null)
-                    alertDialog.show()
+                    showServerInputDialog()
                 } else {
                     mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
                     mSettings.Editor!!.commit()
                 }
             }
+
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+    }
+
+    private fun showServerInputDialog() {
+        val alertDialog = AlertDialog.Builder(this@StartActivity)
+        alertDialog.setTitle("Введите адрес сервера")
+        val input = EditText(this@StartActivity)
+        alertDialog.setView(input)
+        alertDialog.setPositiveButton("OK") { dialog, whichButton ->
+            val customServerUrl = input.text.toString()
+            mSettings.Editor!!.putString(Settings.APP_SERVER_URI, customServerUrl)
+            mSettings.Editor!!.commit()
+
+            val adapter = binding.spinnerServer.adapter
+            val servers = ArrayList<String>()
+            for (i in 0 until adapter.count) {
+                servers.add(adapter.getItem(i).toString())
+            }
+
+            updateSpinner(servers, customServerUrl)
+        }
+        alertDialog.setNegativeButton("Cancel", null)
+        alertDialog.show()
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityStartBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        loadServerList()
+        setupSpinner()
+
         onConfigurationChanged(resources.configuration)
         mSettings = Settings(applicationContext)
         user = UserManager(applicationContext)
