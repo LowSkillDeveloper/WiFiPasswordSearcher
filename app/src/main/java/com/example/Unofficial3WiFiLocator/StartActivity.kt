@@ -215,7 +215,9 @@ class StartActivity : Activity() {
     private fun clearServerList() {
         mSettings.Editor!!.putString("savedServers", "[]")
         mSettings.Editor!!.commit()
-        updateSpinnerWithSavedServers()
+        val defaultServerUrl = resources.getString(R.string.SERVER_URI_DEFAULT)
+        val backupServers = arrayListOf(defaultServerUrl, "Указать свой сервер")
+        updateSpinner(backupServers)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
