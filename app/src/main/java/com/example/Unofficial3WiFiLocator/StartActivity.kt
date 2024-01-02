@@ -44,7 +44,8 @@ class StartActivity : Activity() {
             Toast.makeText(this, "Server URL saved", Toast.LENGTH_SHORT).show()
         }
 
-
+        val currentServerUri = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, "")
+        binding.edtServerUri.setText(currentServerUri)
 
 
         val apiKeysValid = mSettings.AppSettings!!.getBoolean(Settings.API_KEYS_VALID, false)
