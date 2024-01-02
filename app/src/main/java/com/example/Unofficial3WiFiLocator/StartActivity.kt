@@ -207,6 +207,15 @@ class StartActivity : Activity() {
             startActivity(mainActivity)
             finish()
         }
+        binding.btnClearServerList.setOnClickListener {
+            clearServerList()
+        }
+    }
+
+    private fun clearServerList() {
+        mSettings.Editor!!.putString("savedServers", "[]")
+        mSettings.Editor!!.commit()
+        updateSpinnerWithSavedServers()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
