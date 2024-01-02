@@ -1,6 +1,7 @@
-# Unofficial 3WiFi Locator v2 for Android (fork from drygdryg)
+# Unofficial 3WiFi Locator for Android v2
 
-I'm bored, maybe I'll do something...
+This is a new version of 3wifi locator, which is based on the version from drygdryg.
+
 
 <h2>Changelog</h2>
 <div>
