@@ -42,9 +42,12 @@ class StartActivity : Activity() {
                 val bufferedReader = BufferedReader(InputStreamReader(inputStream))
                 val serverListJson = bufferedReader.readText()
                 val serverList = JSONArray(serverListJson)
-                val servers = ArrayList<String>()
+                val servers = getSavedServers()
                 for (i in 0 until serverList.length()) {
-                    servers.add(serverList.getString(i))
+                    val server = serverList.getString(i)
+                    if (!servers.contains(server)) {
+                        servers.add(server)
+                    }
                 }
                 servers.add("Указать свой сервер")
                 runOnUiThread {
@@ -61,35 +64,23 @@ class StartActivity : Activity() {
         }.start()
     }
 
-    private fun updateSpinner(servers: ArrayList<String>, userServer: String? = null) {
-        if (userServer != null && userServer.isNotEmpty()) {
-            if (servers.contains("Указать свой сервер")) {
-                servers.remove("Указать свой сервер")
-            }
-            servers.add(userServer)
-        }
-
-        if (!servers.contains("Указать свой сервер")) {
-            servers.add("Указать свой сервер")
-        }
+    private fun updateSpinner(servers: ArrayList<String>) {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, servers)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerServer.adapter = adapter
-        if (userServer != null && userServer.isNotEmpty()) {
-            val userServerIndex = servers.indexOf(userServer)
-            binding.spinnerServer.setSelection(userServerIndex)
-        }
     }
 
     private fun setupSpinner() {
         binding.spinnerServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                if (selectedItem == "Указать свой сервер") {
-                    showServerInputDialog()
-                } else {
-                    mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
-                    mSettings.Editor!!.commit()
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (view != null) { // фикс вылета, видите ли не нравиться null ему...
+                    val selectedItem = parent.getItemAtPosition(position).toString()
+                    if (selectedItem == "Указать свой сервер") {
+                        showServerInputDialog()
+                    } else {
+                        mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
+                        mSettings.Editor!!.commit()
+                    }
                 }
             }
 
@@ -106,27 +97,50 @@ class StartActivity : Activity() {
             val customServerUrl = input.text.toString()
             mSettings.Editor!!.putString(Settings.APP_SERVER_URI, customServerUrl)
             mSettings.Editor!!.commit()
-
-            val adapter = binding.spinnerServer.adapter
-            val servers = ArrayList<String>()
-            for (i in 0 until adapter.count) {
-                servers.add(adapter.getItem(i).toString())
-            }
-
-            updateSpinner(servers, customServerUrl)
+            saveServerList(customServerUrl)
+            updateSpinnerWithSavedServers()
         }
         alertDialog.setNegativeButton("Cancel", null)
         alertDialog.show()
     }
 
+    private fun saveServerList(newServer: String) {
+        val servers = getSavedServers()
+        if (!servers.contains(newServer)) {
+            servers.add(newServer)
+            val serversJson = JSONArray(servers).toString()
+            mSettings.Editor!!.putString("savedServers", serversJson)
+            mSettings.Editor!!.commit()
+        }
+    }
+
+    private fun getSavedServers(): ArrayList<String> {
+        val serversJson = mSettings.AppSettings!!.getString("savedServers", "[]")
+        val serversArray = JSONArray(serversJson)
+        val servers = ArrayList<String>()
+        for (i in 0 until serversArray.length()) {
+            servers.add(serversArray.getString(i))
+        }
+        return servers
+    }
+
+    private fun updateSpinnerWithSavedServers() {
+        val servers = getSavedServers()
+        servers.add("Указать свой сервер")
+        updateSpinner(servers)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        mSettings = Settings(applicationContext)
+        user = UserManager(applicationContext)
+
+        updateSpinnerWithSavedServers()
         loadServerList()
         setupSpinner()
-
         onConfigurationChanged(resources.configuration)
         mSettings = Settings(applicationContext)
         user = UserManager(applicationContext)
