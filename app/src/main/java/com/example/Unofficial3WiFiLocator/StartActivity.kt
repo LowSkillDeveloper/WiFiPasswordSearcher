@@ -47,23 +47,25 @@ class StartActivity : Activity() {
                 for (i in 0 until serverList.length()) {
                     servers.add(serverList.getString(i))
                 }
-                servers.add("Enter other server")
+                servers.add("Указать свой сервер")
                 runOnUiThread {
                     updateSpinner(servers)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-
+                val defaultServerUrl = resources.getString(R.string.SERVER_URI_DEFAULT)
+                val backupServers = arrayListOf(defaultServerUrl, "Указать свой сервер")
+                runOnUiThread {
+                    updateSpinner(backupServers)
+                }
             }
         }.start()
     }
-
     private fun updateSpinner(servers: ArrayList<String>) {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, servers)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerServer.adapter = adapter
     }
-
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
