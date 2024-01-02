@@ -1,6 +1,7 @@
-# Unofficial 3WiFi Locator for Android
-**This version support android 9 and 10 (except WPS connection, because it is cut from android since version 9),
-also has some updates and changes.**
+# Unofficial 3WiFi Locator for Android v1 (abandoned)
+
+This version support android 9 and 10 (except WPS connection, because it is cut from android since version 9),
+also has some updates and changes.
 
 <h2>What's difference from the original version</h2>
 <div>
