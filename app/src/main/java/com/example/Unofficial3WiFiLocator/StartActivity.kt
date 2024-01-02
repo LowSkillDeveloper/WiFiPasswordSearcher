@@ -140,10 +140,11 @@ class StartActivity : Activity() {
         super.onCreate(savedInstanceState)
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        binding.btnOfflineMode.setOnClickListener {
+            switchToOfflineMode()
+        }
         mSettings = Settings(applicationContext)
         user = UserManager(applicationContext)
-
         updateSpinnerWithSavedServers()
         loadServerList()
         setupSpinner()
@@ -210,6 +211,13 @@ class StartActivity : Activity() {
         binding.btnClearServerList.setOnClickListener {
             clearServerList()
         }
+    }
+
+    private fun switchToOfflineMode() {
+        mSettings.Editor!!.putString(Settings.API_READ_KEY, "offline")
+        mSettings.Editor!!.commit()
+        val offlineActivityIntent = Intent(this@StartActivity, MyActivity::class.java)
+        startActivity(offlineActivityIntent)
     }
 
     private fun clearServerList() {
