@@ -8,7 +8,7 @@ I'm bored, maybe I'll do something...
 <li>Updated to latest wpspin.html from 3WiFi</li>
 <li>Updated local pin.db from latest "Wps Wpa tester" (2000 new pins in DB)</li>
 <li>Updated some libraries</li>
-<li>Add server URL at the start menu</li>
+<li>Add server list URLs at the start menu</li>
 </ul>
 
 ------------------
