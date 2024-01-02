@@ -29,6 +29,7 @@ import android.widget.EditText
 class StartActivity : Activity() {
 
     private lateinit var binding: ActivityStartBinding
+    private var userInteracted = false
     private lateinit var mSettings: Settings
     private lateinit var user: UserManager
 
@@ -73,7 +74,7 @@ class StartActivity : Activity() {
     private fun setupSpinner() {
         binding.spinnerServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (view != null) { // фикс вылета, видите ли не нравиться null ему...
+                if (userInteracted) {
                     val selectedItem = parent.getItemAtPosition(position).toString()
                     if (selectedItem == "Указать свой сервер") {
                         showServerInputDialog()
@@ -85,6 +86,11 @@ class StartActivity : Activity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        binding.spinnerServer.setOnTouchListener { _, _ ->
+            userInteracted = true
+            false
         }
     }
 
