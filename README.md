@@ -1,5 +1,14 @@
-# 3WiFi Locator for Android
+# Unofficial 3WiFi Locator for Android fork from drygdryg
 
-The project is abandoned, gave collaborator rights to binarymaster.
+I'm bored, maybe I'll do something...
 
-**— Fusix**
+------------------
+
+drygdryg version of Locator(abandoned): https://github.com/drygdryg/WiFiPasswordSearcher
+
+Original locator source(abandoned): https://github.com/FusixGit/WiFiPasswordSearcher
+
+3WIFI source: https://github.com/binarymaster/3WiFi
+
+ROOT version of Locator(abandoned): https://github.com/LowSkillDeveloper/Root-3WiFiLocator-Unofficial
+
