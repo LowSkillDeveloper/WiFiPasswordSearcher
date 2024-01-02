@@ -8,9 +8,12 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
 import com.example.Unofficial3WiFiLocator.databinding.ActivityStartBinding
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -20,6 +23,7 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import android.widget.EditText
 
 /**
  * Created by пк on 20.12.2015.
@@ -28,26 +32,69 @@ class StartActivity : Activity() {
     private lateinit var binding: ActivityStartBinding
     private lateinit var mSettings: Settings
     private lateinit var user: UserManager
+
+    private fun loadServerList() {
+        Thread {
+            try {
+                val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/servers.json")
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                val inputStream = connection.inputStream
+                val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+                val serverListJson = bufferedReader.readText()
+                val serverList = JSONArray(serverListJson)
+                val servers = ArrayList<String>()
+                for (i in 0 until serverList.length()) {
+                    servers.add(serverList.getString(i))
+                }
+                servers.add("Enter other server")
+                runOnUiThread {
+                    updateSpinner(servers)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+            }
+        }.start()
+    }
+
+    private fun updateSpinner(servers: ArrayList<String>) {
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, servers)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerServer.adapter = adapter
+    }
+
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        loadServerList()
+        binding.spinnerServer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                if (selectedItem == "Указать свой сервер") {
+                    val alertDialog = AlertDialog.Builder(this@StartActivity)
+                    alertDialog.setTitle("Введите адрес сервера")
+                    val input = EditText(this@StartActivity)
+                    alertDialog.setView(input)
+                    alertDialog.setPositiveButton("OK") { dialog, whichButton ->
+                        val customServerUrl = input.text.toString()
+                        mSettings.Editor!!.putString(Settings.APP_SERVER_URI, customServerUrl)
+                        mSettings.Editor!!.commit()
+                    }
+                    alertDialog.setNegativeButton("Cancel", null)
+                    alertDialog.show()
+                } else {
+                    mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
+                    mSettings.Editor!!.commit()
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
         onConfigurationChanged(resources.configuration)
         mSettings = Settings(applicationContext)
         user = UserManager(applicationContext)
-
-
-        binding.btnSaveServerUri.setOnClickListener {
-            val serverUri = binding.edtServerUri.text.toString()
-            mSettings.Editor!!.putString(Settings.APP_SERVER_URI, serverUri)
-            mSettings.Editor!!.commit()
-            Toast.makeText(this, "Server URL saved", Toast.LENGTH_SHORT).show()
-        }
-
-        val currentServerUri = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, "")
-        binding.edtServerUri.setText(currentServerUri)
-
-
         val apiKeysValid = mSettings.AppSettings!!.getBoolean(Settings.API_KEYS_VALID, false)
         val savedLogin = mSettings.AppSettings!!.getString(Settings.APP_SERVER_LOGIN, "")
         val savedPassword = mSettings.AppSettings!!.getString(Settings.APP_SERVER_PASSWORD, "")
@@ -211,14 +258,12 @@ class StartActivity : Activity() {
         }
         return false
     }
-
     fun btnOffline() {
         mSettings.Editor!!.putString(Settings.API_READ_KEY, "offline")
         mSettings.Editor!!.commit()
         val offlineActivityIntent = Intent(this@StartActivity, MyActivity::class.java)
         startActivity(offlineActivityIntent)
     }
-
     companion object {
         private var VersionAlreadyChecked = false
     }

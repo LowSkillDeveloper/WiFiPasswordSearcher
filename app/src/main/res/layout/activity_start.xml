@@ -44,13 +44,10 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp">
 
-			<EditText
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:id="@+id/edtServerUri"
-				android:inputType="text"
-				android:hint="@string/label_server_url"
-				android:layout_weight="2"/>
+			<Spinner
+				android:id="@+id/spinnerServer"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
 
 			<Button
 				android:layout_width="0dp"
