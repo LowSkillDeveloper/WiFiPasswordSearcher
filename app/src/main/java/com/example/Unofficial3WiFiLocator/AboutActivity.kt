@@ -1,10 +1,10 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
-import com.example.WiFiPasswordSearcher.databinding.ActivityAboutBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivityAboutBinding
 import java.nio.charset.Charset
 
 class AboutActivity : Activity() {

@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -10,7 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.example.WiFiPasswordSearcher.databinding.ActivityStartBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivityStartBinding
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -35,6 +35,18 @@ class StartActivity : Activity() {
         onConfigurationChanged(resources.configuration)
         mSettings = Settings(applicationContext)
         user = UserManager(applicationContext)
+
+
+        binding.btnSaveServerUri.setOnClickListener {
+            val serverUri = binding.edtServerUri.text.toString()
+            mSettings.Editor!!.putString(Settings.APP_SERVER_URI, serverUri)
+            mSettings.Editor!!.commit()
+            Toast.makeText(this, "Server URL saved", Toast.LENGTH_SHORT).show()
+        }
+
+
+
+
         val apiKeysValid = mSettings.AppSettings!!.getBoolean(Settings.API_KEYS_VALID, false)
         val savedLogin = mSettings.AppSettings!!.getString(Settings.APP_SERVER_LOGIN, "")
         val savedPassword = mSettings.AppSettings!!.getString(Settings.APP_SERVER_PASSWORD, "")

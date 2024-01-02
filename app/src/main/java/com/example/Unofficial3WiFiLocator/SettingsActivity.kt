@@ -1,11 +1,11 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import com.example.WiFiPasswordSearcher.databinding.ActivitySettingsBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivitySettingsBinding
 
 class SettingsActivity : Activity() {
     /**

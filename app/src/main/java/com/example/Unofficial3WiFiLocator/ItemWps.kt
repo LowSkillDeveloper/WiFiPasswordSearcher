@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 class ItemWps internal constructor(
         var header: String?,

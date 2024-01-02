@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.annotation.SuppressLint
 import android.content.Context

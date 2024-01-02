@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.annotation.TargetApi
 import android.app.Activity
@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.example.WiFiPasswordSearcher.databinding.ActivityUserBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivityUserBinding
 import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.BasicResponseHandler

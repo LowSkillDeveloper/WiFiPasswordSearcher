@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -23,7 +23,7 @@ import android.webkit.WebViewClient
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.EditText
 import android.widget.Toast
-import com.example.WiFiPasswordSearcher.databinding.ActivityWpsBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivityWpsBinding
 import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
@@ -85,6 +85,7 @@ class WPSActivity : Activity() {
         wpsCallback = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             wpsCallback = object : WpsCallback() {
+                @Deprecated("Deprecated in Java")
                 override fun onStarted(pin: String) {
                     wpsConnecting = true
                     pd = ProgressDialog(this@WPSActivity)
@@ -102,6 +103,7 @@ class WPSActivity : Activity() {
                     pd.show()
                 }
 
+                @Deprecated("Deprecated in Java")
                 override fun onSucceeded() {
                     if (!wpsConnecting) return
                     wpsConnecting = false
@@ -109,6 +111,7 @@ class WPSActivity : Activity() {
                     Toast.makeText(applicationContext, getString(R.string.toast_connected_successfully), Toast.LENGTH_SHORT).show()
                 }
 
+                @Deprecated("Deprecated in Java")
                 override fun onFailed(reason: Int) {
                     if (!wpsConnecting && reason > 2) return
                     wpsConnecting = false

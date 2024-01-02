@@ -1,11 +1,11 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.widget.CheckBox
-import com.example.WiFiPasswordSearcher.databinding.ActivityServerSettingsBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivityServerSettingsBinding
 
 class ServerSettingsActivity : Activity() {
     private lateinit var binding: ActivityServerSettingsBinding
@@ -18,7 +18,12 @@ class ServerSettingsActivity : Activity() {
         mSettings.Reload()
         val serverLogin = mSettings.AppSettings!!.getString(Settings.APP_SERVER_LOGIN, "")
         val serverPassword = mSettings.AppSettings!!.getString(Settings.APP_SERVER_PASSWORD, "")
+
+
         val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+        binding.txtSettings3wifiServer.setText(serverURI)
+
+
         val fetchESS = mSettings.AppSettings!!.getBoolean(Settings.APP_FETCH_ESS, false)
         val checkUpdates = mSettings.AppSettings!!.getBoolean(Settings.APP_CHECK_UPDATES, true)
         binding.txtSettings3wifiLogin.setText(serverLogin)
@@ -40,7 +45,13 @@ class ServerSettingsActivity : Activity() {
         // Save
         mSettings.Editor!!.putString(Settings.APP_SERVER_LOGIN, login)
         mSettings.Editor!!.putString(Settings.APP_SERVER_PASSWORD, password)
-        mSettings.Editor!!.putString(Settings.APP_SERVER_URI, uri)
+
+
+
+        mSettings.Editor!!.putString(Settings.APP_SERVER_URI, binding.txtSettings3wifiServer.text.toString())
+        mSettings.Editor!!.commit()
+
+
         mSettings.Editor!!.putBoolean(Settings.APP_FETCH_ESS, fetchESS)
         mSettings.Editor!!.putBoolean(Settings.APP_CHECK_UPDATES, checkUpdates)
         mSettings.Editor!!.commit()

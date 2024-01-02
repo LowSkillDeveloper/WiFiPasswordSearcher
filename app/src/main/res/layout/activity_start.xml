@@ -28,7 +28,6 @@
 			android:text="@string/label_start"
 			android:id="@+id/textView2"
 			android:padding="20dp"/>
-
 	</LinearLayout>
 
 	<LinearLayout
@@ -38,6 +37,28 @@
 		android:gravity="center_horizontal"
 		android:paddingLeft="10dp"
 		android:paddingRight="10dp">
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp">
+
+			<EditText
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:id="@+id/edtServerUri"
+				android:inputType="text"
+				android:hint="@string/label_server_url"
+				android:layout_weight="2"/>
+
+			<Button
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:text="@string/save"
+				android:id="@+id/btnSaveServerUri"
+				android:layout_weight="1"/>
+		</LinearLayout>
 
 		<LinearLayout
 			android:orientation="horizontal"
@@ -53,7 +74,6 @@
 				android:inputType="textNoSuggestions"
 				android:maxLines="1"
 				android:singleLine="true"/>
-
 		</LinearLayout>
 
 		<LinearLayout
@@ -70,7 +90,6 @@
 				android:inputType="textPassword"
 				android:maxLines="1"
 				android:singleLine="true"/>
-
 		</LinearLayout>
 
 		<Button
@@ -110,7 +129,6 @@
 				android:text="@string/button_start_app"
 				android:id="@+id/btnStart"
 				android:layout_weight="0.85"/>
-
 		</LinearLayout>
 
 		<LinearLayout
@@ -119,8 +137,5 @@
 			android:layout_width="wrap_content"
 			android:orientation="horizontal"
 			android:padding="50dp"/>
-
 	</LinearLayout>
-
 </LinearLayout>
-

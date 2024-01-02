@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.example.WiFiPasswordSearcher"
-          android:versionCode="5"
+    android:versionCode="5"
           android:versionName="@string/app_version">
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -25,31 +24,31 @@
         </activity>
         <activity android:name=".MyActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.WiFiPasswordSearcher.StartActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.StartActivity" />
         </activity>
         <activity android:name="SettingsActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.WiFiPasswordSearcher.MyActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.MyActivity" />
         </activity>
         <activity android:name="UserInfoActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.WiFiPasswordSearcher.MyActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.MyActivity" />
         </activity>
         <activity android:name="ServerSettingsActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.WiFiPasswordSearcher.SettingsActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.SettingsActivity" />
         </activity>
         <activity android:name="AboutActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.WiFiPasswordSearcher.SettingsActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.SettingsActivity" />
         </activity>
         <activity android:name="WifiDetailsActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.WiFiPasswordSearcher.SettingsActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.SettingsActivity" />
         </activity>
         <activity android:name="WPSActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.WiFiPasswordSearcher.MyActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.MyActivity" />
         </activity>
     </application>
 </manifest>

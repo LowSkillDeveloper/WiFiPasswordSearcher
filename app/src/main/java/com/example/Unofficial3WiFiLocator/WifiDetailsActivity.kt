@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.content.Context
@@ -10,7 +10,7 @@ import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import com.example.WiFiPasswordSearcher.databinding.ActivityWifiDetailsBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivityWifiDetailsBinding
 import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries

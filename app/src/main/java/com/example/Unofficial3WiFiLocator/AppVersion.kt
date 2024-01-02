@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -22,7 +22,7 @@ class AppVersion(private val context: Context) {
     private var ActualyVersion = 0f
     private var WhatNews = ""
     private var LoadSuccesses = false
-    private val wpsInternalDate = "2020-01-12 21:00:00"
+    private val wpsInternalDate = "2024-01-01 15:26:00"
     private val mSettings: Settings
     fun ShowUpdateDialog(activity: Activity?) {
         val ad = AlertDialog.Builder(activity)

@@ -1,4 +1,4 @@
-package com.example.WiFiPasswordSearcher
+package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -20,7 +20,7 @@ import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AppCompatActivity
-import com.example.WiFiPasswordSearcher.databinding.ActivityMainBinding
+import com.example.Unofficial3WiFiLocator.databinding.ActivityMainBinding
 import com.larvalabs.svgandroid.SVG
 import com.larvalabs.svgandroid.SVGParser
 import kotlinx.android.synthetic.main.activity_main.*
@@ -502,7 +502,7 @@ class MyActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item!!.itemId) {
             R.id.action_refresh -> {
                 refreshNetworkList()
