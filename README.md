@@ -19,15 +19,17 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 
 <h2>Screenshots</h2>
 <div>
-<ul>
-<table>
-  <tr>
-    <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/67a0ca4d-11a3-4c46-8b95-193c283f6c78" alt="Начальный экран"width="216" height="480"></td>
-    <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/fd9d0551-8999-4888-b10f-5f3cb9d853a2" alt="Выбор сервера"width="216" height="480"></td>
-  </tr>
-</table>
-
-</ul>
+  <table>
+    <tr>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/2e666106-beee-4fdc-ad72-507dcb3a9276" alt="Скриншот 1" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/d5d0e44f-3326-4dae-afca-4558fc3b2522" alt="Скриншот 2" width="216" height="480"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/8f329acb-ce78-49d5-9267-59ee57c49420" alt="Скриншот 3" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/cd9eaeed-888e-4061-a801-1fa2861640fd" alt="Скриншот 4" width="216" height="480"></td>
+    </tr>
+  </table>
+</div>
 ------------------
 
 
