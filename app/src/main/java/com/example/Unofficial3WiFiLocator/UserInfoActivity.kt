@@ -17,19 +17,25 @@ import org.apache.http.impl.client.DefaultHttpClient
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 
-/**
- * Created by пк on 20.12.2015.
- */
+
 class UserInfoActivity : Activity() {
     private lateinit var binding: ActivityUserBinding
     private lateinit var info: String
+    private lateinit var mSettings: Settings
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        mSettings = Settings(applicationContext)
         info = intent.extras?.getString("showInfo") ?: "user"
+        val apiReadKey = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "Not Set")
+        val apiWriteKey = mSettings.AppSettings!!.getString(Settings.API_WRITE_KEY, "Not Set")
+        binding.txtApiKeys.text = "Read Key: $apiReadKey\nWrite Key: $apiWriteKey"
         val nick: String
         val group: String
         val date: Date
@@ -76,7 +82,7 @@ class UserInfoActivity : Activity() {
         override fun doInBackground(input: Array<String?>): String {
             val hc = DefaultHttpClient()
             val res: ResponseHandler<String> = BasicResponseHandler()
-            val mSettings = Settings(applicationContext)
+
             mSettings.Reload()
             val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
             val http = HttpGet("$serverURI/wpspin")
@@ -112,6 +118,15 @@ class UserInfoActivity : Activity() {
         if (info == "wpspin") {
             AsyncWpsUpdater().execute()
         }
+    }
+
+    fun copyApiKeys(view: View) {
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val apiReadKey = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "")
+        val apiWriteKey = mSettings.AppSettings!!.getString(Settings.API_WRITE_KEY, "")
+        val clip = ClipData.newPlainText("API Keys", "Read Key: $apiReadKey\nWrite Key: $apiWriteKey")
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, "API keys copied to clipboard", Toast.LENGTH_SHORT).show()
     }
 
     fun btnRevertOnClick(v: View) {

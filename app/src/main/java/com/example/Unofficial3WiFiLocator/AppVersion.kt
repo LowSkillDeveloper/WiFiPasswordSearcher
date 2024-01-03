@@ -56,7 +56,7 @@ class AppVersion(private val context: Context) {
         }
         try {
             val json = JSONObject(rawData.toString())
-            LoadSuccesses = true  // Предполагаем, что запрос был успешным
+            LoadSuccesses = true
             ActualyVersion = json.getDouble("ActualyVersion").toFloat()
             WhatNews = json.getString("WhatNews")
         } catch (e: JSONException) {

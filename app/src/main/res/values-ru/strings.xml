@@ -23,6 +23,8 @@
         <item>Скопировать пин-код</item>
     </string-array>
 
+    <string name="copy_api_keys">Скопировать API ключи</string>
+
     <string name="label_start">Если основной сервер недоступен, попробуйте зеркало</string>
     <string name="button_3wifi">3WiFi</string>
     <string name="button_gps_sniff">GPS sniff (скоро…)</string>
