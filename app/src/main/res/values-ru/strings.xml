@@ -23,7 +23,7 @@
         <item>Скопировать пин-код</item>
     </string-array>
 
-    <string name="label_start">Это приложение нуждается в API-ключе</string>
+    <string name="label_start">Если основной сервер недоступен, попробуйте зеркало</string>
     <string name="button_3wifi">3WiFi</string>
     <string name="button_gps_sniff">GPS sniff (скоро…)</string>
     <string name="button_offline">Офлайн</string>

@@ -17,7 +17,7 @@
     <string name="dialog_no">No</string>
 
     <!-- StartActivity strings -->
-    <string name="label_start">This app requires API keys</string>
+    <string name="label_start">If the main server is unavailable try a mirror.</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="button_sign_in">Sign in</string>
