@@ -8,7 +8,7 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 
 <ul>
 <li>Add server list URLs to the start menu.</li>
-<li>Add functionality to load server list from online sources (including working mirrors or new main site domain in future...).</li>
+<li>Add functionality to load server list from online source (working mirrors or proxy servers that redirect traffic to the main site.)</li>
 <li>Add an offline button.</li>
 <li>Add feature for checking application updates.</li>
 <li>Add display of API keys with the ability to copy them (since it is currently impossible to visit the site and view them).</li>
