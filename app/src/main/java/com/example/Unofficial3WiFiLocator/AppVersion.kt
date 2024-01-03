@@ -42,29 +42,26 @@ class AppVersion(private val context: Context) {
 
     @Throws(IOException::class)
     private fun GetActualyVersion() {
-        val Args = "/api/ajax.php?Query=AppVersion"
-        var ReadLine: String?
-        val RawData = StringBuilder()
-        mSettings.Reload()
-        val SERVER_URI = mSettings.AppSettings?.getString(Settings.APP_SERVER_URI, context.resources.getString(R.string.SERVER_URI_DEFAULT))
-        val Uri = URL(SERVER_URI + Args)
-        val Connection = Uri.openConnection() as HttpURLConnection
-        Connection.requestMethod = "GET"
-        Connection.readTimeout = 10 * 1000
-        Connection.connect()
-        val Reader = BufferedReader(InputStreamReader(Connection.inputStream))
-        while (Reader.readLine().also { ReadLine = it } != null) {
-            RawData.append(ReadLine)
+        // URL файла JSON на GitHub
+        val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/update.json")
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.readTimeout = 10 * 1000
+        connection.connect()
+        val reader = BufferedReader(InputStreamReader(connection.inputStream))
+        val rawData = StringBuilder()
+        var readLine: String?
+        while (reader.readLine().also { readLine = it } != null) {
+            rawData.append(readLine)
         }
         try {
-            val Json = JSONObject(RawData.toString())
-            LoadSuccesses = Json.getBoolean("Successes")
-            if (LoadSuccesses) {
-                ActualyVersion = Json.getDouble("ActualyVersion").toFloat()
-                WhatNews = Json.getString("WhatNews")
-            }
+            val json = JSONObject(rawData.toString())
+            LoadSuccesses = true  // Предполагаем, что запрос был успешным
+            ActualyVersion = json.getDouble("ActualyVersion").toFloat()
+            WhatNews = json.getString("WhatNews")
         } catch (e: JSONException) {
             e.printStackTrace()
+            LoadSuccesses = false
         }
     }
 

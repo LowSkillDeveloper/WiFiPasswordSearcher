@@ -120,7 +120,7 @@
     <string name="save">Сохранить</string>
     <string name="label_server_url">Адрес сервера</string>
     <string name="ask_later">Спросить позже</string>
-    <string name="dialog_title_update">Новая версия доступна: %d</string>
+    <string name="dialog_title_update">Обновление до версии %.1f доступно</string>
     <string name="download">Загрузить</string>
     <string name="toast_using_latest_version">У вас последняя версия</string>
     <string name="error_database_maintenance">Сейчас проводится обслуживание базы данных, попробуйте позже</string>

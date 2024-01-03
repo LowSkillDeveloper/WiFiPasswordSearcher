@@ -152,7 +152,7 @@
     <string name="save">Save</string>
 
     <!-- AppVersion strings -->
-    <string name="dialog_title_update">New version %d available!</string>
+    <string name="dialog_title_update">New version %.1f available!</string>
     <string name="download">Download</string>
     <string name="ask_later">Ask later</string>
     <string name="toast_using_latest_version">Using latest version"</string>
