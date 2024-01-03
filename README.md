@@ -8,10 +8,11 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 
 <ul>
 <li>Add server list URLs at the start menu</li>
-<li>Add load server list from online (working mirrors or if the main site moves to a new domain)</li>
+<li>Add load server list from online (working mirrors or new main site domain)</li>
 <li>Add offline button</li>
+<li>Add display of API keys and the ability to copy them. (Since at the moment it is impossible to go to the site and view them.)</li>
 <li>Updated to latest wpspin.html from 3WiFi</li>
-<li>Updated local pin.db from latest "Wps Wpa tester" (2000 new pins in DB)</li>
+<li>Updated local pin.db from latest 2024 version of "Wps Wpa tester" (2000 new pins in DB)</li>
 <li>Updated some libraries</li>
 </ul>
 
