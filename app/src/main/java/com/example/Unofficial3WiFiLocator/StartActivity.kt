@@ -44,6 +44,7 @@ class StartActivity : Activity() {
                 val serverListJson = bufferedReader.readText()
                 val serverList = JSONArray(serverListJson)
                 val servers = getSavedServers()
+                servers.add(0, "Выбрать сервер")
                 for (i in 0 until serverList.length()) {
                     val server = serverList.getString(i)
                     if (!servers.contains(server)) {
@@ -77,13 +78,22 @@ class StartActivity : Activity() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (userInteracted) {
                     val selectedItem = parent.getItemAtPosition(position).toString()
-                    if (selectedItem == "Указать свой сервер") {
-                        showServerInputDialog()
-                        updateCurrentServerTextView()
-                    } else {
-                        mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
-                        mSettings.Editor!!.commit()
-                        updateCurrentServerTextView()
+
+                    when (selectedItem) {
+                        "Указать свой сервер" -> {
+                            showServerInputDialog()
+                            loadServerList()
+                            updateCurrentServerTextView()
+                        }
+                        "Выбрать сервер" -> {
+                            updateCurrentServerTextView()
+                        }
+                        else -> {
+                            // Сохраняем выбранный сервер, если выбран один из серверов в списке
+                            mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
+                            mSettings.Editor!!.commit()
+                            updateCurrentServerTextView()
+                        }
                     }
                 }
             }
@@ -95,6 +105,17 @@ class StartActivity : Activity() {
             userInteracted = true
             false
         }
+    }
+
+
+    private fun initializeSpinnerWithCurrentServer(servers: ArrayList<String>) {
+        val currentServer = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, "")
+        val serverIndex = servers.indexOf(currentServer)
+        binding.spinnerServer.setSelection(if (serverIndex != -1) serverIndex else 0)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, servers)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerServer.adapter = adapter
+        binding.spinnerServer.setSelection(serverIndex)
     }
 
     private fun showServerInputDialog() {
@@ -135,6 +156,7 @@ class StartActivity : Activity() {
 
     private fun updateSpinnerWithSavedServers() {
         val servers = getSavedServers()
+        servers.add(0, "Выбрать сервер")
         servers.add("Указать свой сервер")
         updateSpinner(servers)
     }
@@ -235,9 +257,8 @@ class StartActivity : Activity() {
 
     private fun updateCurrentServerTextView() {
         val currentServerUri = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
-        binding.txtCurrentServer.text = "Текущий сервер: $currentServerUri"
+        binding.txtCurrentServer.text = "Текущий сервер:\n $currentServerUri"
     }
-
     private fun switchToOfflineMode() {
         mSettings.Editor!!.putString(Settings.API_READ_KEY, "offline")
         mSettings.Editor!!.commit()
