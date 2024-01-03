@@ -44,7 +44,7 @@ class StartActivity : Activity() {
                 val serverListJson = bufferedReader.readText()
                 val serverList = JSONArray(serverListJson)
                 val servers = getSavedServers()
-                servers.add(0, "Выбрать сервер")
+                servers.add(0, "Изменить сервер")
                 for (i in 0 until serverList.length()) {
                     val server = serverList.getString(i)
                     if (!servers.contains(server)) {
@@ -85,7 +85,7 @@ class StartActivity : Activity() {
                             loadServerList()
                             updateCurrentServerTextView()
                         }
-                        "Выбрать сервер" -> {
+                        "Изменить сервер" -> {
                             updateCurrentServerTextView()
                         }
                         else -> {
@@ -156,7 +156,7 @@ class StartActivity : Activity() {
 
     private fun updateSpinnerWithSavedServers() {
         val servers = getSavedServers()
-        servers.add(0, "Выбрать сервер")
+        servers.add(0, "Изменить сервер")
         servers.add("Указать свой сервер")
         updateSpinner(servers)
     }
