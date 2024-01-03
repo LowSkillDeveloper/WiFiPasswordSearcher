@@ -8,7 +8,7 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 
 <ul>
 <li>Add server list URLs at the start menu</li>
-<li>Add online server list for working URLs</li>
+<li>Add load server list from online (working mirrors or if the main site moves to a new domain)</li>
 <li>Add offline button</li>
 <li>Updated to latest wpspin.html from 3WiFi</li>
 <li>Updated local pin.db from latest "Wps Wpa tester" (2000 new pins in DB)</li>
