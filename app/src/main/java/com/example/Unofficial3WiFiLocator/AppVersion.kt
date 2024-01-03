@@ -32,7 +32,7 @@ class AppVersion(private val context: Context) {
         ad.setPositiveButton(context.getString(R.string.download)) { dialog, arg1 ->
             mSettings.Reload()
             val SERVER_URI = mSettings.AppSettings?.getString(Settings.APP_SERVER_URI, context.resources.getString(R.string.SERVER_URI_DEFAULT))
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("$SERVER_URI/api/app.latest.apk"))
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/releases"))
             browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(browserIntent)
         }
