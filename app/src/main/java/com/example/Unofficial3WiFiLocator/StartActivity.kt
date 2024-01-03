@@ -53,6 +53,7 @@ class StartActivity : Activity() {
                 servers.add("Указать свой сервер")
                 runOnUiThread {
                     updateSpinner(servers)
+                    showClearButton()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -78,9 +79,11 @@ class StartActivity : Activity() {
                     val selectedItem = parent.getItemAtPosition(position).toString()
                     if (selectedItem == "Указать свой сервер") {
                         showServerInputDialog()
+                        updateCurrentServerTextView()
                     } else {
                         mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
                         mSettings.Editor!!.commit()
+                        updateCurrentServerTextView()
                     }
                 }
             }
@@ -136,10 +139,25 @@ class StartActivity : Activity() {
         updateSpinner(servers)
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateCurrentServerTextView()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.btnClearServerList.setOnClickListener {
+            clearServerList()
+            showUpdateButton()
+        }
+        binding.btnUpdateServerList.setOnClickListener {
+            loadServerList()
+            showClearButton()
+        }
+
         binding.btnOfflineMode.setOnClickListener {
             switchToOfflineMode()
         }
@@ -149,8 +167,10 @@ class StartActivity : Activity() {
         loadServerList()
         setupSpinner()
         onConfigurationChanged(resources.configuration)
-        mSettings = Settings(applicationContext)
-        user = UserManager(applicationContext)
+
+        val currentServerUri = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+        binding.txtCurrentServer.text = "Текущий сервер: $currentServerUri"
+
         val apiKeysValid = mSettings.AppSettings!!.getBoolean(Settings.API_KEYS_VALID, false)
         val savedLogin = mSettings.AppSettings!!.getString(Settings.APP_SERVER_LOGIN, "")
         val savedPassword = mSettings.AppSettings!!.getString(Settings.APP_SERVER_PASSWORD, "")
@@ -213,11 +233,26 @@ class StartActivity : Activity() {
         }
     }
 
+    private fun updateCurrentServerTextView() {
+        val currentServerUri = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+        binding.txtCurrentServer.text = "Текущий сервер: $currentServerUri"
+    }
+
     private fun switchToOfflineMode() {
         mSettings.Editor!!.putString(Settings.API_READ_KEY, "offline")
         mSettings.Editor!!.commit()
         val offlineActivityIntent = Intent(this@StartActivity, MyActivity::class.java)
         startActivity(offlineActivityIntent)
+    }
+
+    private fun showUpdateButton() {
+        binding.btnClearServerList.visibility = View.GONE
+        binding.btnUpdateServerList.visibility = View.VISIBLE
+    }
+
+    private fun showClearButton() {
+        binding.btnUpdateServerList.visibility = View.GONE
+        binding.btnClearServerList.visibility = View.VISIBLE
     }
 
     private fun clearServerList() {
@@ -226,6 +261,7 @@ class StartActivity : Activity() {
         val defaultServerUrl = resources.getString(R.string.SERVER_URI_DEFAULT)
         val backupServers = arrayListOf(defaultServerUrl, "Указать свой сервер")
         updateSpinner(backupServers)
+        showUpdateButton()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

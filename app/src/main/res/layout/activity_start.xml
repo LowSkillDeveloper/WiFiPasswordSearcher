@@ -38,6 +38,14 @@
 		android:paddingLeft="10dp"
 		android:paddingRight="10dp">
 
+		<TextView
+			android:id="@+id/txtCurrentServer"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Текущий сервер: "
+			android:layout_marginTop="10dp"
+			android:layout_gravity="center_horizontal"/>
+
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
@@ -90,6 +98,29 @@
 		</LinearLayout>
 
 		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:weightSum="1"
+			android:id="@+id/llStartMenu"
+			android:visibility="gone">
+
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_user_info"
+				android:id="@+id/btnUserInfo"
+				android:layout_weight="0.15"/>
+
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_start_app"
+				android:id="@+id/btnStart"
+				android:layout_weight="0.85"/>
+		</LinearLayout>
+
+		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
@@ -115,32 +146,15 @@
 			android:id="@+id/btnClearServerList"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp"
-			android:text="Clear server list"
-			android:layout_gravity="center_horizontal" />
+			android:text="Clear Server List"
+			android:visibility="visible" />
 
-		<LinearLayout
-			android:orientation="horizontal"
-			android:layout_width="fill_parent"
+		<Button
+			android:id="@+id/btnUpdateServerList"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:weightSum="1"
-			android:id="@+id/llStartMenu"
-			android:visibility="gone">
-
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/button_user_info"
-				android:id="@+id/btnUserInfo"
-				android:layout_weight="0.15"/>
-
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/button_start_app"
-				android:id="@+id/btnStart"
-				android:layout_weight="0.85"/>
-		</LinearLayout>
+			android:text="Update Servers List"
+			android:visibility="gone" />
 
 		<LinearLayout
 			android:id="@+id/layoutPadding"
