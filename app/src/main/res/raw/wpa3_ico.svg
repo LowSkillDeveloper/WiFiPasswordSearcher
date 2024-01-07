@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient y2="0.9" x2="0.5" y1="0.1" x1="0.5" id="svg_12">
+   <stop stop-color="#494949" offset="0"/>
+   <stop stop-color="#000000" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g>
+  <rect ry="4" rx="4" id="svg_1" x="2" y="2" width="28" height="28" stroke-width="0" stroke="#ffffff" fill="url(#svg_12)"/>
+  <text transform="matrix(1.3485704712310436,0,0,1.3393393962670022,-42.892390886763025,-9.744953210275582) " xml:space="preserve" text-anchor="middle" font-family="monospace" font-size="8" id="svg_6" y="22.234023" x="43.556507" fill="#ffffff">WPA3</text>
+ </g>
+</svg>

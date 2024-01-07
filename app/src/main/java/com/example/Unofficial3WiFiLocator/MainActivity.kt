@@ -175,7 +175,15 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
         imgSec.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         imgWPS.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         var svgImg: SVG
-        if (capability!!.contains("WPA2")) {
+        if (capability!!.contains("WPA3")) {
+            var img = SvgImageCache["WPA3"]
+            if (img == null) {
+                val svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa3_ico)
+                img = svgImg.createPictureDrawable()
+                SvgImageCache["WPA3"] = img
+            }
+            imgSec.setImageDrawable(img)
+        } else if (capability.contains("WPA2")) {
             var img = SvgImageCache["WPA2"]
             if (img == null) {
                 svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa2_ico)
