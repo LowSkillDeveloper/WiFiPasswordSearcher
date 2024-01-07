@@ -25,6 +25,8 @@
 
     <string name="copy_api_keys">Скопировать API ключи</string>
     <string name="dark_mode">Тёмная тема</string>
+    <string name="action_view_db">Просмотр локальной БД</string>
+
 
     <string name="label_start">Если основной сервер недоступен, попробуйте зеркало</string>
     <string name="button_3wifi">3WiFi</string>

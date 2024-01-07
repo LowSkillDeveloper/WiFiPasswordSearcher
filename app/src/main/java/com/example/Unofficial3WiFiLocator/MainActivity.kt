@@ -34,8 +34,89 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 import android.preference.PreferenceManager
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+
+private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
+class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
+    companion object {
+        private const val DATABASE_VERSION = 1
+        private const val DATABASE_NAME = "mylocalwifi.db"
+        private const val TABLE_NAME = "WiFiNetworks"
+        private const val COLUMN_ID = "ID"
+        private const val COLUMN_WIFI_NAME = "WiFiName"
+        private const val COLUMN_MAC_ADDRESS = "MACAddress"
+        private const val COLUMN_WIFI_PASSWORD = "WiFiPassword"
+        private const val COLUMN_WPS_CODE = "WPSCode"
+    }
+
+    override fun onCreate(db: SQLiteDatabase) {
+        val createTableStatement = """
+            CREATE TABLE $TABLE_NAME (
+                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_WIFI_NAME TEXT,
+                $COLUMN_MAC_ADDRESS TEXT,
+                $COLUMN_WIFI_PASSWORD TEXT,
+                $COLUMN_WPS_CODE TEXT
+            )
+        """.trimIndent()
+        db.execSQL(createTableStatement)
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Обработка обновления схемы базы данных, если это необходимо
+    }
+
+    fun addNetwork(essid: String?, bssid: String?, password: String?, wpsCode: String?) {
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(COLUMN_WIFI_NAME, essid)
+            put(COLUMN_MAC_ADDRESS, bssid)
+            put(COLUMN_WIFI_PASSWORD, password)
+            put(COLUMN_WPS_CODE, wpsCode)
+        }
+        db.insert(TABLE_NAME, null, contentValues)
+        db.close()
+    }
+
+    fun getAllNetworks(): ArrayList<APData> {
+        val networksList = ArrayList<APData>()
+        val db = this.readableDatabase
+        val selectQuery = "SELECT * FROM $TABLE_NAME"
+        val cursor = db.rawQuery(selectQuery, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val network = APData().apply {
+                    essid = cursor.getString(cursor.getColumnIndex(COLUMN_WIFI_NAME))
+                    bssid = cursor.getString(cursor.getColumnIndex(COLUMN_MAC_ADDRESS))
+                    keys = arrayListOf(cursor.getString(cursor.getColumnIndex(COLUMN_WIFI_PASSWORD)))
+                    wps = arrayListOf(cursor.getString(cursor.getColumnIndex(COLUMN_WPS_CODE)))
+                }
+                networksList.add(network)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return networksList
+    }
+
+    fun networkExists(bssid: String, password: String?, wpsCode: String?): Boolean {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_MAC_ADDRESS = ? AND ($COLUMN_WIFI_PASSWORD = ? OR $COLUMN_WPS_CODE = ?)"
+        val cursor = db.rawQuery(query, arrayOf(bssid, password ?: "", wpsCode ?: ""))
+
+        val exists = cursor.moveToFirst()
+        cursor.close()
+        db.close()
+        return exists
+    }
+}
 
 class APData {
+    var essid: String? = null
     var bssid: String? = null
     var keys: ArrayList<String>? = null
     var generated: ArrayList<Boolean>? = null
@@ -482,6 +563,7 @@ class MyActivity : AppCompatActivity() {
             refreshNetworkList()
             swipeRefreshLayout?.isRefreshing = false
         }
+        wifiDatabaseHelper = WiFiDatabaseHelper(this)
         wifiMgr = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         locationMgr = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         sClipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -514,7 +596,12 @@ class MyActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item!!.itemId) {
+        when (item.itemId) {
+            R.id.action_view_db -> {
+                val intent = Intent(this, ViewDatabaseActivity::class.java)
+                startActivity(intent)
+                return true
+            }
             R.id.action_refresh -> {
                 refreshNetworkList()
             }
@@ -551,7 +638,7 @@ class MyActivity : AppCompatActivity() {
             }
         }
 
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
     private fun Context.toast(message: CharSequence) {
@@ -668,8 +755,7 @@ class MyActivity : AppCompatActivity() {
             connection.requestMethod = "POST"
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json")
-            val writer = DataOutputStream(
-                    connection.outputStream)
+            val writer = DataOutputStream(connection.outputStream)
             writer.writeBytes(query.toString())
             connection.readTimeout = 10 * 1000
             connection.connect()
@@ -681,7 +767,6 @@ class MyActivity : AppCompatActivity() {
                 val json = JSONObject(rawData.toString())
                 val ret = json.getBoolean("result")
                 if (!ret) {
-                    // API failure
                     val error = json.getString("error")
                     val errorDesc = user.getErrorDesc(error, this)
                     if (error == "loginfail") {
@@ -702,12 +787,10 @@ class MyActivity : AppCompatActivity() {
                     bss = try {
                         json.getJSONObject("data")
                     } catch (e: Exception) {
-                        // add empty object
                         JSONObject()
                     }
                 }
             } catch (e: Exception) {
-                // JSON error
                 runOnUiThread {
                     val t = Toast.makeText(applicationContext, getString(R.string.toast_database_failure), Toast.LENGTH_SHORT)
                     t.show()
@@ -716,7 +799,6 @@ class MyActivity : AppCompatActivity() {
                 return
             }
         } catch (e: Exception) {
-            // Connection error
             runOnUiThread {
                 val t = Toast.makeText(applicationContext, getString(R.string.status_no_internet), Toast.LENGTH_SHORT)
                 t.show()
@@ -748,16 +830,28 @@ class MyActivity : AppCompatActivity() {
                 elemWiFi["WPS"] = "*[color:blue]*" + apdata.wps!![0]
             }
             elemWiFi["CAPABILITY"] = result.capabilities
+
+            // Проверяем наличие сети в локальной базе данных и наличие пароля или WPS PIN
+            if (!wifiDatabaseHelper.networkExists(result.bssid!!.toUpperCase(), apdata.keys?.firstOrNull(), apdata.wps?.firstOrNull()) &&
+                (apdata.keys?.isNotEmpty() == true || apdata.wps?.isNotEmpty() == true)) {
+                // Добавляем сеть в локальную базу данных, если её там нет и есть пароль/WPS PIN
+                wifiDatabaseHelper.addNetwork(
+                    result.essid ?: "",
+                    result.bssid!!.toUpperCase(),
+                    apdata.keys?.firstOrNull() ?: "",
+                    apdata.wps?.firstOrNull() ?: ""
+                )
+            }
+
             list.add(elemWiFi)
             WiFiKeys!!.add(i, apdata)
             i++
         }
         adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount))
-        runOnUiThread(Thread(Runnable {
+        runOnUiThread {
             WiFiList!!.adapter = adapter
             binding.btnCheckFromBase.isEnabled = true
         }
-        ))
     }
 
     private fun keyWPSPairExists(keys: ArrayList<String>, pins: ArrayList<String>, key: String, pin: String): Boolean {

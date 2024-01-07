@@ -7,6 +7,10 @@
         android:title="@string/button_refresh"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_view_db"
+        android:title="@string/action_view_db"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_monitor_network"
         android:title="@string/action_monitor_network"
         app:showAsAction="never"/>

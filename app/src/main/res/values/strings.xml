@@ -15,6 +15,8 @@
 
     <string name="copy_api_keys">Copy API Keys</string>
     <string name="dark_mode">Dark mode</string>
+    <string name="action_view_db">View local database</string>
+
 
 
     <string name="dialog_yes">Yes</string>
@@ -144,9 +146,9 @@
     <string name="status_initializing">Initializing…</string>
     <string name="dialog_enter_custom_pin">Enter your WPS PIN</string>
 
-    <string name="source_3wifi">3WiFi Base</string>
-    <string name="source_local_generator">Generate</string>
-    <string name="source_local_database">Local</string>
+    <string name="source_3wifi">3WiFi Online DataBase</string>
+    <string name="source_local_generator">3WiFi Offline Generate</string>
+    <string name="source_local_database">Local DataBase</string>
 
     <!-- Server settings strings -->
     <string name="checkbox_unmask_password">Unmask</string>
