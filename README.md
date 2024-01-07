@@ -17,6 +17,7 @@ The changelog contains only information about the changes that I made myself. Ch
 - Added history of data found in 3wifi for networks you scanned using the locator. (Local database in the application, where the networks to which you found data in 3wifi are added)
   
 ## Updated Features:
+- In network security definition, WPA3 definition has been added
 - Latest wpspin.html from 3WiFi.
 - Local pin.db updated to the 2024 version from "Wps Wpa Tester" (includes 2000 new pins).
 - Update some libraries.
