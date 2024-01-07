@@ -4,6 +4,7 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 
 
 # Changelog
+The changelog contains only information about the changes that I made myself. Changes made by drygdryg to the original version can be found in his repository, link at the end of the description.
 
 ## Added Features:
 - Server list URLs in the start menu.
