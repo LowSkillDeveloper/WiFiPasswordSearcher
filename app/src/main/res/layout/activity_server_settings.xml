@@ -141,6 +141,21 @@
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:layout_marginBottom="8dp">
+		<Switch
+			android:id="@+id/switch_dark_mode"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/dark_mode"
+			android:textSize="21sp"
+			android:checked="false"/>
+	</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content">
 
 			<Button

@@ -1,12 +1,14 @@
 package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.widget.CheckBox
 import com.example.Unofficial3WiFiLocator.databinding.ActivityServerSettingsBinding
 import android.preference.PreferenceManager
+import android.widget.Switch
 
 class ServerSettingsActivity : Activity() {
     private lateinit var binding: ActivityServerSettingsBinding
@@ -35,7 +37,33 @@ class ServerSettingsActivity : Activity() {
         binding.swCheckUpd.isChecked = checkUpdates
         binding.btnSettitgs3wifiCancel.setOnClickListener(btnCloseOnClick)
         binding.btnSettitgs3wifiSave.setOnClickListener(btnSaveOnClick)
+
+        val switchDarkMode = findViewById<Switch>(R.id.switch_dark_mode)
+        switchDarkMode.isChecked = getDarkModePreference()
+        switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
+            setDarkModePreference(isChecked)
+            restartApp()
+        }
     }
+
+    private fun restartApp() {
+        val i = Intent(this, StartActivity::class.java)
+        startActivity(i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
+
+    private fun getDarkModePreference(): Boolean {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        return sharedPref.getBoolean("DARK_MODE", false)
+    }
+
+    private fun setDarkModePreference(isDarkMode: Boolean) {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        with(sharedPref.edit()) {
+            putBoolean("DARK_MODE", isDarkMode)
+            apply()
+        }
+    }
+
 
     private fun setAppTheme() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
