@@ -35,6 +35,8 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.*
 import android.preference.PreferenceManager
+import org.jsoup.Jsoup
+import java.io.FileOutputStream
 
 data class WPSPin (var mode: Int, var name: String, var pin: String = "", var sugg: Boolean = false)
 
@@ -78,6 +80,9 @@ class WPSActivity : Activity() {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
         mSettings = Settings(applicationContext)
+        val dbName = "vendor.db"
+        val dbPath = getDatabasePath(this, dbName)
+        copyDatabaseFromAssets(this, dbName, dbPath)
         API_READ_KEY = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "")
         val essdWPS = intent.extras!!.getString("variable")
         binding.ESSDWpsTextView.text = essdWPS // ESSID
@@ -231,18 +236,22 @@ class WPSActivity : Activity() {
         }
 
         override fun doInBackground(BSSDWps: Array<String>): String {
-            // get MAC manufacturer
             val BSSID = BSSDWps[0]
             var response2: String
-            val hc2 = DefaultHttpClient()
-            val res2: ResponseHandler<String> = BasicResponseHandler()
-            val http2 = HttpPost("http://wpsfinder.com/ethernet-wifi-brand-lookup/MAC:$BSSID")
             try {
-                response2 = hc2.execute(http2, res2)
-                response2 = response2.substring(response2.indexOf("muted'><center>") + 15, response2.indexOf("<center></h4><h6"))
+                val url = "https://wpsfinder.com/ethernet-wifi-brand-lookup/MAC:$BSSID"
+                val doc = Jsoup.connect(url).get()
+                val element = doc.select("h4.text-muted > center").first()
+
+                if (element != null) {
+                    response2 = element.text()
+                } else {
+                    response2 = "N/A"
+                }
             } catch (e: Exception) {
                 response2 = "N/A"
             }
+
             var wait = 8000
             while (!wpsReady && wait > 0) {
                 try {
@@ -251,22 +260,67 @@ class WPSActivity : Activity() {
                 } catch (ignored: Exception) {
                 }
             }
+
             return response2
         }
-
         override fun onPostExecute(response2: String) {
             var response2 = response2
             val src = mSettings.AppSettings!!.getInt(Settings.WPS_SOURCE, 1)
             if (src != 1) pd.dismiss()
-            if (response2.length > 50) {
-                response2 = "unknown vendor"
+
+            // Проверяем длину и содержание ответа
+            response2 = when {
+                response2.length > 50 || response2 == "N/A" -> "unknown vendor"
+                else -> response2
             }
-            binding.VendorWpsTextView.text = response2
+
+            // Всегда добавляем "Online DB:" перед результатом
+            binding.VendorWpsTextView.text = "Online DB: $response2"
+
             when (src) {
                 1 -> btnwpsbaseclick(null)
                 2 -> btnGenerate(null)
                 3 -> btnLocalClick(null)
             }
+        }
+    }
+
+    private fun copyDatabaseFromAssets(context: Context, dbName: String, dbPath: String) {
+        try {
+            val inputStream = context.assets.open(dbName)
+            val outputStream = FileOutputStream(dbPath)
+            val buffer = ByteArray(1024)
+            while (inputStream.read(buffer) > 0) {
+                outputStream.write(buffer)
+            }
+            outputStream.flush()
+            outputStream.close()
+            inputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getDatabasePath(context: Context, dbName: String): String {
+        return context.getDatabasePath(dbName).path
+    }
+    private fun checkVendorFromLocalDB(BSSID: String) {
+        try {
+            val formattedBSSID = BSSID.replace(":", "").substring(0, 6).uppercase(Locale.getDefault())
+            val dbFile = getDatabasePath("vendor.db")
+            val localDB = SQLiteDatabase.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READONLY)
+            val cursor = localDB.rawQuery("SELECT vendor FROM oui WHERE mac = ?", arrayOf(formattedBSSID))
+            if (cursor.moveToFirst()) {
+                val vendor = cursor.getString(cursor.getColumnIndex("vendor"))
+                binding.VendorLocalDBTextView.text = "Local DB: $vendor"
+            } else {
+                binding.VendorLocalDBTextView.text = "Local DB: unknown vendor"
+            }
+            cursor.close()
+            localDB.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            binding.VendorLocalDBTextView.text = "Local DB: Error accessing database"
         }
     }
 
@@ -378,6 +432,9 @@ class WPSActivity : Activity() {
         mSettings.Editor!!.putInt(Settings.WPS_SOURCE, 1)
         mSettings.Editor!!.commit()
         val bssdWPS = intent.extras!!.getString("variable1")
+        bssdWPS?.let {
+            checkVendorFromLocalDB(it)
+        }
         GetPinsFromBase().execute(bssdWPS)
     }
 
