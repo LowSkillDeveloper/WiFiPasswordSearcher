@@ -15,7 +15,7 @@ The changelog contains only information about the changes that I made myself. Ch
 - Offline vendor database from "Wps Wpa Tester".
 - Display of API keys with the ability to copy them.
 - Add History of data found in 3wifi for networks that you scanned using the locator. (local database in the application where the networks to which you found data in 3wifi are added)
-- 
+  
 ## Updated Features:
 - Latest wpspin.html from 3WiFi.
 - Local pin.db updated to the 2024 version from "Wps Wpa Tester" (includes 2000 new pins).
