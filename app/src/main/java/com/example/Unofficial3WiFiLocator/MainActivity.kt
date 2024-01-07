@@ -33,6 +33,7 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
+import android.preference.PreferenceManager
 
 class APData {
     var bssid: String? = null
@@ -462,6 +463,7 @@ class MyActivity : AppCompatActivity() {
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
+        setAppTheme()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -496,6 +498,15 @@ class MyActivity : AppCompatActivity() {
         scanAndShowWiFi()
     }
 
+    private fun setAppTheme() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
+        if (isDarkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.LightTheme)
+        }
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.bottomappbar_menu, menu)

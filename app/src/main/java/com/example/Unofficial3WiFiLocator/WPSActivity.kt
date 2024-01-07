@@ -34,6 +34,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 import java.util.*
+import android.preference.PreferenceManager
 
 data class WPSPin (var mode: Int, var name: String, var pin: String = "", var sugg: Boolean = false)
 
@@ -57,6 +58,7 @@ class WPSActivity : Activity() {
     private var wpsReady = false
     private var cachedPins = ""
     public override fun onCreate(savedInstanceState: Bundle?) {
+        setAppTheme()
         super.onCreate(savedInstanceState)
         binding = ActivityWpsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -166,6 +168,16 @@ class WPSActivity : Activity() {
         if (path == null) path = "/android_asset/wpspin.html"
         binding.webView.loadUrl("file://$path")
         AsyncInitActivity().execute(bssdWPS)
+    }
+
+    private fun setAppTheme() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
+        if (isDarkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.LightTheme)
+        }
     }
 
     private fun showMenu(BSSID: String?, pin: String?) {

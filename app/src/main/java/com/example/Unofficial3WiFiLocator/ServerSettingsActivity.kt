@@ -6,11 +6,13 @@ import android.text.InputType
 import android.view.View
 import android.widget.CheckBox
 import com.example.Unofficial3WiFiLocator.databinding.ActivityServerSettingsBinding
+import android.preference.PreferenceManager
 
 class ServerSettingsActivity : Activity() {
     private lateinit var binding: ActivityServerSettingsBinding
     private lateinit var mSettings: Settings
     override fun onCreate(savedInstanceState: Bundle?) {
+        setAppTheme()
         super.onCreate(savedInstanceState)
         binding = ActivityServerSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -33,6 +35,16 @@ class ServerSettingsActivity : Activity() {
         binding.swCheckUpd.isChecked = checkUpdates
         binding.btnSettitgs3wifiCancel.setOnClickListener(btnCloseOnClick)
         binding.btnSettitgs3wifiSave.setOnClickListener(btnSaveOnClick)
+    }
+
+    private fun setAppTheme() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
+        if (isDarkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.LightTheme)
+        }
     }
 
     private val btnCloseOnClick = View.OnClickListener { finish() }

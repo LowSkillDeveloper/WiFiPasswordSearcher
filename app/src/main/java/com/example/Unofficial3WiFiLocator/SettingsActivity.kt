@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import com.example.Unofficial3WiFiLocator.databinding.ActivitySettingsBinding
+import android.preference.PreferenceManager
 
 class SettingsActivity : Activity() {
     /**
@@ -13,6 +14,7 @@ class SettingsActivity : Activity() {
      */
     private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+        setAppTheme()
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -20,6 +22,41 @@ class SettingsActivity : Activity() {
         val adapterSettingsListView = ArrayAdapter(this, android.R.layout.simple_list_item_1, strSettingsRows)
         binding.SettingsListView.adapter = adapterSettingsListView
         binding.SettingsListView.onItemClickListener = generalListOnClick
+
+        val switchDarkMode = findViewById<Switch>(R.id.switch_dark_mode)
+        switchDarkMode.isChecked = getDarkModePreference()
+        switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
+            setDarkModePreference(isChecked)
+            restartApp()
+        }
+    }
+
+    private fun setAppTheme() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
+        if (isDarkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.LightTheme)
+        }
+    }
+
+    private fun getDarkModePreference(): Boolean {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        return sharedPref.getBoolean("DARK_MODE", false)
+    }
+
+    private fun setDarkModePreference(isDarkMode: Boolean) {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        with(sharedPref.edit()) {
+            putBoolean("DARK_MODE", isDarkMode)
+            apply()
+        }
+    }
+
+    private fun restartApp() {
+        val i = Intent(this, StartActivity::class.java)
+        startActivity(i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     private val generalListOnClick = OnItemClickListener { parent, Item, position, id ->

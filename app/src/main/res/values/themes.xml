@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Темная тема -->
+    <style name="DarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/dark_primary</item>
+        <item name="android:textColorPrimary">@color/dark_primary_text</item>
+        <item name="android:textColorSecondary">@color/dark_secondary_text</item>
+
+    </style>
+
+    <!-- Светлая тема -->
+    <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/light_primary</item>
+    </style>
+</resources>

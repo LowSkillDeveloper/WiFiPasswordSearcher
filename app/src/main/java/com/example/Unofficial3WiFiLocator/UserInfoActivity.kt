@@ -20,7 +20,7 @@ import java.util.*
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-
+import android.preference.PreferenceManager
 
 class UserInfoActivity : Activity() {
     private lateinit var binding: ActivityUserBinding
@@ -28,6 +28,7 @@ class UserInfoActivity : Activity() {
     private lateinit var mSettings: Settings
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public override fun onCreate(savedInstanceState: Bundle?) {
+        setAppTheme()
         super.onCreate(savedInstanceState)
         binding = ActivityUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,6 +67,16 @@ class UserInfoActivity : Activity() {
         binding.txtLogin.text = nick
         binding.txtRegDate.text = DateFormat.getDateTimeInstance().format(date)
         binding.txtGroup.text = group
+    }
+
+    private fun setAppTheme() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
+        if (isDarkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.LightTheme)
+        }
     }
 
     private inner class AsyncWpsUpdater : AsyncTask<String?, Void?, String>() {

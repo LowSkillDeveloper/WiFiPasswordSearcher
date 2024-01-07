@@ -15,6 +15,7 @@ import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import java.util.*
+import android.preference.PreferenceManager
 
 class WifiDetailsActivity : Activity() {
     private lateinit var binding: ActivityWifiDetailsBinding
@@ -34,6 +35,7 @@ class WifiDetailsActivity : Activity() {
     private lateinit var graphSeries: LineGraphSeries<DataPoint>
     private var iGraphPointCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
+        setAppTheme()
         super.onCreate(savedInstanceState)
         binding = ActivityWifiDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -78,6 +80,16 @@ class WifiDetailsActivity : Activity() {
         val scanThread = Thread(Runnable { scanWorker() })
         scanThreadActive = true
         scanThread.start()
+    }
+
+    private fun setAppTheme() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
+        if (isDarkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.LightTheme)
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

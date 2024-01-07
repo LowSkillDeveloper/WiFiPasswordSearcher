@@ -24,6 +24,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import android.widget.EditText
+import android.preference.PreferenceManager
 
 
 class StartActivity : Activity() {
@@ -167,6 +168,7 @@ class StartActivity : Activity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setAppTheme()
         super.onCreate(savedInstanceState)
         binding = ActivityStartBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -252,6 +254,16 @@ class StartActivity : Activity() {
         }
         binding.btnClearServerList.setOnClickListener {
             clearServerList()
+        }
+    }
+
+    private fun setAppTheme() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
+        if (isDarkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.LightTheme)
         }
     }
 

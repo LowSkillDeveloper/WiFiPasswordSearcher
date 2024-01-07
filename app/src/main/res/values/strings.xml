@@ -14,6 +14,8 @@
     </string-array>
 
     <string name="copy_api_keys">Copy API Keys</string>
+    <string name="dark_mode">Dark mode</string>
+
 
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
