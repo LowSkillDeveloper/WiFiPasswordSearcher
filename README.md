@@ -7,16 +7,17 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 The changelog contains only information about the changes that I made myself. Changes made by drygdryg to the original version can be found in his repository, link at the end of the description.
 
 ## Added Features:
-- Server list URLs in the start menu.
-- Functionality to load server list from online sources (working mirrors or proxy servers).
 - Offline mode button.
-- Feature for checking application updates.
+- Server list URLs in the start menu.
+- Display of 3WiFi API keys with the ability to copy them.
 - Dark theme and option to switch to it.
+- Feature for checking application updates.
 - Offline vendor database from "Wps Wpa Tester".
-- Display of API keys with the ability to copy them.
+- Functionality to load server list from online sources (working mirrors or proxy servers).
 - Added history of data found in 3wifi for networks you scanned using the locator. (Local database in the application, where the networks to which you found data in 3wifi are added)
   
 ## Updated Features:
+- In network security definition, WPA3 definition has been added
 - Latest wpspin.html from 3WiFi.
 - Local pin.db updated to the 2024 version from "Wps Wpa Tester" (includes 2000 new pins).
 - Update some libraries.
