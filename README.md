@@ -14,7 +14,7 @@ The changelog contains only information about the changes that I made myself. Ch
 - Dark theme and option to switch to it.
 - Offline vendor database from "Wps Wpa Tester".
 - Display of API keys with the ability to copy them.
-- Add History of data found in 3wifi for networks that you scanned using the locator. (local database in the application where the networks to which you found data in 3wifi are added)
+- Added history of data found in 3wifi for networks you scanned using the locator. (Local database in the application, where the networks to which you found data in 3wifi are added)
   
 ## Updated Features:
 - Latest wpspin.html from 3WiFi.
