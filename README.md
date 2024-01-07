@@ -1,24 +1,29 @@
-# Unofficial 3WiFi Locator for Android v2
+# Unofficial 3WiFi Locator v2 for Android 
 
 This is a new version of 3wifi locator, which is based on the version from drygdryg.
 
 
-<h2>Changelog</h2>
-<div>
+# Changelog
+The changelog contains only information about the changes that I made myself. Changes made by drygdryg to the original version can be found in his repository, link at the end of the description.
 
-<ul>
-<li>Add server list URLs to the start menu.</li>
-<li>Add functionality to load server list from online source (working mirrors or proxy servers that redirect traffic to the main site.)</li>
-<li>Add an offline button.</li>
-<li>Add feature for checking application updates.</li>
-<li>Added dark theme and switch to it.</li>
-<li>Add display of API keys with the ability to copy them (since it is currently impossible to visit the site and view them).</li>
-<li>Update to the latest wpspin.html from 3WiFi.</li>
-<li>Update local pin.db to the latest 2024 version from "Wps Wpa Tester" (includes 2000 new pins in the database).</li>
-<li>Update some libraries.</li>
-</ul>
+## Added Features:
+- Server list URLs in the start menu.
+- Functionality to load server list from online sources (working mirrors or proxy servers).
+- Offline mode button.
+- Feature for checking application updates.
+- Dark theme and option to switch to it.
+- Offline vendor database from "Wps Wpa Tester".
+- Display of API keys with the ability to copy them.
 
-<h2>Screenshots</h2>
+## Updated Features:
+- Latest wpspin.html from 3WiFi.
+- Local pin.db updated to the 2024 version from "Wps Wpa Tester" (includes 2000 new pins).
+- Update some libraries.
+
+## Fixed Issues:
+- Getting online vendor information from wpsfinder.
+
+# Screenshots
 <div>
   <table>
     <tr>
