@@ -3,12 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/search_menu_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/search_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/search_hint"
+            android:inputType="text"/>
+
+        <ImageButton
+            android:id="@+id/menu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Menu"
+            android:src="@android:drawable/ic_menu_more"/>
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/list_view_database"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/search_menu_layout"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:padding="16dp"
         android:scrollbars="vertical" />
+
 </RelativeLayout>

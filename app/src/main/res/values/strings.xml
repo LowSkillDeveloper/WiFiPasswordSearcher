@@ -16,6 +16,11 @@
     <string name="copy_api_keys">Copy API Keys</string>
     <string name="dark_mode">Dark mode</string>
     <string name="action_view_db">View local database</string>
+    <string name="import_database">Import DB from json file</string>
+    <string name="export_database">Export DB to json file</string>
+    <string name="clear_database">CLEAR ALL DATABASE</string>
+    <string name="search_hint">Search in local database</string>
+
 
 
 

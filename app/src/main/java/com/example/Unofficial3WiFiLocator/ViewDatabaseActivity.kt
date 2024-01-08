@@ -6,15 +6,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
 import android.widget.ListView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.preference.PreferenceManager
+import android.os.Environment
+import android.widget.Toast
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.io.FileWriter
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
+import java.io.BufferedReader
+
 
 class ViewDatabaseActivity : Activity() {
-
+    companion object {
+        private const val REQUEST_CODE_IMPORT_DB = 1
+    }
     private lateinit var listView: ListView
     private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
-
+    private lateinit var menuButton: ImageButton
     override fun onCreate(savedInstanceState: Bundle?) {
         setAppTheme()
         super.onCreate(savedInstanceState)
@@ -22,8 +38,128 @@ class ViewDatabaseActivity : Activity() {
 
         listView = findViewById(R.id.list_view_database)
         wifiDatabaseHelper = WiFiDatabaseHelper(this)
+        val menuButton: ImageButton = findViewById(R.id.menu_button)
+        menuButton.setOnClickListener { view ->
+            showPopupMenu(view)
+        }
 
         displayDatabaseInfo()
+    }
+
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.menuInflater.inflate(R.menu.database_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.export_database -> {
+                    exportDatabase()
+                    true
+                }
+                R.id.import_database -> {
+                    selectImportFile()
+                    true
+                }
+                R.id.clear_database -> {
+                    clearDatabase()
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_IMPORT_DB && resultCode == Activity.RESULT_OK) {
+            data?.data?.also { uri ->
+                try {
+                    val inputStream = contentResolver.openInputStream(uri)
+                    inputStream?.let { stream ->
+                        val fileContents = stream.bufferedReader().use(BufferedReader::readText)
+                        importDatabase(fileContents)
+                        displayDatabaseInfo()
+                    } ?: throw Exception("Не удалось открыть файл")
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Ошибка при импорте файла: ${e.message}", Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+    private fun selectImportFile() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "application/json"
+        val downloadsFolderUri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path)
+        intent.setDataAndType(downloadsFolderUri, "application/json")
+
+        startActivityForResult(intent, REQUEST_CODE_IMPORT_DB)
+    }
+
+    private fun importDatabase(jsonContents: String) {
+        try {
+            val jsonArray = JSONArray(jsonContents)
+            for (i in 0 until jsonArray.length()) {
+                val jsonObject = jsonArray.getJSONObject(i)
+                val essid = jsonObject.optString("essid")
+                val bssid = jsonObject.optString("bssid")
+                val password = jsonObject.optString("password")
+                val wpsCode = jsonObject.optString("wpsCode")
+                wifiDatabaseHelper.addNetwork(essid, bssid, password, wpsCode)
+            }
+            Toast.makeText(this, "Database import successful", Toast.LENGTH_SHORT).show()
+            displayDatabaseInfo()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error importing database: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
+            displayDatabaseInfo()
+        }
+    }
+
+    private fun clearDatabase() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Clear Database")
+        builder.setMessage("Are you sure you want to clear the entire database? This action cannot be undone.")
+        builder.setPositiveButton("Yes") { dialog, which ->
+            wifiDatabaseHelper.clearAllNetworks()
+            displayDatabaseInfo()
+            toast("Database cleared successfully.")
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
+    private fun exportDatabase() {
+        val wifiList = wifiDatabaseHelper.getAllNetworks()
+        val jsonArray = JSONArray()
+        wifiList.forEach { network ->
+            val jsonObject = JSONObject().apply {
+                put("essid", network.essid)
+                put("bssid", network.bssid)
+                put("password", network.keys?.joinToString(", "))
+                put("wps", network.wps?.joinToString(", "))
+            }
+            jsonArray.put(jsonObject)
+        }
+        try {
+            val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            if (!folder.exists()) {
+                folder.mkdirs()
+            }
+            val file = File(folder, "wifi_database_export.json")
+            val fileWriter = FileWriter(file)
+            fileWriter.write(jsonArray.toString(4))
+            fileWriter.close()
+            toast("Database exported successfully to ${file.absolutePath}")
+        } catch (e: Exception) {
+            toast("Error exporting database: ${e.message}")
+        }
+    }
+
+    private fun toast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     private fun setAppTheme() {

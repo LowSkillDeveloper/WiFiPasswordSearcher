@@ -26,6 +26,10 @@
     <string name="copy_api_keys">Скопировать API ключи</string>
     <string name="dark_mode">Тёмная тема</string>
     <string name="action_view_db">Просмотр локальной БД</string>
+    <string name="import_database">Импорт базы данных из файла JSON</string>
+    <string name="export_database">Экспорт базы данных в файл JSON</string>
+    <string name="clear_database">ОЧИСТИТЬ ВСЮ БАЗУ ДАННЫХ</string>
+    <string name="search_hint">Поиск по локальной базе</string>
 
 
     <string name="label_start">Если основной сервер недоступен, попробуйте зеркало</string>

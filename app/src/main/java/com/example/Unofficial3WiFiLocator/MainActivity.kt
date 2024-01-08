@@ -52,6 +52,12 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         private const val COLUMN_WPS_CODE = "WPSCode"
     }
 
+    fun clearAllNetworks() {
+        val db = this.writableDatabase
+        db.delete(TABLE_NAME, null, null)
+        db.close()
+    }
+
     override fun onCreate(db: SQLiteDatabase) {
         val createTableStatement = """
             CREATE TABLE $TABLE_NAME (

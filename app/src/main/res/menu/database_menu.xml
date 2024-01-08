@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/export_database"
+        android:title="@string/export_database"
+       />
+
+    <item
+        android:id="@+id/import_database"
+        android:title="@string/import_database"
+        />
+
+    <item
+        android:id="@+id/clear_database"
+        android:title="@string/clear_database"
+        />
+</menu>
