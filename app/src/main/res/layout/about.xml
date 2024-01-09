@@ -28,7 +28,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="App version: "/>
+				android:text="@string/app_version_txt"/>
 
 			<TextView
 				android:layout_width="match_parent"

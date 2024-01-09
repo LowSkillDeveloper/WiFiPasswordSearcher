@@ -3,7 +3,7 @@
     <string name="app_name">3WiFi Локатор</string>
     <string-array name="strings_settings_rows">
         <item>Настройки приложения</item>
-        <item>WPS PIN Companion</item>
+        <item>Причие настройки</item>
         <item>О приложении</item>
         <item>Проверить наличие обновлений</item>
         <item>Выйти из аккаунта</item>
@@ -14,7 +14,7 @@
         <item>Скопировать ESSID</item>
         <item>Скопировать BSSID</item>
         <item>Скопировать пароль</item>
-        <item>Сохранить сетевой профиль</item>
+        <item>Сохранить wifi в настройках телефона</item>
         <item>Сгенерировать пин-код WPS</item>
     </string-array>
 
@@ -30,9 +30,27 @@
     <string name="export_database">Экспорт базы данных в файл JSON</string>
     <string name="clear_database">ОЧИСТИТЬ ВСЮ БАЗУ ДАННЫХ</string>
     <string name="search_hint">Поиск по локальной базе</string>
+    <string name="database_import_successful">Импорт базы данных успешен</string>
+    <string name="error_importing_database">Ошибка импорта базы данных</string>
+    <string name="failed_to_open_file">Не удалось открыть файл</string>
+    <string name="error_importing_file">Ошибка при импорте файла</string>
+    <string name="clear_database_txt">Очистить базу данных</string>
+    <string name="Are_you_sure_clear_database">Вы уверены, что хотите очистить всю базу данных? Это действие невозможно отменить.</string>
+    <string name="database_cleared_successfully">База данных успешно очищена.</string>
+    <string name="database_exported_successfully_to">База данных успешно экспортирована в</string>
+    <string name="error_exporting_database">Ошибка экспорта базы данных</string>
+    <string name="database_management_menu">Меню управление базой данных</string>
+    <string name="change_server">Изменить сервер</string>
+    <string name="specify_own_server">Указать свой сервер</string>
+    <string name="enter_server_address">Введите адрес сервера</string>
+    <string name="current_server">Текущий сервер:</string>
+    <string name="app_version_txt">Версия приложения:</string>
+    <string name="offline_mode">Офлайн режим</string>
+    <string name="clear_server_list">Очистить список серверов</string>
+    <string name="update_server_list">Обновить список серверов</string>
 
 
-    <string name="label_start">Если основной сервер недоступен, попробуйте зеркало</string>
+    <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>
     <string name="button_gps_sniff">GPS sniff (скоро…)</string>
     <string name="button_offline">Офлайн</string>

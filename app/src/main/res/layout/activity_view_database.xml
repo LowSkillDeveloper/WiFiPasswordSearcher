@@ -22,7 +22,7 @@
             android:id="@+id/menu_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Menu"
+            android:contentDescription="@string/database_management_menu"
             android:src="@android:drawable/ic_menu_more"/>
 
     </LinearLayout>

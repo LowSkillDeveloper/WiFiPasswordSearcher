@@ -79,9 +79,9 @@ class ViewDatabaseActivity : Activity() {
                         val fileContents = stream.bufferedReader().use(BufferedReader::readText)
                         importDatabase(fileContents)
                         displayDatabaseInfo()
-                    } ?: throw Exception("Не удалось открыть файл")
+                    } ?: throw Exception(getString(R.string.failed_to_open_file))
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Ошибка при импорте файла: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_importing_file) + ": ${e.message}", Toast.LENGTH_SHORT).show()
                     e.printStackTrace()
                 }
             }
@@ -107,10 +107,10 @@ class ViewDatabaseActivity : Activity() {
                 val wpsCode = jsonObject.optString("wpsCode")
                 wifiDatabaseHelper.addNetwork(essid, bssid, password, wpsCode)
             }
-            Toast.makeText(this, "Database import successful", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.database_import_successful), Toast.LENGTH_SHORT).show()
             displayDatabaseInfo()
         } catch (e: Exception) {
-            Toast.makeText(this, "Error importing database: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_importing_database) + ": ${e.message}", Toast.LENGTH_LONG).show()
             e.printStackTrace()
             displayDatabaseInfo()
         }
@@ -118,14 +118,14 @@ class ViewDatabaseActivity : Activity() {
 
     private fun clearDatabase() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Clear Database")
-        builder.setMessage("Are you sure you want to clear the entire database? This action cannot be undone.")
-        builder.setPositiveButton("Yes") { dialog, which ->
+        builder.setTitle(getString(R.string.clear_database_txt))
+        builder.setMessage(getString(R.string.Are_you_sure_clear_database))
+        builder.setPositiveButton(getString(R.string.dialog_yes)) { dialog, which ->
             wifiDatabaseHelper.clearAllNetworks()
             displayDatabaseInfo()
-            toast("Database cleared successfully.")
+            toast(getString(R.string.database_cleared_successfully))
         }
-        builder.setNegativeButton("No") { dialog, which ->
+        builder.setNegativeButton(getString(R.string.dialog_no)) { dialog, which ->
             dialog.dismiss()
         }
         builder.create().show()
@@ -152,9 +152,9 @@ class ViewDatabaseActivity : Activity() {
             val fileWriter = FileWriter(file)
             fileWriter.write(jsonArray.toString(4))
             fileWriter.close()
-            toast("Database exported successfully to ${file.absolutePath}")
+            toast(getString(R.string.database_exported_successfully_to) + " ${file.absolutePath}")
         } catch (e: Exception) {
-            toast("Error exporting database: ${e.message}")
+            toast(getString(R.string.error_exporting_database) + ": ${e.message}")
         }
     }
 

@@ -315,9 +315,6 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
 }
 
 class MyActivity : AppCompatActivity() {
-    /**
-     * Called when the activity is first created.
-     */
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var mSettings: Settings

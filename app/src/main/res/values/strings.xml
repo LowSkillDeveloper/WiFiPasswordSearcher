@@ -7,9 +7,9 @@
 
     <string-array name="strings_settings_rows">
         <item>Locator Settings</item>
-        <item>WPS PIN Companion</item>
-        <item>About</item>
-        <item>Check updates</item>
+        <item>Other Settings</item>
+        <item>About app</item>
+        <item>Check app updates</item>
         <item>Logout</item>
     </string-array>
 
@@ -20,7 +20,24 @@
     <string name="export_database">Export DB to json file</string>
     <string name="clear_database">CLEAR ALL DATABASE</string>
     <string name="search_hint">Search in local database</string>
-
+    <string name="database_import_successful">Database import successful</string>
+    <string name="error_importing_database">Error importing database</string>
+    <string name="failed_to_open_file">Failed to open file</string>
+    <string name="error_importing_file">Error importing file</string>
+    <string name="clear_database_txt">Clear Database</string>
+    <string name="Are_you_sure_clear_database">Are you sure you want to clear the entire database? This action cannot be undone.</string>
+    <string name="database_cleared_successfully">Database cleared successfully.</string>
+    <string name="database_exported_successfully_to">Database exported successfully to</string>
+    <string name="error_exporting_database">Error exporting database</string>
+    <string name="database_management_menu">Database management menu</string>
+    <string name="change_server">Change server</string>
+    <string name="specify_own_server">Enter your server</string>
+    <string name="enter_server_address">Enter server address</string>
+    <string name="current_server">Current server:</string>
+    <string name="app_version_txt">App version:</string>
+    <string name="offline_mode">Offline mode</string>
+    <string name="clear_server_list">Clear Server List</string>
+    <string name="update_server_list">Update Servers List</string>
 
 
 
@@ -28,7 +45,7 @@
     <string name="dialog_no">No</string>
 
     <!-- StartActivity strings -->
-    <string name="label_start">If the main server is unavailable try a mirror.</string>
+    <string name="label_start">If the main server is unavailable, try a proxy or mirror</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="button_sign_in">Sign in</string>

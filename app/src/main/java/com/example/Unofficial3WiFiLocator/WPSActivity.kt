@@ -516,7 +516,7 @@ class WPSActivity : Activity() {
         }
         binding.WPSlist.isEnabled = pins.size > 0
         binding.WPSlist.adapter = MyAdapterWps(this@WPSActivity, data)
-        toastMessage(String.format(getString(R.string.selected_source), "WPS PIN Companion"))
+        toastMessage(String.format(getString(R.string.selected_source), "3WIFI OFFLINE WPS PIN Companion"))
     }
 
     private fun findAlgoByPin(pin: String?): Int {
@@ -582,7 +582,7 @@ class WPSActivity : Activity() {
             binding.WPSlist.isEnabled = false
         }
         binding.WPSlist.adapter = MyAdapterWps(this@WPSActivity, data)
-        toastMessage(String.format(getString(R.string.selected_source), "WPA WPS TESTER"))
+        toastMessage(String.format(getString(R.string.selected_source), "OFFLINE WPS PIN GENERATOR"))
     }
 
     fun btnCustomPin(view: View?) {
