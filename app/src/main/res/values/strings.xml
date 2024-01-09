@@ -39,7 +39,9 @@
     <string name="offline_mode">Offline mode</string>
     <string name="clear_server_list">Clear Server List</string>
     <string name="update_server_list">Update Servers List</string>
-
+    <string name="select_import_type">Select import type</string>
+    <string name="update_existing_database">Update existing database</string>
+    <string name="replace_database">Replace existing database</string>
 
 
     <string name="dialog_yes">Yes</string>

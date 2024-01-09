@@ -69,6 +69,26 @@ class ViewDatabaseActivity : Activity() {
         popupMenu.show()
     }
 
+
+    private fun showImportDialog(jsonContents: String) {
+        val options = arrayOf(getString(R.string.replace_database), getString(R.string.update_existing_database))
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.select_import_type))
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> {
+                    wifiDatabaseHelper.clearAllNetworks()
+                    importDatabase(jsonContents)
+                }
+                1 -> {
+                    importDatabase(jsonContents)
+                }
+            }
+        }
+        builder.show()
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_IMPORT_DB && resultCode == Activity.RESULT_OK) {
@@ -77,8 +97,7 @@ class ViewDatabaseActivity : Activity() {
                     val inputStream = contentResolver.openInputStream(uri)
                     inputStream?.let { stream ->
                         val fileContents = stream.bufferedReader().use(BufferedReader::readText)
-                        importDatabase(fileContents)
-                        displayDatabaseInfo()
+                        showImportDialog(fileContents)
                     } ?: throw Exception(getString(R.string.failed_to_open_file))
                 } catch (e: Exception) {
                     Toast.makeText(this, getString(R.string.error_importing_file) + ": ${e.message}", Toast.LENGTH_SHORT).show()
@@ -99,20 +118,24 @@ class ViewDatabaseActivity : Activity() {
     private fun importDatabase(jsonContents: String) {
         try {
             val jsonArray = JSONArray(jsonContents)
+
             for (i in 0 until jsonArray.length()) {
                 val jsonObject = jsonArray.getJSONObject(i)
                 val essid = jsonObject.optString("essid")
                 val bssid = jsonObject.optString("bssid")
                 val password = jsonObject.optString("password")
                 val wpsCode = jsonObject.optString("wpsCode")
-                wifiDatabaseHelper.addNetwork(essid, bssid, password, wpsCode)
+
+                if (!wifiDatabaseHelper.networkExists(bssid, password, wpsCode)) {
+                    wifiDatabaseHelper.addNetwork(essid, bssid, password, wpsCode)
+                }
             }
-            Toast.makeText(this, getString(R.string.database_import_successful), Toast.LENGTH_SHORT).show()
+
             displayDatabaseInfo()
+            Toast.makeText(this, getString(R.string.database_import_successful), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, getString(R.string.error_importing_database) + ": ${e.message}", Toast.LENGTH_LONG).show()
             e.printStackTrace()
-            displayDatabaseInfo()
         }
     }
 

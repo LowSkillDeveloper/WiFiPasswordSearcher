@@ -48,7 +48,9 @@
     <string name="offline_mode">Офлайн режим</string>
     <string name="clear_server_list">Очистить список серверов</string>
     <string name="update_server_list">Обновить список серверов</string>
-
+    <string name="select_import_type">Выберите тип импорта</string>
+    <string name="update_existing_database">Обновить существующую базу данных</string>
+    <string name="replace_database">Заменить существующую базу данных</string>
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>
