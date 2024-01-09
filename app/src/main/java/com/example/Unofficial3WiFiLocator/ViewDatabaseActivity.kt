@@ -18,6 +18,9 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
@@ -38,12 +41,44 @@ class ViewDatabaseActivity : Activity() {
 
         listView = findViewById(R.id.list_view_database)
         wifiDatabaseHelper = WiFiDatabaseHelper(this)
+
         val menuButton: ImageButton = findViewById(R.id.menu_button)
         menuButton.setOnClickListener { view ->
             showPopupMenu(view)
         }
 
         displayDatabaseInfo()
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val network = listView.adapter.getItem(position) as APData
+            showNetworkOptionsDialog(network)
+        }
+    }
+
+    private fun showNetworkOptionsDialog(network: APData) {
+        val optionsList = mutableListOf("Copy ESSID", "Copy BSSID")
+        network.keys?.firstOrNull()?.let { optionsList.add("Copy Password") }
+        network.wps?.firstOrNull()?.let { optionsList.add("Copy WPS PIN") }
+
+        val optionsArray = optionsList.toTypedArray()
+
+        val builder = AlertDialog.Builder(this)
+        builder.setItems(optionsArray) { _, which ->
+            when (which) {
+                0 -> copyToClipboard("ESSID", network.essid ?: "")
+                1 -> copyToClipboard("BSSID", network.bssid ?: "")
+                2 -> if (network.keys != null) copyToClipboard("Password", network.keys!!.first())
+                3 -> if (network.wps != null) copyToClipboard("WPS PIN", network.wps!!.first())
+            }
+        }
+        builder.show()
+    }
+
+    private fun copyToClipboard(label: String, text: String) {
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(label, text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, "$label copied to clipboard", Toast.LENGTH_SHORT).show()
     }
 
     private fun showPopupMenu(view: View) {
