@@ -25,6 +25,7 @@ The changelog contains only information about the changes that I made myself. Ch
 ## Fixed Issues:
 - Getting online vendor information from wpsfinder.
 - Remade some hardcoded lines
+- Visibility of some objects
 
 # Screenshots
 <div>
