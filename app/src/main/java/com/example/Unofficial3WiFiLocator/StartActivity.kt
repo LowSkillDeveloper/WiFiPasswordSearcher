@@ -37,7 +37,7 @@ class StartActivity : Activity() {
     private fun loadServerList() {
         Thread {
             try {
-                val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/servers.json")
+                val url = URL(resources.getString(R.string.SERVERS_LIST_URL))
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 val inputStream = connection.inputStream
@@ -90,7 +90,6 @@ class StartActivity : Activity() {
                             updateCurrentServerTextView()
                         }
                         else -> {
-                            // Сохраняем выбранный сервер, если выбран один из серверов в списке
                             mSettings.Editor!!.putString(Settings.APP_SERVER_URI, selectedItem)
                             mSettings.Editor!!.commit()
                             updateCurrentServerTextView()
