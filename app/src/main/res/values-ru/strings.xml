@@ -51,6 +51,18 @@
     <string name="select_import_type">Выберите тип импорта</string>
     <string name="update_existing_database">Обновить существующую базу данных</string>
     <string name="replace_database">Заменить существующую базу данных</string>
+    <string name="wps_connection_started">Подключение через WPS начато</string>
+    <string name="wps_connection_succeeded">Подключение через WPS успешно</string>
+    <string name="wps_connection_failed">Ошибка подключения через WPS. Причина: %1$d</string>
+    <string name="wps_not_supported">WPS не поддерживается на этом устройстве</string>
+    <string name="no_wps_pin_available">WPS PIN отсутствует</string>
+    <string name="copy_essid">Скопировать ESSID</string>
+    <string name="copy_bssid">Скопировать BSSID</string>
+    <string name="copy_password">Скопировать пароль</string>
+    <string name="copy_wps_pin">Скопировать WPS PIN</string>
+    <string name="connect_using_wps">Подключиться через WPS… (без root)</string>
+    <string name="unknown_network">Неизвестная сеть</string>
+    <string name="label_copied_to_clipboard">%1$s скопирован в буфер обмена</string>
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>

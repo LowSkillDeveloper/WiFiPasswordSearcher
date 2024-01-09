@@ -42,7 +42,18 @@
     <string name="select_import_type">Select import type</string>
     <string name="update_existing_database">Update existing database</string>
     <string name="replace_database">Replace existing database</string>
-
+    <string name="wps_connection_started">WPS connection started</string>
+    <string name="wps_connection_succeeded">WPS connection succeeded</string>
+    <string name="wps_connection_failed">WPS connection failed with reason: %1$d</string>
+    <string name="wps_not_supported">WPS not supported on this device</string>
+    <string name="no_wps_pin_available">No WPS PIN available</string>
+    <string name="copy_essid">Copy ESSID</string>
+    <string name="copy_bssid">Copy BSSID</string>
+    <string name="copy_password">Copy Password</string>
+    <string name="copy_wps_pin">Copy WPS PIN</string>
+    <string name="connect_using_wps">Connect using WPS… (without root)</string>
+    <string name="unknown_network">Unknown Network</string>
+    <string name="label_copied_to_clipboard">%1$s copied to clipboard</string>
 
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>

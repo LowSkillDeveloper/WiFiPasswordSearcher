@@ -24,6 +24,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.net.wifi.WifiManager
+import android.net.wifi.WpsInfo
+import android.os.Build
 import java.io.BufferedReader
 
 
@@ -56,29 +59,68 @@ class ViewDatabaseActivity : Activity() {
     }
 
     private fun showNetworkOptionsDialog(network: APData) {
-        val optionsList = mutableListOf("Copy ESSID", "Copy BSSID")
-        network.keys?.firstOrNull()?.let { optionsList.add("Copy Password") }
-        network.wps?.firstOrNull()?.let { optionsList.add("Copy WPS PIN") }
-
-        val optionsArray = optionsList.toTypedArray()
-
-        val builder = AlertDialog.Builder(this)
-        builder.setItems(optionsArray) { _, which ->
-            when (which) {
-                0 -> copyToClipboard("ESSID", network.essid ?: "")
-                1 -> copyToClipboard("BSSID", network.bssid ?: "")
-                2 -> if (network.keys != null) copyToClipboard("Password", network.keys!!.first())
-                3 -> if (network.wps != null) copyToClipboard("WPS PIN", network.wps!!.first())
+        val options = arrayListOf<String>()
+        options.add(getString(R.string.copy_essid))
+        options.add(getString(R.string.copy_bssid))
+        network.keys?.let {
+            if (it.isNotEmpty()) options.add(getString(R.string.copy_password))
+        }
+        network.wps?.let {
+            if (it.isNotEmpty()) {
+                options.add(getString(R.string.copy_wps_pin))
+                options.add(getString(R.string.connect_using_wps))
             }
         }
-        builder.show()
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle(network.essid ?: getString(R.string.unknown_network))
+        dialogBuilder.setItems(options.toTypedArray()) { _, which ->
+            when (options[which]) {
+                getString(R.string.copy_essid) -> copyToClipboard("ESSID", network.essid ?: "")
+                getString(R.string.copy_bssid) -> copyToClipboard("BSSID", network.bssid ?: "")
+                getString(R.string.copy_password) -> copyToClipboard("Password", network.keys?.joinToString(", ") ?: "")
+                getString(R.string.copy_wps_pin) -> copyToClipboard("WPS PIN", network.wps?.joinToString(", ") ?: "")
+                getString(R.string.connect_using_wps) -> connectUsingWPS(network)
+            }
+        }
+        dialogBuilder.show()
     }
 
     private fun copyToClipboard(label: String, text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(label, text)
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(this, "$label copied to clipboard", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.label_copied_to_clipboard, label), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun connectUsingWPS(network: APData) {
+        network.wps?.firstOrNull()?.let { wpsPin ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val wpsConfig = WpsInfo().apply {
+                    setup = WpsInfo.KEYPAD
+                    this.pin = wpsPin
+                }
+
+                val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                wifiManager.startWps(wpsConfig, object : WifiManager.WpsCallback() {
+                    override fun onStarted(pin: String) {
+                        Toast.makeText(applicationContext, getString(R.string.wps_connection_started), Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onSucceeded() {
+                        Toast.makeText(applicationContext, getString(R.string.wps_connection_succeeded), Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onFailed(reason: Int) {
+                        Toast.makeText(applicationContext, getString(R.string.wps_connection_failed, reason), Toast.LENGTH_SHORT).show()
+                    }
+                })
+            } else {
+                Toast.makeText(applicationContext, getString(R.string.wps_not_supported), Toast.LENGTH_SHORT).show()
+            }
+        } ?: run {
+            Toast.makeText(applicationContext, getString(R.string.no_wps_pin_available), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showPopupMenu(view: View) {
