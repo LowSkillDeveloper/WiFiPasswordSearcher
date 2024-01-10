@@ -41,7 +41,6 @@ The changelog contains only information about the changes that I made myself. Ch
 - Add GPS sniffer
 - Add manual language change
 - Add a 3wifi sniffer for surrounding networks
-- Import data from a txt file from Router Sacan to local DB
 
 
 # Screenshots
