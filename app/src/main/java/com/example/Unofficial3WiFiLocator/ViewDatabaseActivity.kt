@@ -27,6 +27,8 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.os.Build
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.EditText
 import java.io.BufferedReader
 
@@ -57,6 +59,32 @@ class ViewDatabaseActivity : Activity() {
             val network = listView.adapter.getItem(position) as APData
             showNetworkOptionsDialog(network)
         }
+        val searchField = findViewById<EditText>(R.id.search_field)
+        searchField.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterData(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+    }
+
+    private fun filterData(searchQuery: String) {
+        val filteredList = wifiDatabaseHelper.getAllNetworks().filter {
+            it.essid?.contains(searchQuery, ignoreCase = true) == true ||
+                    it.bssid?.contains(searchQuery, ignoreCase = true) == true ||
+                    it.keys?.any { key -> key.contains(searchQuery, ignoreCase = true) } == true ||
+                    it.wps?.any { pin -> pin.contains(searchQuery, ignoreCase = true) } == true ||
+                    it.adminLogin?.contains(searchQuery, ignoreCase = true) == true ||
+                    it.adminPass?.contains(searchQuery, ignoreCase = true) == true
+        }
+        updateListView(filteredList)
+    }
+
+    private fun updateListView(networks: List<APData>) {
+        val adapter = WiFiNetworkAdapter(this, networks)
+        listView.adapter = adapter
     }
 
     private fun showNetworkOptionsDialog(network: APData) {
