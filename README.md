@@ -3,16 +3,26 @@
 This is a new version of 3wifi locator, which is based on the version from drygdryg.
 
 
+> [!NOTE]
+> Делать новую версию локатора оказалось интереснее чем я думал, поэтому я запилил огромное обновление, по моему мнению конечно, ведь локатор давно был заброшен.
+Поэтому надеюсь проект 3wifi не умрёт окончательно, и получит вторую жизнь, как и локатор.
+
+
+
 # Changelog
 The changelog contains only information about the changes that I made myself. Changes made by drygdryg to the original version can be found in his repository, link at the end of the description.
 
 ## Added Features:
 - Server list URLs in the start menu.
+  - Functionality to load server list from online sources (working mirrors or proxy servers).
 - Display of 3WiFi API keys with the ability to copy them.
 - Dark theme and option to switch to it.
 - Offline vendor database from "Wps Wpa Tester" app.
-- Functionality to load server list from online sources (working mirrors or proxy servers).
-- Added history of data found in 3wifi for networks you scanned using the locator. (Local database in the application, where the networks to which you found data in 3wifi are added)
+- Added history of data founded in 3wifi for networks you scanned. (Local database in the application, where the networks saves when you found data in 3wifi)
+  - Added import and export of local database
+  - Manually adding to the database
+  - Interaction with networks in the database (wps generation, wps connection, copying)
+  - Added columns for login and password to the router admin panel. (manual addition or import from router scan)
   
 ## Updated Features:
 - Offline mode button.
@@ -26,6 +36,14 @@ The changelog contains only information about the changes that I made myself. Ch
 - Getting online vendor information from wpsfinder.
 - Remade some hardcoded lines
 - Visibility of some objects
+
+
+# TODO:
+- Add GPS sniffer
+- Add manual language change
+- Add a 3wifi sniffer for surrounding networks
+- Import data from a txt file from Router Sacan to local DB
+
 
 # Screenshots
 <div>
