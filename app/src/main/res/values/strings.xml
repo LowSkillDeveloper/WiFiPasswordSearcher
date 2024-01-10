@@ -55,7 +55,7 @@
     <string name="unknown_network">Unknown Network</string>
     <string name="label_copied_to_clipboard">%1$s copied to clipboard</string>
     <string name="generate_wps_pin">Generate WPS PIN</string>
-    <string name="add_network_manually">Manually add the network to the database</string>
+    <string name="add_network_manually">Manually add network to DB</string>
     <string name="ssid" translatable="false">SSID</string>
     <string name="bssid" translatable="false">BSSID</string>
     <string name="password">Password</string>

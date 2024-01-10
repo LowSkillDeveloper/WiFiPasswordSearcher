@@ -64,7 +64,7 @@
     <string name="unknown_network">Неизвестная сеть</string>
     <string name="label_copied_to_clipboard">%1$s скопирован в буфер обмена</string>
     <string name="generate_wps_pin">Генерировать WPS PIN</string>
-    <string name="add_network_manually">Внести сеть в БД вручную</string>
+    <string name="add_network_manually">Вручную внести сеть в БД</string>
     <string name="password">Пароль</string>
     <string name="admin_login">Логин роутера</string>
     <string name="admin_pass">Пароль роутера</string>
