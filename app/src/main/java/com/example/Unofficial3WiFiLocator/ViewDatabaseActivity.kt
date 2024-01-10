@@ -185,7 +185,7 @@ class ViewDatabaseActivity : Activity() {
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.export_database -> {
-                    exportDatabase()
+                    exportDatabaseAsync()
                     true
                 }
                 R.id.import_database -> {
@@ -448,34 +448,51 @@ class ViewDatabaseActivity : Activity() {
         builder.create().show()
     }
 
-    private fun exportDatabase() {
-        val wifiList = wifiDatabaseHelper.getAllNetworks()
-        val jsonArray = JSONArray()
-        wifiList.forEach { network ->
-            val jsonObject = JSONObject().apply {
-                put("essid", network.essid)
-                put("bssid", network.bssid)
-                put("password", network.keys?.joinToString(", "))
-                put("wps", network.wps?.joinToString(", "))
-                put("adminLogin", network.adminLogin)
-                put("adminPass", network.adminPass)
-            }
-            jsonArray.put(jsonObject)
+    private fun exportDatabaseAsync() {
+        val progressDialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.exporting_data))
+            setCancelable(false)
+            show()
         }
-        try {
-            val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            if (!folder.exists()) {
-                folder.mkdirs()
+
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val wifiList = wifiDatabaseHelper.getAllNetworks()
+                val jsonArray = JSONArray()
+                wifiList.forEach { network ->
+                    val jsonObject = JSONObject().apply {
+                        put("essid", network.essid)
+                        put("bssid", network.bssid)
+                        put("password", network.keys?.joinToString(", "))
+                        put("wps", network.wps?.joinToString(", "))
+                        put("adminLogin", network.adminLogin)
+                        put("adminPass", network.adminPass)
+                    }
+                    jsonArray.put(jsonObject)
+                }
+
+                val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val file = File(folder, "wifi_database_export.json")
+                val fileWriter = FileWriter(file)
+                fileWriter.write(jsonArray.toString(4))
+                fileWriter.close()
+
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    toast(getString(R.string.database_exported_successfully_to) + " ${file.absolutePath}")
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    toast(getString(R.string.error_exporting_database) + ": ${e.message}")
+                }
             }
-            val file = File(folder, "wifi_database_export.json")
-            val fileWriter = FileWriter(file)
-            fileWriter.write(jsonArray.toString(4))
-            fileWriter.close()
-            toast(getString(R.string.database_exported_successfully_to) + " ${file.absolutePath}")
-        } catch (e: Exception) {
-            toast(getString(R.string.error_exporting_database) + ": ${e.message}")
         }
     }
+
 
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
