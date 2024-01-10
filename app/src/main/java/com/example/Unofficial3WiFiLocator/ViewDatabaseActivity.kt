@@ -36,6 +36,7 @@ import java.io.BufferedReader
 class ViewDatabaseActivity : Activity() {
     companion object {
         private const val REQUEST_CODE_IMPORT_DB = 1
+        private const val REQUEST_CODE_IMPORT_ROUTERSCAN = 2
     }
     private lateinit var listView: ListView
     private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
@@ -185,6 +186,10 @@ class ViewDatabaseActivity : Activity() {
                     selectImportFile()
                     true
                 }
+                R.id.import_routerscan -> {
+                    selectImportFileFromRouterScan()
+                    true
+                }
                 R.id.clear_database -> {
                     clearDatabase()
                     true
@@ -197,6 +202,42 @@ class ViewDatabaseActivity : Activity() {
             }
         }
         popupMenu.show()
+    }
+
+    private fun selectImportFileFromRouterScan() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "text/plain"
+        startActivityForResult(intent, REQUEST_CODE_IMPORT_ROUTERSCAN)
+    }
+
+    private fun importDataFromRouterScan(uri: Uri) {
+        try {
+            val inputStream = contentResolver.openInputStream(uri)
+            inputStream?.bufferedReader()?.useLines { lines ->
+                lines.forEach { line ->
+                    parseAndAddToDatabaseFromRouterScan(line)
+                }
+            }
+            displayDatabaseInfo()
+        } catch (e: Exception) {
+            Toast.makeText(this, getString(R.string.import_error, e.message), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun parseAndAddToDatabaseFromRouterScan(line: String) {
+        val parts = line.split("\t")
+        if (parts.size >= 14) {
+            val adminCredentials = parts[4].split(":")
+            val adminLogin = if (adminCredentials.size > 1) adminCredentials[0] else ""
+            val adminPass = if (adminCredentials.size > 1) adminCredentials[1] else ""
+            val bssid = parts[8]
+            val essid = parts[9]
+            val keys = parts[11]
+            val wps = parts[12]
+            if (essid.isNotEmpty() || bssid.isNotEmpty()) {
+                wifiDatabaseHelper.addNetwork(essid, bssid, keys, wps, adminLogin, adminPass)
+            }
+        }
     }
 
     private fun showAddNetworkDialog() {
@@ -258,17 +299,27 @@ class ViewDatabaseActivity : Activity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_IMPORT_DB && resultCode == Activity.RESULT_OK) {
-            data?.data?.also { uri ->
-                try {
-                    val inputStream = contentResolver.openInputStream(uri)
-                    inputStream?.let { stream ->
-                        val fileContents = stream.bufferedReader().use(BufferedReader::readText)
-                        showImportDialog(fileContents)
-                    } ?: throw Exception(getString(R.string.failed_to_open_file))
-                } catch (e: Exception) {
-                    Toast.makeText(this, getString(R.string.error_importing_file) + ": ${e.message}", Toast.LENGTH_SHORT).show()
-                    e.printStackTrace()
+
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CODE_IMPORT_DB -> {
+                    data?.data?.also { uri ->
+                        try {
+                            val inputStream = contentResolver.openInputStream(uri)
+                            inputStream?.let { stream ->
+                                val fileContents = stream.bufferedReader().use(BufferedReader::readText)
+                                showImportDialog(fileContents)
+                            } ?: throw Exception(getString(R.string.failed_to_open_file))
+                        } catch (e: Exception) {
+                            Toast.makeText(this, getString(R.string.error_importing_file) + ": ${e.message}", Toast.LENGTH_SHORT).show()
+                            e.printStackTrace()
+                        }
+                    }
+                }
+                REQUEST_CODE_IMPORT_ROUTERSCAN -> {
+                    data?.data?.also { uri ->
+                        importDataFromRouterScan(uri)
+                    }
                 }
             }
         }

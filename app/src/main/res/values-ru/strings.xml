@@ -71,6 +71,9 @@
     <string name="error_empty_ssid_bssid">Введите SSID или BSSID</string>
     <string name="copy_router_login">Скопировать логин входа в роутер</string>
     <string name="copy_router_password">Скопировать пароль входа в роутер</string>
+    <string name="import_routerscan">Импорт txt от RouterScan</string>
+    <string name="import_error">Ошибка импорта: %1$s</string>
+
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>

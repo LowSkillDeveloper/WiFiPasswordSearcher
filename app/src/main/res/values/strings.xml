@@ -65,6 +65,9 @@
     <string name="error_empty_ssid_bssid">Please enter either SSID or BSSID</string>
     <string name="copy_router_login">Copy Router Login</string>
     <string name="copy_router_password">Copy Router Password</string>
+    <string name="import_routerscan">Import txt from RouterScan</string>
+    <string name="import_error">Import error: %1$s</string>
+
 
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
