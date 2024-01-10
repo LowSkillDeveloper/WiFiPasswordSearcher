@@ -54,6 +54,8 @@
     <string name="connect_using_wps">Connect using WPS… (without root)</string>
     <string name="unknown_network">Unknown Network</string>
     <string name="label_copied_to_clipboard">%1$s copied to clipboard</string>
+    <string name="generate_wps_pin">Generate WPS PIN</string>
+
 
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>

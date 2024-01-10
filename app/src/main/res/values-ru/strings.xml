@@ -63,6 +63,8 @@
     <string name="connect_using_wps">Подключиться через WPS… (без root)</string>
     <string name="unknown_network">Неизвестная сеть</string>
     <string name="label_copied_to_clipboard">%1$s скопирован в буфер обмена</string>
+    <string name="generate_wps_pin">Генерировать WPS PIN</string>
+
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>

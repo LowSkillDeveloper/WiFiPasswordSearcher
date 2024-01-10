@@ -71,6 +71,7 @@ class ViewDatabaseActivity : Activity() {
                 options.add(getString(R.string.connect_using_wps))
             }
         }
+        options.add(getString(R.string.generate_wps_pin))
 
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setTitle(network.essid ?: getString(R.string.unknown_network))
@@ -81,6 +82,12 @@ class ViewDatabaseActivity : Activity() {
                 getString(R.string.copy_password) -> copyToClipboard("Password", network.keys?.joinToString(", ") ?: "")
                 getString(R.string.copy_wps_pin) -> copyToClipboard("WPS PIN", network.wps?.joinToString(", ") ?: "")
                 getString(R.string.connect_using_wps) -> connectUsingWPS(network)
+                getString(R.string.generate_wps_pin) -> {
+                    val intent = Intent(this, WPSActivity::class.java)
+                    intent.putExtra("variable", network.essid)
+                    intent.putExtra("variable1", network.bssid)
+                    startActivity(intent)
+                }
             }
         }
         dialogBuilder.show()
