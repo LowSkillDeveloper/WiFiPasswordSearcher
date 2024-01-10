@@ -209,9 +209,10 @@ class ViewDatabaseActivity : Activity() {
                 val bssid = jsonObject.optString("bssid")
                 val password = jsonObject.optString("password")
                 val wpsCode = jsonObject.optString("wpsCode")
-
-                if (!wifiDatabaseHelper.networkExists(bssid, password, wpsCode)) {
-                    wifiDatabaseHelper.addNetwork(essid, bssid, password, wpsCode)
+                val adminLogin = jsonObject.optString("adminLogin")
+                val adminPass = jsonObject.optString("adminPass")
+                if (!wifiDatabaseHelper.networkExists(bssid, password, wpsCode, adminLogin, adminPass)) {
+                    wifiDatabaseHelper.addNetwork(essid, bssid, password, wpsCode, adminLogin, adminPass)
                 }
             }
 
@@ -247,6 +248,8 @@ class ViewDatabaseActivity : Activity() {
                 put("bssid", network.bssid)
                 put("password", network.keys?.joinToString(", "))
                 put("wps", network.wps?.joinToString(", "))
+                put("adminLogin", network.adminLogin)
+                put("adminPass", network.adminPass)
             }
             jsonArray.put(jsonObject)
         }
@@ -307,6 +310,12 @@ class ViewDatabaseActivity : Activity() {
 
             val wpsTextView = listItemView.findViewById<TextView>(R.id.wps_text_view)
             wpsTextView.text = currentNetwork?.wps?.joinToString(", ")
+
+            val adminLoginTextView = listItemView.findViewById<TextView>(R.id.admin_login_text_view)
+            adminLoginTextView.text = currentNetwork?.adminLogin
+
+            val adminPassTextView = listItemView.findViewById<TextView>(R.id.admin_pass_text_view)
+            adminPassTextView.text = currentNetwork?.adminPass
 
             return listItemView
         }

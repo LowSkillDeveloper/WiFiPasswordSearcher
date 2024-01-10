@@ -42,7 +42,7 @@ private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
 class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         private const val DATABASE_NAME = "mylocalwifi.db"
         private const val TABLE_NAME = "WiFiNetworks"
         private const val COLUMN_ID = "ID"
@@ -50,6 +50,8 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         private const val COLUMN_MAC_ADDRESS = "MACAddress"
         private const val COLUMN_WIFI_PASSWORD = "WiFiPassword"
         private const val COLUMN_WPS_CODE = "WPSCode"
+        private const val COLUMN_ADMIN_LOGIN = "AdminLogin"
+        private const val COLUMN_ADMIN_PASS = "AdminPass"
     }
 
     fun clearAllNetworks() {
@@ -65,23 +67,30 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
                 $COLUMN_WIFI_NAME TEXT,
                 $COLUMN_MAC_ADDRESS TEXT,
                 $COLUMN_WIFI_PASSWORD TEXT,
-                $COLUMN_WPS_CODE TEXT
+                $COLUMN_WPS_CODE TEXT,
+                $COLUMN_ADMIN_LOGIN TEXT,
+                $COLUMN_ADMIN_PASS TEXT
             )
         """.trimIndent()
         db.execSQL(createTableStatement)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Обработка обновления схемы базы данных, если это необходимо
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COLUMN_ADMIN_LOGIN TEXT")
+            db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COLUMN_ADMIN_PASS TEXT")
+        }
     }
 
-    fun addNetwork(essid: String?, bssid: String?, password: String?, wpsCode: String?) {
+    fun addNetwork(essid: String?, bssid: String?, password: String?, wpsCode: String?, adminLogin: String?, adminPass: String?) {
         val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(COLUMN_WIFI_NAME, essid)
             put(COLUMN_MAC_ADDRESS, bssid)
             put(COLUMN_WIFI_PASSWORD, password)
             put(COLUMN_WPS_CODE, wpsCode)
+            put(COLUMN_ADMIN_LOGIN, adminLogin)
+            put(COLUMN_ADMIN_PASS, adminPass)
         }
         db.insert(TABLE_NAME, null, contentValues)
         db.close()
@@ -109,10 +118,10 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         return networksList
     }
 
-    fun networkExists(bssid: String, password: String?, wpsCode: String?): Boolean {
+    fun networkExists(bssid: String, password: String?, wpsCode: String?, adminLogin: String?, adminPass: String?): Boolean {
         val db = this.readableDatabase
-        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_MAC_ADDRESS = ? AND ($COLUMN_WIFI_PASSWORD = ? OR $COLUMN_WPS_CODE = ?)"
-        val cursor = db.rawQuery(query, arrayOf(bssid, password ?: "", wpsCode ?: ""))
+        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_MAC_ADDRESS = ? AND ($COLUMN_WIFI_PASSWORD = ? OR $COLUMN_WPS_CODE = ? OR $COLUMN_ADMIN_LOGIN = ? OR $COLUMN_ADMIN_PASS = ?)"
+        val cursor = db.rawQuery(query, arrayOf(bssid, password ?: "", wpsCode ?: "", adminLogin ?: "", adminPass ?: ""))
 
         val exists = cursor.moveToFirst()
         cursor.close()
@@ -127,6 +136,8 @@ class APData {
     var keys: ArrayList<String>? = null
     var generated: ArrayList<Boolean>? = null
     var wps: ArrayList<String>? = null
+    var adminLogin: String? = null
+    var adminPass: String? = null
 }
 
 internal class MyScanResult {
@@ -843,14 +854,22 @@ class MyActivity : AppCompatActivity() {
             elemWiFi["CAPABILITY"] = result.capabilities
 
             // Проверяем наличие сети в локальной базе данных и наличие пароля или WPS PIN
-            if (!wifiDatabaseHelper.networkExists(result.bssid!!.toUpperCase(), apdata.keys?.firstOrNull(), apdata.wps?.firstOrNull()) &&
-                (apdata.keys?.isNotEmpty() == true || apdata.wps?.isNotEmpty() == true)) {
-                // Добавляем сеть в локальную базу данных, если её там нет и есть пароль/WPS PIN
+            if (!wifiDatabaseHelper.networkExists(
+                    result.bssid!!.toUpperCase(),
+                    apdata.keys?.firstOrNull(),
+                    apdata.wps?.firstOrNull(),
+                    apdata.adminLogin,
+                    apdata.adminPass
+                ) && (apdata.keys?.isNotEmpty() == true || apdata.wps?.isNotEmpty() == true)
+            ) {
+                // Добавляем сеть в локальную базу данных, если её там нет
                 wifiDatabaseHelper.addNetwork(
                     result.essid ?: "",
                     result.bssid!!.toUpperCase(),
                     apdata.keys?.firstOrNull() ?: "",
-                    apdata.wps?.firstOrNull() ?: ""
+                    apdata.wps?.firstOrNull() ?: "",
+                    apdata.adminLogin ?: "",
+                    apdata.adminPass ?: ""
                 )
             }
 
