@@ -20,7 +20,8 @@ The changelog contains only information about the changes that I made myself. Ch
   - Manually adding to the database
   - Interaction with networks in the database (wps generation, wps connection, copying)
   - Added columns for login and password to the router admin panel. (only manual addition or import from router scan txt)
-  - Import txt file from RouterScan to local DB
+  - Import txt file from RouterScan to local DB (or myuploads.txt from 3wifi)
+    - Now the application can import a large myuploads.txt file that containing more than 100K lines
   
 ## Updated Features:
 - Offline mode button.
