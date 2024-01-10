@@ -2,12 +2,9 @@
 
 This is a new version of 3wifi locator, which is based on the version from drygdryg.
 
-
 > [!NOTE]
 > Делать новую версию локатора оказалось интереснее чем я думал, поэтому я запилил огромное обновление, по моему мнению конечно, ведь локатор давно был заброшен.
 Поэтому надеюсь проект 3wifi не умрёт окончательно, и получит вторую жизнь, как и локатор.
-
-
 
 # Changelog
 The changelog contains only information about the changes that I made myself. Changes made by drygdryg to the original version can be found in his repository, link at the end of the description.
@@ -23,6 +20,7 @@ The changelog contains only information about the changes that I made myself. Ch
   - Manually adding to the database
   - Interaction with networks in the database (wps generation, wps connection, copying)
   - Added columns for login and password to the router admin panel. (manual addition or import from router scan)
+  - Import txt file from RouterScan to local DB
   
 ## Updated Features:
 - Offline mode button.
