@@ -27,6 +27,7 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.os.Build
+import android.widget.EditText
 import java.io.BufferedReader
 
 
@@ -60,16 +61,27 @@ class ViewDatabaseActivity : Activity() {
 
     private fun showNetworkOptionsDialog(network: APData) {
         val options = arrayListOf<String>()
-        options.add(getString(R.string.copy_essid))
-        options.add(getString(R.string.copy_bssid))
+
+        network.essid?.let {
+            if (it.isNotEmpty()) options.add(getString(R.string.copy_essid))
+        }
+        network.bssid?.let {
+            if (it.isNotEmpty()) options.add(getString(R.string.copy_bssid))
+        }
         network.keys?.let {
-            if (it.isNotEmpty()) options.add(getString(R.string.copy_password))
+            if (it.any { key -> key.isNotEmpty() }) options.add(getString(R.string.copy_password))
         }
         network.wps?.let {
-            if (it.isNotEmpty()) {
+            if (it.any { pin -> pin.isNotEmpty() }) {
                 options.add(getString(R.string.copy_wps_pin))
                 options.add(getString(R.string.connect_using_wps))
             }
+        }
+        network.adminLogin?.let {
+            if (it.isNotEmpty()) options.add(getString(R.string.copy_router_login))
+        }
+        network.adminPass?.let {
+            if (it.isNotEmpty()) options.add(getString(R.string.copy_router_password))
         }
         options.add(getString(R.string.generate_wps_pin))
 
@@ -77,10 +89,12 @@ class ViewDatabaseActivity : Activity() {
         dialogBuilder.setTitle(network.essid ?: getString(R.string.unknown_network))
         dialogBuilder.setItems(options.toTypedArray()) { _, which ->
             when (options[which]) {
-                getString(R.string.copy_essid) -> copyToClipboard("ESSID", network.essid ?: "")
-                getString(R.string.copy_bssid) -> copyToClipboard("BSSID", network.bssid ?: "")
-                getString(R.string.copy_password) -> copyToClipboard("Password", network.keys?.joinToString(", ") ?: "")
-                getString(R.string.copy_wps_pin) -> copyToClipboard("WPS PIN", network.wps?.joinToString(", ") ?: "")
+                getString(R.string.copy_essid) -> copyToClipboard("ESSID", network.essid!!)
+                getString(R.string.copy_bssid) -> copyToClipboard("BSSID", network.bssid!!)
+                getString(R.string.copy_password) -> copyToClipboard("Password", network.keys!!.joinToString(", "))
+                getString(R.string.copy_router_login) -> copyToClipboard("Router Login", network.adminLogin!!)
+                getString(R.string.copy_router_password) -> copyToClipboard("Router Password", network.adminPass!!)
+                getString(R.string.copy_wps_pin) -> copyToClipboard("WPS PIN", network.wps!!.joinToString(", "))
                 getString(R.string.connect_using_wps) -> connectUsingWPS(network)
                 getString(R.string.generate_wps_pin) -> {
                     val intent = Intent(this, WPSActivity::class.java)
@@ -147,10 +161,51 @@ class ViewDatabaseActivity : Activity() {
                     clearDatabase()
                     true
                 }
+                R.id.add_network_manually -> {
+                    showAddNetworkDialog()
+                    true
+                }
                 else -> false
             }
         }
         popupMenu.show()
+    }
+
+    private fun showAddNetworkDialog() {
+        val layoutInflater = LayoutInflater.from(this)
+        val view = layoutInflater.inflate(R.layout.dialog_add_network, null)
+        val ssidInput = view.findViewById<EditText>(R.id.ssid_input)
+        val bssidInput = view.findViewById<EditText>(R.id.bssid_input)
+        val passwordInput = view.findViewById<EditText>(R.id.password_input)
+        val wpsInput = view.findViewById<EditText>(R.id.wps_input)
+        val adminLoginInput = view.findViewById<EditText>(R.id.admin_login_input)
+        val adminPassInput = view.findViewById<EditText>(R.id.admin_pass_input)
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        dialogBuilder.setTitle(getString(R.string.add_network_manually))
+        dialogBuilder.setPositiveButton(getString(R.string.save)) { dialog, _ ->
+            val ssid = ssidInput.text.toString()
+            val bssid = bssidInput.text.toString()
+            val password = passwordInput.text.toString()
+            val wps = wpsInput.text.toString()
+            val adminLogin = adminLoginInput.text.toString()
+            val adminPass = adminPassInput.text.toString()
+
+            // Проверяем, что хотя бы одно из полей SSID или BSSID заполнено
+            if (ssid.isNotEmpty() || bssid.isNotEmpty()) {
+                wifiDatabaseHelper.addNetwork(ssid, bssid, password, wps, adminLogin, adminPass)
+                displayDatabaseInfo()
+            } else {
+                // Показать сообщение об ошибке, если оба поля пусты
+                Toast.makeText(this, getString(R.string.error_empty_ssid_bssid), Toast.LENGTH_LONG).show()
+            }
+            dialog.dismiss()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+            dialog.cancel()
+        }
+        dialogBuilder.create().show()
     }
 
 

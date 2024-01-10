@@ -55,7 +55,16 @@
     <string name="unknown_network">Unknown Network</string>
     <string name="label_copied_to_clipboard">%1$s copied to clipboard</string>
     <string name="generate_wps_pin">Generate WPS PIN</string>
-
+    <string name="add_network_manually">Manually add the network to the database</string>
+    <string name="ssid" translatable="false">SSID</string>
+    <string name="bssid" translatable="false">BSSID</string>
+    <string name="password">Password</string>
+    <string name="wps_pin" translatable="false">WPS PIN</string>
+    <string name="admin_login">Router login</string>
+    <string name="admin_pass">Router password</string>
+    <string name="error_empty_ssid_bssid">Please enter either SSID or BSSID</string>
+    <string name="copy_router_login">Copy Router Login</string>
+    <string name="copy_router_password">Copy Router Password</string>
 
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>

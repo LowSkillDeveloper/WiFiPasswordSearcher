@@ -82,7 +82,7 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         }
     }
 
-    fun addNetwork(essid: String?, bssid: String?, password: String?, wpsCode: String?, adminLogin: String?, adminPass: String?) {
+    fun addNetwork(essid: String, bssid: String, password: String, wpsCode: String, adminLogin: String, adminPass: String) {
         val db = this.writableDatabase
         val contentValues = ContentValues().apply {
             put(COLUMN_WIFI_NAME, essid)
@@ -109,6 +109,8 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
                     bssid = cursor.getString(cursor.getColumnIndex(COLUMN_MAC_ADDRESS))
                     keys = arrayListOf(cursor.getString(cursor.getColumnIndex(COLUMN_WIFI_PASSWORD)))
                     wps = arrayListOf(cursor.getString(cursor.getColumnIndex(COLUMN_WPS_CODE)))
+                    adminLogin = cursor.getString(cursor.getColumnIndex(COLUMN_ADMIN_LOGIN))
+                    adminPass = cursor.getString(cursor.getColumnIndex(COLUMN_ADMIN_PASS))
                 }
                 networksList.add(network)
             } while (cursor.moveToNext())
