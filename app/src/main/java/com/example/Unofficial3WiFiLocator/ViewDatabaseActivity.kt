@@ -140,6 +140,8 @@ class ViewDatabaseActivity : Activity() {
         dialogBuilder.show()
     }
 
+
+
     private fun copyToClipboard(label: String, text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(label, text)
@@ -209,41 +211,42 @@ class ViewDatabaseActivity : Activity() {
     }
 
     private fun importDataFromRouterScanAsync(uri: Uri) {
-        val progressDialog = ProgressDialog(this).apply {
-            setMessage(getString(R.string.importing_data))
-            setCancelable(false)
-            show()
-        }
-
-        val handler = Handler(Looper.getMainLooper())
-        val updateMessageRunnable = Runnable {
-            if (progressDialog.isShowing) {
-                progressDialog.setMessage(getString(R.string.importing_large_amount))
+        showImportTypeDialog { importType ->
+            val progressDialog = ProgressDialog(this).apply {
+                setMessage(getString(R.string.importing_data))
+                setCancelable(false)
+                show()
             }
-        }
 
-        handler.postDelayed(updateMessageRunnable, 30000) // 30 секунд
+            val handler = Handler(Looper.getMainLooper())
+            val updateMessageRunnable = Runnable {
+                if (progressDialog.isShowing) {
+                    progressDialog.setMessage(getString(R.string.importing_large_amount))
+                }
+            }
+            handler.postDelayed(updateMessageRunnable, 30000) // 30 секунд
 
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                val inputStream = contentResolver.openInputStream(uri)
-                inputStream?.bufferedReader()?.useLines { lines ->
-                    lines.forEach { line ->
-                        parseAndAddToDatabaseFromRouterScan(line)
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val inputStream = contentResolver.openInputStream(uri)
+                    inputStream?.bufferedReader()?.useLines { lines ->
+                        lines.forEach { line ->
+                            parseAndAddToDatabaseFromRouterScan(line, importType)
+                        }
                     }
+                    withContext(Dispatchers.Main) {
+                        displayDatabaseInfo()
+                        progressDialog.dismiss()
+                        Toast.makeText(applicationContext, getString(R.string.import_complete), Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        progressDialog.dismiss()
+                        Toast.makeText(applicationContext, getString(R.string.import_error, e.message), Toast.LENGTH_SHORT).show()
+                    }
+                } finally {
+                    handler.removeCallbacks(updateMessageRunnable)
                 }
-                withContext(Dispatchers.Main) {
-                    displayDatabaseInfo()
-                    progressDialog.dismiss()
-                    Toast.makeText(applicationContext, getString(R.string.import_complete), Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    progressDialog.dismiss()
-                    Toast.makeText(applicationContext, getString(R.string.import_error, e.message), Toast.LENGTH_SHORT).show()
-                }
-            } finally {
-                handler.removeCallbacks(updateMessageRunnable)
             }
         }
     }
@@ -254,21 +257,7 @@ class ViewDatabaseActivity : Activity() {
         startActivityForResult(intent, REQUEST_CODE_IMPORT_ROUTERSCAN)
     }
 
-    private fun importDataFromRouterScan(uri: Uri) {
-        try {
-            val inputStream = contentResolver.openInputStream(uri)
-            inputStream?.bufferedReader()?.useLines { lines ->
-                lines.forEach { line ->
-                    parseAndAddToDatabaseFromRouterScan(line)
-                }
-            }
-            displayDatabaseInfo()
-        } catch (e: Exception) {
-            Toast.makeText(this, getString(R.string.import_error, e.message), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun parseAndAddToDatabaseFromRouterScan(line: String) {
+    private fun parseAndAddToDatabaseFromRouterScan(line: String, importType: String) {
         val parts = line.split("\t")
         if (parts.size >= 14) {
             val adminCredentials = parts[4].split(":")
@@ -278,10 +267,29 @@ class ViewDatabaseActivity : Activity() {
             val essid = parts[9]
             val keys = parts[11]
             val wps = parts[12]
+            if (importType == "update" && wifiDatabaseHelper.networkExists(bssid, keys, wps, adminLogin, adminPass)) {
+                return
+            }
             if (essid.isNotEmpty() || bssid.isNotEmpty()) {
                 wifiDatabaseHelper.addNetwork(essid, bssid, keys, wps, adminLogin, adminPass)
             }
         }
+    }
+
+    private fun showImportTypeDialog(importFunction: (String) -> Unit) {
+        val options = arrayOf(getString(R.string.replace_database), getString(R.string.update_existing_database))
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.select_import_type))
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> {
+                    wifiDatabaseHelper.clearAllNetworks()
+                    importFunction.invoke("replace")
+                }
+                1 -> importFunction.invoke("update")
+            }
+        }
+        builder.show()
     }
 
     private fun showAddNetworkDialog() {
