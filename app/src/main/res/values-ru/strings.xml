@@ -73,6 +73,9 @@
     <string name="copy_router_password">Скопировать пароль входа в роутер</string>
     <string name="import_routerscan">Импорт txt от RouterScan</string>
     <string name="import_error">Ошибка импорта: %1$s</string>
+    <string name="importing_data">Импорт данных...</string>
+    <string name="import_complete">Импорт завершён!</string>
+    <string name="importing_large_amount">Импортируется множество строк, это может занять 5-10 минут.</string>
 
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>

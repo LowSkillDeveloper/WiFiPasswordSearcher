@@ -18,6 +18,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -27,10 +28,13 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import java.io.BufferedReader
+import kotlinx.coroutines.*
 
 
 class ViewDatabaseActivity : Activity() {
@@ -204,6 +208,46 @@ class ViewDatabaseActivity : Activity() {
         popupMenu.show()
     }
 
+    private fun importDataFromRouterScanAsync(uri: Uri) {
+        val progressDialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.importing_data))
+            setCancelable(false)
+            show()
+        }
+
+        val handler = Handler(Looper.getMainLooper())
+        val updateMessageRunnable = Runnable {
+            if (progressDialog.isShowing) {
+                progressDialog.setMessage(getString(R.string.importing_large_amount))
+            }
+        }
+
+        handler.postDelayed(updateMessageRunnable, 30000) // 30 секунд
+
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val inputStream = contentResolver.openInputStream(uri)
+                inputStream?.bufferedReader()?.useLines { lines ->
+                    lines.forEach { line ->
+                        parseAndAddToDatabaseFromRouterScan(line)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    displayDatabaseInfo()
+                    progressDialog.dismiss()
+                    Toast.makeText(applicationContext, getString(R.string.import_complete), Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    Toast.makeText(applicationContext, getString(R.string.import_error, e.message), Toast.LENGTH_SHORT).show()
+                }
+            } finally {
+                handler.removeCallbacks(updateMessageRunnable)
+            }
+        }
+    }
+
     private fun selectImportFileFromRouterScan() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "text/plain"
@@ -318,7 +362,7 @@ class ViewDatabaseActivity : Activity() {
                 }
                 REQUEST_CODE_IMPORT_ROUTERSCAN -> {
                     data?.data?.also { uri ->
-                        importDataFromRouterScan(uri)
+                        importDataFromRouterScanAsync(uri)
                     }
                 }
             }
