@@ -19,7 +19,7 @@ The changelog contains only information about the changes that I made myself. Ch
   - Added import and export of local database
   - Manually adding to the database
   - Interaction with networks in the database (wps generation, wps connection, copying)
-  - Added columns for login and password to the router admin panel. (manual addition or import from router scan)
+  - Added columns for login and password to the router admin panel. (only manual addition or import from router scan txt)
   - Import txt file from RouterScan to local DB
   
 ## Updated Features:
