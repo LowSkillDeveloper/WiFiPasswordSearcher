@@ -69,7 +69,7 @@
     <string name="import_error">Import error: %1$s</string>
     <string name="importing_data">Importing data...</string>
     <string name="import_complete">Import complete!</string>
-    <string name="importing_large_amount">Lots of rows are imported, this may take 5-10 minutes...</string>
+    <string name="importing_large_amount">Perhaps many rows are being imported or the database already contains many rows and is being checked for duplicates, this may take 5–10 minutes or more…</string>
     <string name="exporting_data">Exporting data...</string>
     <string name="delete_network">Delete Network from DB</string>
     <string name="confirm_deletion_message">Are you sure you want to delete the %1$s network?</string>

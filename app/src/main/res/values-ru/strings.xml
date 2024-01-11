@@ -75,7 +75,7 @@
     <string name="import_error">Ошибка импорта: %1$s</string>
     <string name="importing_data">Импорт данных...</string>
     <string name="import_complete">Импорт завершён!</string>
-    <string name="importing_large_amount">Импортируется множество строк, это может занять 5-10 минут.</string>
+    <string name="importing_large_amount">Возможно импортируется множество строк или база уже содержит много строк и идёт проверка на дубликаты, это может занять 5–10 минут или больше…</string>
     <string name="exporting_data">Экспорт данных...</string>
     <string name="delete_network">Удалить эту сеть из БД</string>
     <string name="confirm_deletion_message">Вы уверены, что хотите удалить сеть %1$s?</string>
