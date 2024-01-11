@@ -1,43 +1,45 @@
 package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageButton
-import android.widget.ListView
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.preference.PreferenceManager
-import android.os.Environment
-import android.widget.Toast
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.File
-import java.io.FileWriter
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.os.Build
+import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
-import java.io.BufferedReader
-import kotlinx.coroutines.*
+import android.widget.ImageButton
+import android.widget.ListView
+import android.widget.PopupMenu
+import android.widget.TextView
+import android.widget.Toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileWriter
 
 class ViewDatabaseActivity : Activity() {
     companion object {
@@ -362,25 +364,6 @@ class ViewDatabaseActivity : Activity() {
             dialog.cancel()
         }
         dialogBuilder.create().show()
-    }
-
-
-    private fun showImportDialog(jsonContents: String) {
-        val options = arrayOf(getString(R.string.replace_database), getString(R.string.update_existing_database))
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.select_import_type))
-        builder.setItems(options) { dialog, which ->
-            when (which) {
-                0 -> {
-                    wifiDatabaseHelper.clearAllNetworks()
-                    importDatabaseAsync(jsonContents)
-                }
-                1 -> {
-                    importDatabaseAsync(jsonContents)
-                }
-            }
-        }
-        builder.show()
     }
 
 
