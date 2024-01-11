@@ -71,6 +71,9 @@
     <string name="import_complete">Import complete!</string>
     <string name="importing_large_amount">Lots of rows are imported, this may take 5-10 minutes...</string>
     <string name="exporting_data">Exporting data...</string>
+    <string name="delete_network">Delete Network from DB</string>
+    <string name="confirm_deletion_message">Are you sure you want to delete the %1$s network?</string>
+    <string name="network_deleted">Network deleted</string>
 
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>

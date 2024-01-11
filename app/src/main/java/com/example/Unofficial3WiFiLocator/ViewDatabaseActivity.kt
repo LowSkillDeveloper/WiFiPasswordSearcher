@@ -116,28 +116,55 @@ class ViewDatabaseActivity : Activity() {
         network.adminPass?.let {
             if (it.isNotEmpty()) options.add(getString(R.string.copy_router_password))
         }
+
         options.add(getString(R.string.generate_wps_pin))
+        options.add(getString(R.string.delete_network))
 
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setTitle(network.essid ?: getString(R.string.unknown_network))
         dialogBuilder.setItems(options.toTypedArray()) { _, which ->
-            when (options[which]) {
-                getString(R.string.copy_essid) -> copyToClipboard("ESSID", network.essid!!)
-                getString(R.string.copy_bssid) -> copyToClipboard("BSSID", network.bssid!!)
-                getString(R.string.copy_password) -> copyToClipboard("Password", network.keys!!.joinToString(", "))
-                getString(R.string.copy_router_login) -> copyToClipboard("Router Login", network.adminLogin!!)
-                getString(R.string.copy_router_password) -> copyToClipboard("Router Password", network.adminPass!!)
-                getString(R.string.copy_wps_pin) -> copyToClipboard("WPS PIN", network.wps!!.joinToString(", "))
-                getString(R.string.connect_using_wps) -> connectUsingWPS(network)
-                getString(R.string.generate_wps_pin) -> {
-                    val intent = Intent(this, WPSActivity::class.java)
-                    intent.putExtra("variable", network.essid)
-                    intent.putExtra("variable1", network.bssid)
-                    startActivity(intent)
-                }
+            when {
+                which < options.size - 1 -> handleOtherOptions(which, network)
+                else -> showDeleteConfirmationDialog(network)
             }
         }
         dialogBuilder.show()
+    }
+
+    private fun handleOtherOptions(which: Int, network: APData) {
+        when (which) {
+            0 -> network.essid?.let { copyToClipboard("ESSID", it) }
+            1 -> network.bssid?.let { copyToClipboard("BSSID", it) }
+            2 -> network.keys?.joinToString(", ")?.let { copyToClipboard("Password", it) }
+            3 -> network.wps?.joinToString(", ")?.let { copyToClipboard("WPS PIN", it) }
+            4 -> connectUsingWPS(network)
+            5 -> network.adminLogin?.let { copyToClipboard("Router Login", it) }
+            6 -> network.adminPass?.let { copyToClipboard("Router Password", it) }
+            7 -> { val intent = Intent(this, WPSActivity::class.java)
+                intent.putExtra("variable", network.essid)
+                intent.putExtra("variable1", network.bssid)
+                startActivity(intent) }
+        }
+    }
+
+    private fun showDeleteConfirmationDialog(network: APData) {
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.confirm_deletion_message, network.essid ?: ""))
+            .setPositiveButton(R.string.dialog_yes) { _, _ ->
+                deleteNetwork(network.bssid ?: "")
+                Toast.makeText(this, R.string.network_deleted, Toast.LENGTH_SHORT).show()
+                displayDatabaseInfo()
+            }
+            .setNegativeButton(R.string.dialog_no, null)
+            .show()
+    }
+
+    private fun deleteNetwork(bssid: String) {
+        val db = wifiDatabaseHelper.writableDatabase
+        val selection = "${WiFiDatabaseHelper.COLUMN_MAC_ADDRESS} LIKE ?"
+        val selectionArgs = arrayOf(bssid)
+        db.delete(WiFiDatabaseHelper.TABLE_NAME, selection, selectionArgs)
+        db.close()
     }
 
 

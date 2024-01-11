@@ -44,10 +44,10 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
     companion object {
         private const val DATABASE_VERSION = 2
         private const val DATABASE_NAME = "mylocalwifi.db"
-        private const val TABLE_NAME = "WiFiNetworks"
+        public const val TABLE_NAME = "WiFiNetworks"
         private const val COLUMN_ID = "ID"
         private const val COLUMN_WIFI_NAME = "WiFiName"
-        private const val COLUMN_MAC_ADDRESS = "MACAddress"
+        public const val COLUMN_MAC_ADDRESS = "MACAddress"
         private const val COLUMN_WIFI_PASSWORD = "WiFiPassword"
         private const val COLUMN_WPS_CODE = "WPSCode"
         private const val COLUMN_ADMIN_LOGIN = "AdminLogin"

@@ -77,6 +77,9 @@
     <string name="import_complete">Импорт завершён!</string>
     <string name="importing_large_amount">Импортируется множество строк, это может занять 5-10 минут.</string>
     <string name="exporting_data">Экспорт данных...</string>
+    <string name="delete_network">Удалить эту сеть из БД</string>
+    <string name="confirm_deletion_message">Вы уверены, что хотите удалить сеть %1$s?</string>
+    <string name="network_deleted">Сеть удалена</string>
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>
