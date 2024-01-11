@@ -7,6 +7,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
@@ -22,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.CursorAdapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ListView
@@ -64,8 +66,18 @@ class ViewDatabaseActivity : Activity() {
         displayDatabaseInfo()
 
         listView.setOnItemClickListener { _, _, position, _ ->
-            val network = listView.adapter.getItem(position) as APData
-            showNetworkOptionsDialog(network)
+            val cursor = (listView.adapter as WiFiCursorAdapter).cursor
+            if (cursor.moveToPosition(position)) {
+                val network = APData().apply {
+                    essid = cursor.getString(cursor.getColumnIndexOrThrow("WiFiName"))
+                    bssid = cursor.getString(cursor.getColumnIndexOrThrow("MACAddress"))
+                    keys = arrayListOf(cursor.getString(cursor.getColumnIndexOrThrow("WiFiPassword")))
+                    wps = arrayListOf(cursor.getString(cursor.getColumnIndexOrThrow("WPSCode")))
+                    adminLogin = cursor.getString(cursor.getColumnIndexOrThrow("AdminLogin"))
+                    adminPass = cursor.getString(cursor.getColumnIndexOrThrow("AdminPass"))
+                }
+                showNetworkOptionsDialog(network)
+            }
         }
         val searchField = findViewById<EditText>(R.id.search_field)
         searchField.addTextChangedListener(object : TextWatcher {
@@ -83,6 +95,28 @@ class ViewDatabaseActivity : Activity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
+    }
+
+    private class WiFiCursorAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
+        override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
+            return LayoutInflater.from(context).inflate(R.layout.wifi_network_item, parent, false)
+        }
+
+        override fun bindView(view: View, context: Context, cursor: Cursor) {
+            val ssidTextView = view.findViewById<TextView>(R.id.ssid_text_view)
+            val bssidTextView = view.findViewById<TextView>(R.id.bssid_text_view)
+            val passwordTextView = view.findViewById<TextView>(R.id.password_text_view)
+            val wpsTextView = view.findViewById<TextView>(R.id.wps_text_view)
+            val adminLoginTextView = view.findViewById<TextView>(R.id.admin_login_text_view)
+            val adminPassTextView = view.findViewById<TextView>(R.id.admin_pass_text_view)
+
+            ssidTextView.text = cursor.getString(cursor.getColumnIndexOrThrow("WiFiName"))
+            bssidTextView.text = cursor.getString(cursor.getColumnIndexOrThrow("MACAddress"))
+            passwordTextView.text = cursor.getString(cursor.getColumnIndexOrThrow("WiFiPassword"))
+            wpsTextView.text = cursor.getString(cursor.getColumnIndexOrThrow("WPSCode"))
+            adminLoginTextView.text = cursor.getString(cursor.getColumnIndexOrThrow("AdminLogin"))
+            adminPassTextView.text = cursor.getString(cursor.getColumnIndexOrThrow("AdminPass"))
+        }
     }
 
     private fun filterData(searchQuery: String) {
@@ -527,8 +561,8 @@ class ViewDatabaseActivity : Activity() {
     }
 
     private fun displayDatabaseInfo() {
-        val wifiList = wifiDatabaseHelper.getAllNetworks()
-        val adapter = WiFiNetworkAdapter(this, wifiList)
+        val cursor = wifiDatabaseHelper.getNetworksCursor()
+        val adapter = WiFiCursorAdapter(this, cursor)
         listView.adapter = adapter
     }
 
@@ -564,4 +598,10 @@ class ViewDatabaseActivity : Activity() {
             return listItemView
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (listView.adapter as? WiFiCursorAdapter)?.cursor?.close()
+    }
+
 }

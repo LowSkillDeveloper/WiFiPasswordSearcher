@@ -35,6 +35,7 @@ import java.net.URL
 import java.util.*
 import android.preference.PreferenceManager
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -52,6 +53,11 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         private const val COLUMN_WPS_CODE = "WPSCode"
         private const val COLUMN_ADMIN_LOGIN = "AdminLogin"
         private const val COLUMN_ADMIN_PASS = "AdminPass"
+    }
+
+    fun getNetworksCursor(): Cursor {
+        val db = this.readableDatabase
+        return db.rawQuery("SELECT ID as _id, * FROM $TABLE_NAME", null)
     }
 
     fun clearAllNetworks() {
