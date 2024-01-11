@@ -73,6 +73,10 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
             )
         """.trimIndent()
         db.execSQL(createTableStatement)
+
+        // Индексация имён вифи в базе
+        val createIndexStatement = "CREATE INDEX idx_wifi_name ON $TABLE_NAME($COLUMN_WIFI_NAME)"
+        db.execSQL(createIndexStatement)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
