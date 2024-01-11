@@ -35,7 +35,9 @@ import android.text.TextWatcher
 import android.widget.EditText
 import java.io.BufferedReader
 import kotlinx.coroutines.*
-
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 class ViewDatabaseActivity : Activity() {
     companion object {
@@ -66,11 +68,18 @@ class ViewDatabaseActivity : Activity() {
         }
         val searchField = findViewById<EditText>(R.id.search_field)
         searchField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterData(s.toString())
+            private var searchJob: Job? = null
+
+            override fun afterTextChanged(s: Editable?) {
+                searchJob?.cancel()
+                searchJob = GlobalScope.launch(Dispatchers.Main) {
+                    delay(1000) // Задержка 1000 мс
+                    filterData(s.toString())
+                }
             }
-            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
     }
