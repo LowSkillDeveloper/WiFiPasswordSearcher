@@ -46,7 +46,6 @@ class ViewDatabaseActivity : Activity() {
     }
     private lateinit var listView: ListView
     private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
-    private lateinit var menuButton: ImageButton
     override fun onCreate(savedInstanceState: Bundle?) {
         setAppTheme()
         super.onCreate(savedInstanceState)
