@@ -30,6 +30,7 @@ import android.widget.ListView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -54,6 +55,11 @@ class ViewDatabaseActivity : Activity() {
         setAppTheme()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_database)
+
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener {
+        }
+
 
         listView = findViewById(R.id.list_view_database)
         wifiDatabaseHelper = WiFiDatabaseHelper(this)
