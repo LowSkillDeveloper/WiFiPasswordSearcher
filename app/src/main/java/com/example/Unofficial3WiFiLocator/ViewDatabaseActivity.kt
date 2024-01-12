@@ -92,7 +92,7 @@ class ViewDatabaseActivity : Activity() {
             override fun afterTextChanged(s: Editable?) {
                 searchJob?.cancel()
                 searchJob = GlobalScope.launch(Dispatchers.Main) {
-                    delay(1000) // Задержка 1000 мс
+                    delay(600) // Задержка 600 мс
                     filterData(s.toString())
                 }
             }
