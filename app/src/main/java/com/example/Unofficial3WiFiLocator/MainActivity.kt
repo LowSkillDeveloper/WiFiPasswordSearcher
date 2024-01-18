@@ -839,6 +839,7 @@ class MyActivity : AppCompatActivity() {
         val list = ArrayList<HashMap<String, String?>?>()
         var elemWiFi: HashMap<String, String?>
         var keyColor: String
+        val saveToDb = mSettings.AppSettings!!.getBoolean("SAVE_TO_DB", true)
         var i = 0
         for (result in WiFiScanResult!!) {
             val apdata = getWiFiKeyByBSSID(bss, fetchESS, result.essid, result.bssid!!.toUpperCase())
@@ -862,7 +863,7 @@ class MyActivity : AppCompatActivity() {
             elemWiFi["CAPABILITY"] = result.capabilities
 
             // Проверяем наличие сети в локальной базе данных и наличие пароля или WPS PIN
-            if (!wifiDatabaseHelper.networkExists(
+            if (saveToDb && !wifiDatabaseHelper.networkExists(
                     result.bssid!!.toUpperCase(),
                     apdata.keys?.firstOrNull(),
                     apdata.wps?.firstOrNull(),

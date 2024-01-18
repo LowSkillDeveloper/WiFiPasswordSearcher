@@ -80,6 +80,7 @@
     <string name="delete_network">Удалить эту сеть из БД</string>
     <string name="confirm_deletion_message">Вы уверены, что хотите удалить сеть %1$s?</string>
     <string name="network_deleted">Сеть удалена</string>
+    <string name="save_to_local_database">Сохранять данные в локальную базу</string>
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>

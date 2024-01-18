@@ -27,6 +27,9 @@ class ServerSettingsActivity : Activity() {
         val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
         binding.txtSettings3wifiServer.setText(serverURI)
 
+        val switchSaveToDb = findViewById<Switch>(R.id.switch_save_to_db)
+        val saveToDb = mSettings.AppSettings!!.getBoolean("SAVE_TO_DB", true)
+        switchSaveToDb.isChecked = saveToDb
 
         val fetchESS = mSettings.AppSettings!!.getBoolean(Settings.APP_FETCH_ESS, false)
         val checkUpdates = mSettings.AppSettings!!.getBoolean(Settings.APP_CHECK_UPDATES, true)
@@ -82,7 +85,10 @@ class ServerSettingsActivity : Activity() {
         val uri = binding.txtSettings3wifiServer.text.toString()
         val fetchESS = binding.swFetchEss.isChecked
         val checkUpdates = binding.swCheckUpd.isChecked
-        // Save
+
+        val switchSaveToDb = findViewById<Switch>(R.id.switch_save_to_db)
+        mSettings.Editor!!.putBoolean("SAVE_TO_DB", switchSaveToDb.isChecked).apply()
+
         mSettings.Editor!!.putString(Settings.APP_SERVER_LOGIN, login)
         mSettings.Editor!!.putString(Settings.APP_SERVER_PASSWORD, password)
 
