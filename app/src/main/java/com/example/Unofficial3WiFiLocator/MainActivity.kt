@@ -368,7 +368,7 @@ class MyActivity : AppCompatActivity() {
         val context = applicationContext
         val list = ArrayList<HashMap<String, String?>>()
         val adapter = SimpleAdapter(context, list, R.layout.row, arrayOf("ESSID", "BSSID"), intArrayOf(R.id.ESSID, R.id.BSSID))
-        WiFiList!!.adapter = adapter
+        binding.WiFiList.adapter = adapter
         scanAndShowWiFi()
     }
 
@@ -760,7 +760,7 @@ class MyActivity : AppCompatActivity() {
                     list.add(ElemWiFi)
                 }
                 adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount))
-                WiFiList!!.adapter = adapter
+                binding.WiFiList.adapter = adapter
                 ScanInProcess = false
                 binding.btnCheckFromBase.isEnabled = true
                 val toast = Toast.makeText(applicationContext,
@@ -905,7 +905,7 @@ class MyActivity : AppCompatActivity() {
         }
         adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount))
         runOnUiThread {
-            WiFiList!!.adapter = adapter
+            binding.WiFiList.adapter = adapter
             binding.btnCheckFromBase.isEnabled = true
         }
     }
