@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/ssid_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/ssid"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/bssid_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/bssid"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/password_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/wps_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/wps_pin"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/admin_login_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/admin_login"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/admin_pass_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/admin_pass"
+        android:inputType="text" />
+
+</LinearLayout>

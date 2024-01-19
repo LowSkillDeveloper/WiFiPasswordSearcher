@@ -88,6 +88,22 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         }
     }
 
+    fun updateNetwork(network: APData) {
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(COLUMN_WIFI_NAME, network.essid)
+            put(COLUMN_MAC_ADDRESS, network.bssid)
+            put(COLUMN_WIFI_PASSWORD, network.keys?.joinToString(", "))
+            put(COLUMN_WPS_CODE, network.wps?.joinToString(", "))
+            put(COLUMN_ADMIN_LOGIN, network.adminLogin)
+            put(COLUMN_ADMIN_PASS, network.adminPass)
+        }
+        network.id?.let {
+            db.update(TABLE_NAME, contentValues, "$COLUMN_ID = ?", arrayOf(it.toString()))
+        }
+        db.close()
+    }
+
     fun addNetwork(essid: String, bssid: String, password: String, wpsCode: String, adminLogin: String, adminPass: String) {
         val db = this.writableDatabase
         val contentValues = ContentValues().apply {
@@ -139,6 +155,7 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
 }
 
 class APData {
+    var id: Int? = null
     var essid: String? = null
     var bssid: String? = null
     var keys: ArrayList<String>? = null

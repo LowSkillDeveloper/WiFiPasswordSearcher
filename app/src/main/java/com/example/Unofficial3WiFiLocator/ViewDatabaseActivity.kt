@@ -75,6 +75,7 @@ class ViewDatabaseActivity : Activity() {
             val cursor = (listView.adapter as WiFiCursorAdapter).cursor
             if (cursor.moveToPosition(position)) {
                 val network = APData().apply {
+                    id = cursor.getInt(cursor.getColumnIndex("ID"))
                     essid = cursor.getString(cursor.getColumnIndexOrThrow("WiFiName"))
                     bssid = cursor.getString(cursor.getColumnIndexOrThrow("MACAddress"))
                     keys = arrayListOf(cursor.getString(cursor.getColumnIndexOrThrow("WiFiPassword")))
@@ -168,6 +169,7 @@ class ViewDatabaseActivity : Activity() {
         }
 
         options.add(getString(R.string.generate_wps_pin))
+        options.add(getString(R.string.edit_network))
         options.add(getString(R.string.delete_network))
 
         val dialogBuilder = AlertDialog.Builder(this)
@@ -194,8 +196,41 @@ class ViewDatabaseActivity : Activity() {
                 intent.putExtra("variable1", network.bssid)
                 startActivity(intent)
             }
+            getString(R.string.edit_network) -> showEditNetworkDialog(network)
+            getString(R.string.delete_network) -> showDeleteConfirmationDialog(network)
         }
     }
+
+
+    private fun showEditNetworkDialog(network: APData) {
+        val layoutInflater = LayoutInflater.from(this)
+        val view = layoutInflater.inflate(R.layout.dialog_edit_network, null)
+
+        val ssidInput = view.findViewById<EditText>(R.id.ssid_input).apply { setText(network.essid) }
+        val bssidInput = view.findViewById<EditText>(R.id.bssid_input).apply { setText(network.bssid) }
+        val passwordInput = view.findViewById<EditText>(R.id.password_input).apply { setText(network.keys?.joinToString(", ")) }
+        val wpsInput = view.findViewById<EditText>(R.id.wps_input).apply { setText(network.wps?.joinToString(", ")) }
+        val adminLoginInput = view.findViewById<EditText>(R.id.admin_login_input).apply { setText(network.adminLogin) }
+        val adminPassInput = view.findViewById<EditText>(R.id.admin_pass_input).apply { setText(network.adminPass) }
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        dialogBuilder.setTitle(getString(R.string.edit_network))
+        dialogBuilder.setPositiveButton(getString(R.string.save)) { dialog, _ ->
+            network.essid = ssidInput.text.toString()
+            network.bssid = bssidInput.text.toString()
+            network.keys = arrayListOf(passwordInput.text.toString())
+            network.wps = arrayListOf(wpsInput.text.toString())
+            network.adminLogin = adminLoginInput.text.toString()
+            network.adminPass = adminPassInput.text.toString()
+
+            wifiDatabaseHelper.updateNetwork(network)
+            displayDatabaseInfo()
+        }
+        dialogBuilder.setNegativeButton(getString(R.string.cancel), null)
+        dialogBuilder.create().show()
+    }
+
 
     private fun showDeleteConfirmationDialog(network: APData) {
         AlertDialog.Builder(this)
