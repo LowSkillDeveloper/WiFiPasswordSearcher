@@ -173,27 +173,27 @@ class ViewDatabaseActivity : Activity() {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setTitle(network.essid ?: getString(R.string.unknown_network))
         dialogBuilder.setItems(options.toTypedArray()) { _, which ->
-            when {
-                which < options.size - 1 -> handleOtherOptions(which, network)
-                else -> showDeleteConfirmationDialog(network)
-            }
+            val selectedOption = options[which]
+            handleOtherOptions(selectedOption, network)
         }
         dialogBuilder.show()
     }
 
-    private fun handleOtherOptions(which: Int, network: APData) {
-        when (which) {
-            0 -> network.essid?.let { copyToClipboard("ESSID", it) }
-            1 -> network.bssid?.let { copyToClipboard("BSSID", it) }
-            2 -> network.keys?.joinToString(", ")?.let { copyToClipboard("Password", it) }
-            3 -> network.wps?.joinToString(", ")?.let { copyToClipboard("WPS PIN", it) }
-            4 -> connectUsingWPS(network)
-            5 -> network.adminLogin?.let { copyToClipboard("Router Login", it) }
-            6 -> network.adminPass?.let { copyToClipboard("Router Password", it) }
-            7 -> { val intent = Intent(this, WPSActivity::class.java)
+    private fun handleOtherOptions(selectedOption: String, network: APData) {
+        when (selectedOption) {
+            getString(R.string.copy_essid) -> network.essid?.let { copyToClipboard("ESSID", it) }
+            getString(R.string.copy_bssid) -> network.bssid?.let { copyToClipboard("BSSID", it) }
+            getString(R.string.copy_password) -> network.keys?.joinToString(", ")?.let { copyToClipboard("Password", it) }
+            getString(R.string.copy_wps_pin) -> network.wps?.joinToString(", ")?.let { copyToClipboard("WPS PIN", it) }
+            getString(R.string.connect_using_wps) -> connectUsingWPS(network)
+            getString(R.string.copy_router_login) -> network.adminLogin?.let { copyToClipboard("Router Login", it) }
+            getString(R.string.copy_router_password) -> network.adminPass?.let { copyToClipboard("Router Password", it) }
+            getString(R.string.generate_wps_pin) -> {
+                val intent = Intent(this, WPSActivity::class.java)
                 intent.putExtra("variable", network.essid)
                 intent.putExtra("variable1", network.bssid)
-                startActivity(intent) }
+                startActivity(intent)
+            }
         }
     }
 
