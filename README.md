@@ -22,7 +22,8 @@ The changelog contains only information about the changes that I made myself. Ch
   - Added columns for login and password to the router admin panel. (only manual addition or import from router scan txt)
   - Import txt file from RouterScan to local DB (or myuploads.txt from 3wifi)
     - Now the application can import a large myuploads.txt file that containing more than 100K lines
-  
+  - Added a switch that disables automatic adding of received data from 3wifi to the local database
+    
 ## Updated Features:
 - Offline mode button.
 - In network security definition, WPA3 definition has been added
