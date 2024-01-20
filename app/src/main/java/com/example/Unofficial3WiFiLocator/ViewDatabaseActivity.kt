@@ -58,6 +58,7 @@ class ViewDatabaseActivity : Activity() {
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
+            Toast.makeText(this, "Проверка окружающих wifi по базе (WIP)", Toast.LENGTH_SHORT).show()
         }
 
 
