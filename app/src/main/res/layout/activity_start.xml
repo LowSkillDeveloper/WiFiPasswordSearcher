@@ -163,4 +163,49 @@
 			android:orientation="horizontal"
 			android:padding="50dp"/>
 	</LinearLayout>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/telegram_txt"
+		android:autoLink="web"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginTop="5dp"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/TELEGRAM_START_URI"
+		android:textColor="@android:color/holo_blue_dark"
+		android:textStyle="bold"
+		android:layout_marginTop="3dp"
+		android:textSize="15sp"
+		android:clickable="true"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:autoLink="web"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/github_txt"
+		android:autoLink="web"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginTop="8dp" />
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/GITHUB_START_URI"
+		android:textColor="@android:color/holo_blue_dark"
+		android:textStyle="bold"
+		android:layout_marginTop="3dp"
+		android:textSize="14sp"
+		android:clickable="true"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:autoLink="web"
+		/>
+
 </LinearLayout>
+
