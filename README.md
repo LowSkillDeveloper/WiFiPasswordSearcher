@@ -23,6 +23,7 @@ The changelog contains only information about the changes that I made myself. Ch
   - Import txt file from RouterScan to local DB (or myuploads.txt from 3wifi)
     - Now the application can import a large myuploads.txt file that containing more than 100K lines
   - Added a switch that disables automatic adding of received data from 3wifi to the local database
+- Added links to the start menu
     
 ## Updated Features:
 - Offline mode button.
