@@ -76,6 +76,7 @@
     <string name="network_deleted">Network deleted</string>
     <string name="save_to_local_database">Save data to a local database</string>
     <string name="edit_network">Edit data of this network</string>
+    <string name="found_in_local_db">Found in local DB</string>
 
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
