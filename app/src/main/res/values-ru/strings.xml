@@ -87,6 +87,7 @@
     <string name="api_txt">API ключи</string>
     <string name="logout_txt">Сменить аккаунт:</string>
     <string name="logout_btn_txt">Выйти из этого аккаунта</string>
+    <string name="found_in_local_db">Найден в локальной БД</string>
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>

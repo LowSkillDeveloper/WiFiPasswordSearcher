@@ -171,6 +171,7 @@ internal class MyScanResult {
     var frequency = 0
     var level = 0
     var capabilities: String? = null
+    var foundInLocalDb = false
 }
 
 internal class WiFiListSimpleAdapter(private val context: Context, data: List<MutableMap<String, *>?>, resource: Int, from: Array<String>?, to: IntArray?) : SimpleAdapter(context, data, resource, from, to) {
@@ -283,6 +284,17 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
         val keysCount = txtKeysCount.text.toString().toInt()
         llKeys.isClickable = keysCount > 1
         txtRowId.text = position.toString()
+
+
+        val localDbStatusTextView = view.findViewById<TextView>(R.id.localDbStatus)
+        val localDbStatus = elemWiFi["LOCAL_DB"]
+        if (!localDbStatus.isNullOrEmpty()) {
+            localDbStatusTextView.visibility = View.VISIBLE
+            localDbStatusTextView.text = localDbStatus
+        } else {
+            localDbStatusTextView.visibility = View.GONE
+        }
+
         return view
     }
 
@@ -858,6 +870,7 @@ class MyActivity : AppCompatActivity() {
             }
             return
         }
+
         val list = ArrayList<HashMap<String, String?>?>()
         var elemWiFi: HashMap<String, String?>
         var keyColor: String
@@ -883,8 +896,7 @@ class MyActivity : AppCompatActivity() {
                 elemWiFi["WPS"] = "*[color:blue]*" + apdata.wps!![0]
             }
             elemWiFi["CAPABILITY"] = result.capabilities
-
-            // Проверяем наличие сети в локальной базе данных и наличие пароля или WPS PIN
+            elemWiFi["LOCAL_DB"] = ""
             if (saveToDb && !wifiDatabaseHelper.networkExists(
                     result.bssid!!.toUpperCase(),
                     apdata.keys?.firstOrNull(),
@@ -893,7 +905,6 @@ class MyActivity : AppCompatActivity() {
                     apdata.adminPass
                 ) && (apdata.keys?.isNotEmpty() == true || apdata.wps?.isNotEmpty() == true)
             ) {
-                // Добавляем сеть в локальную базу данных, если её там нет
                 wifiDatabaseHelper.addNetwork(
                     result.essid ?: "",
                     result.bssid!!.toUpperCase(),
@@ -908,11 +919,25 @@ class MyActivity : AppCompatActivity() {
             WiFiKeys!!.add(i, apdata)
             i++
         }
-        adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount))
-        runOnUiThread {
-            binding.WiFiList.adapter = adapter
-            binding.btnCheckFromBase.isEnabled = true
-        }
+        Thread(Runnable {
+            for (elemWiFi in list) {
+                val bssid = elemWiFi?.get("BSSID")?.toUpperCase()
+                val localDbExists = bssid?.let {
+                    wifiDatabaseHelper.networkExists(
+                        it,
+                        null, null, null, null
+                    )
+                } ?: false
+                if (localDbExists) {
+                    elemWiFi?.put("LOCAL_DB", getString(R.string.found_in_local_db))
+                }
+            }
+            runOnUiThread {
+                adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY", "LOCAL_DB"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount, R.id.localDbStatus))
+                binding.WiFiList.adapter = adapter
+                binding.btnCheckFromBase.isEnabled = true
+            }
+        }).start()
     }
 
     private fun keyWPSPairExists(keys: ArrayList<String>, pins: ArrayList<String>, key: String, pin: String): Boolean {
