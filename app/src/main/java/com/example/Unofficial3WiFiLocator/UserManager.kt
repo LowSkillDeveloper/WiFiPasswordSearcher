@@ -2,9 +2,6 @@ package com.example.Unofficial3WiFiLocator
 
 import android.content.Context
 
-/**
- * Created by пк on 20.12.2015.
- */
 internal class UserManager(context: Context) {
     private val mSettings: Settings
     @JvmField

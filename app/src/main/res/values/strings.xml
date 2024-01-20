@@ -81,6 +81,11 @@
     <string name="github_txt">Project GitHub page</string>
     <string name="telegram_txt">Official telegram channel</string>
 
+    <string name="api_txt">API Keys</string>
+    <string name="logout_txt">Change your account:</string>
+    <string name="logout_btn_txt">Logout from this account</string>
+
+
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
 

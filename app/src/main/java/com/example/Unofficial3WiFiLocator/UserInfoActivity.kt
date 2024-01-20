@@ -20,6 +20,7 @@ import java.util.*
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.preference.PreferenceManager
 
 class UserInfoActivity : Activity() {
@@ -129,6 +130,20 @@ class UserInfoActivity : Activity() {
         if (info == "wpspin") {
             AsyncWpsUpdater().execute()
         }
+    }
+    fun btnLogoutOnClick(view: View) {
+        val mSettings = Settings(applicationContext)
+        mSettings.Reload()
+        mSettings.Editor!!.remove(Settings.APP_SERVER_LOGIN)
+        mSettings.Editor!!.remove(Settings.APP_SERVER_PASSWORD)
+        mSettings.Editor!!.remove(Settings.API_READ_KEY)
+        mSettings.Editor!!.remove(Settings.API_WRITE_KEY)
+        mSettings.Editor!!.remove(Settings.API_KEYS_VALID)
+        mSettings.Editor!!.commit()
+
+        val startPage = Intent(applicationContext, StartActivity::class.java)
+        startPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(startPage)
     }
 
     fun copyApiKeys(view: View) {

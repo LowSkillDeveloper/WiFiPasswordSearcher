@@ -82,7 +82,7 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:gravity="center_horizontal"
-		android:text="API Keys"
+		android:text="@string/api_txt"
 		android:textSize="20sp"
 		android:layout_marginTop="16dp"/>
 
@@ -94,6 +94,23 @@
 		android:onClick="copyApiKeys"
 		android:gravity="center_horizontal"
 		/>
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:gravity="center_horizontal"
+		android:text="@string/logout_txt"
+		android:textSize="20sp"
+		android:layout_marginTop="16dp"/>
+
+	<Button
+		android:id="@+id/btnLogout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/logout_btn_txt"
+		android:onClick="btnLogoutOnClick"
+		android:layout_marginTop="16dp"/>
 
 </LinearLayout>
 
