@@ -36,6 +36,7 @@ The changelog contains only information about the changes that I made myself. Ch
 - Getting online vendor information from wpsfinder.
 - Remade some hardcoded lines
 - Visibility of some objects
+- Fixed a crash when switching passwords (The problem exists in all versions from drygdryg, which migrated from java to kotlin, but I no longer have it)
 
 
 # TODO:
