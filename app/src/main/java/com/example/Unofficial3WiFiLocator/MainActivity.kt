@@ -314,9 +314,13 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
 
         for (i in 0 until MyActivity.WiFiList!!.childCount) {
             row = MyActivity.WiFiList!!.getChildAt(i)
+            val currentRow = MyActivity.WiFiList!!.getChildAt(i)
             val txtRowId = row.findViewById<View>(R.id.txtRowId) as TextView
             val rid = txtRowId.text.toString().toInt()
-            row = if (rid != rowID) null else break
+            if (rid == rowID) {
+                row = currentRow
+                break
+            }
         }
         if (row == null) return
         val keys = MyActivity.WiFiKeys!![rowID].keys
@@ -595,6 +599,7 @@ class MyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        MyActivity.WiFiList = binding.WiFiList
         setSupportActionBar(bottomAppBar)
         listContextMenuItems = resources.getStringArray(R.array.menu_network)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
