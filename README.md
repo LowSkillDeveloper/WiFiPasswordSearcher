@@ -45,6 +45,9 @@ The changelog contains only information about the changes that I made myself. Ch
 - Add GPS sniffer
 - Add manual language change
 - Add a 3wifi sniffer for surrounding networks
+- Fix known minor bugs
+- Fix the message that the application is intended for older versions of Android (Too much to redo)
+
 
 
 # Screenshots
