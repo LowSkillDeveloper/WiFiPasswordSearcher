@@ -176,9 +176,9 @@
     <string name="connection_failure">Сбой подключения</string>
     <string name="status_initializing">Инициализация…</string>
     <string name="dialog_enter_custom_pin">Введите пин-код WPS</string>
-    <string name="source_3wifi">3WiFi</string>
-    <string name="source_local_database">БАЗА</string>
-    <string name="source_local_generator">ГЕНЕРАТОР</string>
+    <string name="source_3wifi">3WiFi ОНЛАЙН</string>
+    <string name="source_local_database">ЛОКАЛЬНАЯ БАЗА</string>
+    <string name="source_local_generator">ОФФЛАЙН ГЕНЕРАТОР</string>
     <string name="check_updates">Проверять обновления</string>
     <string name="checkbox_unmask_password">Показать</string>
     <string name="fetch_by_bssid_essid">Искать по ESSID + BSSID</string>

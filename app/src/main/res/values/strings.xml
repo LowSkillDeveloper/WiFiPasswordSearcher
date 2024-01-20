@@ -213,9 +213,9 @@
     <string name="status_initializing">Initializing…</string>
     <string name="dialog_enter_custom_pin">Enter your WPS PIN</string>
 
-    <string name="source_3wifi">3WiFi Online DataBase</string>
+    <string name="source_3wifi">3WiFi Online</string>
     <string name="source_local_generator">3WiFi Offline Generate</string>
-    <string name="source_local_database">Local DataBase</string>
+    <string name="source_local_database">Local DB</string>
 
     <!-- Server settings strings -->
     <string name="checkbox_unmask_password">Unmask</string>
