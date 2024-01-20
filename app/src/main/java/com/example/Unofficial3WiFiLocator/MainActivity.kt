@@ -669,6 +669,10 @@ class MyActivity : AppCompatActivity() {
             R.id.action_refresh -> {
                 refreshNetworkList()
             }
+            R.id.action_check_local_db -> {
+                Toast.makeText(this, "Проверка по локальной БД (WIP)", Toast.LENGTH_SHORT).show()
+                return true
+            }
             R.id.action_monitor_network -> {
                 val lay = LinearLayout(this@MyActivity)
                 lay.orientation = LinearLayout.VERTICAL

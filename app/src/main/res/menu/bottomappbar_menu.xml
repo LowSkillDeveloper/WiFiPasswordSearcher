@@ -7,6 +7,11 @@
         android:title="@string/button_refresh"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_check_local_db"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/action_check_local_db"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/action_view_db"
         android:title="@string/action_view_db"
         app:showAsAction="never"/>

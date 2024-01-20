@@ -82,6 +82,8 @@
     <string name="telegram_txt">Official telegram channel</string>
     <string name="found_in_local_db">Found in local DB</string>
     <string name="auto_search_local_db">Search in local DB after 3WiFi</string>
+    <string name="action_check_local_db">Check in local DB</string>
+
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>
