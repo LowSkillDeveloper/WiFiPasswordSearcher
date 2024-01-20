@@ -3,9 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/row"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:orientation="horizontal"
-	android:padding="8dp">
+	android:layout_height="fill_parent">
 
 	<LinearLayout
 		android:orientation="horizontal"
@@ -68,32 +66,14 @@
 					android:textSize="12dp" />
 
 
-				<LinearLayout
-					android:orientation="horizontal"
+				<TextView
+					android:id="@+id/txtSignal"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginLeft="5dp">
+					android:layout_marginLeft="5dp"
+					android:text="10%"
+					android:textSize="12sp" />
 
-					<TextView
-						android:id="@+id/txtSignal"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="10%"
-						android:textSize="12sp" />
-
-					<View
-						android:layout_width="5dp"
-						android:layout_height="wrap_content" />
-
-					<TextView
-						android:id="@+id/localDbStatus"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="Found in local DB"
-						android:textSize="12sp"
-						android:textColor="@android:color/holo_purple" />
-
-				</LinearLayout>
 
 			</LinearLayout>
 
@@ -158,7 +138,6 @@
 				android:paddingRight="18dp"/>
 
 		</LinearLayout>
-
 
 	</LinearLayout>
 
