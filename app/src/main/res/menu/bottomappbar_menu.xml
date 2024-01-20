@@ -12,6 +12,11 @@
         android:title="@string/action_check_local_db"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/action_gps_sniff"
+        android:icon="@drawable/ic_map_black_24dp"
+        android:title="@string/button_gps_sniff"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/action_view_db"
         android:title="@string/action_view_db"
         app:showAsAction="never"/>

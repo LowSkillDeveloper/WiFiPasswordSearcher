@@ -669,6 +669,10 @@ class MyActivity : AppCompatActivity() {
             R.id.action_refresh -> {
                 refreshNetworkList()
             }
+            R.id.action_gps_sniff -> {
+                Toast.makeText(this, "Функция GPS Sniff (WIP)", Toast.LENGTH_SHORT).show()
+                return true
+            }
             R.id.action_check_local_db -> {
                 Toast.makeText(this, "Проверка по локальной БД (WIP)", Toast.LENGTH_SHORT).show()
                 return true

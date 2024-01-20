@@ -93,7 +93,7 @@
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>
-    <string name="button_gps_sniff">GPS sniff (скоро…)</string>
+    <string name="button_gps_sniff">GPS снифер</string>
     <string name="button_offline">Офлайн</string>
     <string name="button_refresh">Обновить</string>
     <string name="button_sign_in">Войти</string>

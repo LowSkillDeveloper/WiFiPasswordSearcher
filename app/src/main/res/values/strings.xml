@@ -109,7 +109,7 @@
     <!-- MyActivity strings-->
     <string name="button_refresh">Refresh</string>
     <string name="button_3wifi">3WiFi</string>
-    <string name="button_gps_sniff">GPS sniff (soon…)</string>
+    <string name="button_gps_sniff">GPS sniff</string>
 
     <string name="dialog_choose_key">Choose key:</string>
     <string name="dialog_choose_key_key">Key: </string>
