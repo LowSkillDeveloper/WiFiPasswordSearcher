@@ -800,6 +800,7 @@ class MyActivity : AppCompatActivity() {
         var readLine: String?
         val rawData = StringBuilder()
         val fetchESS: Boolean
+        val autoSearchLocalDb: Boolean
         try {
             val query = JSONObject()
             query.put("key", API_READ_KEY)
@@ -811,6 +812,7 @@ class MyActivity : AppCompatActivity() {
             }
             mSettings.Reload()
             fetchESS = mSettings.AppSettings!!.getBoolean(Settings.APP_FETCH_ESS, false)
+            autoSearchLocalDb = mSettings.AppSettings!!.getBoolean("AUTO_SEARCH_LOCAL_DB", true)
             query.put("bssid", bssids)
             if (fetchESS) query.put("essid", essids)
             val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
@@ -928,7 +930,7 @@ class MyActivity : AppCompatActivity() {
                         null, null, null, null
                     )
                 } ?: false
-                if (localDbExists) {
+                if (localDbExists && autoSearchLocalDb) {
                     elemWiFi?.put("LOCAL_DB", getString(R.string.found_in_local_db))
                 }
             }

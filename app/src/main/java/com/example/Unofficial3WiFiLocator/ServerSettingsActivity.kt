@@ -26,9 +26,10 @@ class ServerSettingsActivity : Activity() {
 
         val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
         binding.txtSettings3wifiServer.setText(serverURI)
-
+        val switchAutoSearchLocalDb = findViewById<Switch>(R.id.switch_auto_search_local_db)
         val switchSaveToDb = findViewById<Switch>(R.id.switch_save_to_db)
         val saveToDb = mSettings.AppSettings!!.getBoolean("SAVE_TO_DB", true)
+        val autoSearchLocalDb = mSettings.AppSettings!!.getBoolean("AUTO_SEARCH_LOCAL_DB", true)
         switchSaveToDb.isChecked = saveToDb
 
         val fetchESS = mSettings.AppSettings!!.getBoolean(Settings.APP_FETCH_ESS, false)
@@ -38,6 +39,8 @@ class ServerSettingsActivity : Activity() {
         binding.txtSettings3wifiServer.setText(serverURI)
         binding.swFetchEss.isChecked = fetchESS
         binding.swCheckUpd.isChecked = checkUpdates
+        binding.switchSaveToDb.isChecked = saveToDb
+        binding.switchAutoSearchLocalDb.isChecked = autoSearchLocalDb
         binding.btnSettitgs3wifiCancel.setOnClickListener(btnCloseOnClick)
         binding.btnSettitgs3wifiSave.setOnClickListener(btnSaveOnClick)
 
@@ -85,9 +88,10 @@ class ServerSettingsActivity : Activity() {
         val uri = binding.txtSettings3wifiServer.text.toString()
         val fetchESS = binding.swFetchEss.isChecked
         val checkUpdates = binding.swCheckUpd.isChecked
-
+        val autoSearchLocalDb = binding.switchAutoSearchLocalDb.isChecked
         val switchSaveToDb = findViewById<Switch>(R.id.switch_save_to_db)
         mSettings.Editor!!.putBoolean("SAVE_TO_DB", switchSaveToDb.isChecked).apply()
+        mSettings.Editor!!.putBoolean("AUTO_SEARCH_LOCAL_DB", autoSearchLocalDb)
 
         mSettings.Editor!!.putString(Settings.APP_SERVER_LOGIN, login)
         mSettings.Editor!!.putString(Settings.APP_SERVER_PASSWORD, password)

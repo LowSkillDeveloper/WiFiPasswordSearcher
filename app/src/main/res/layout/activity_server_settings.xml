@@ -172,6 +172,21 @@
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:layout_marginBottom="8dp">
+		<Switch
+			android:id="@+id/switch_auto_search_local_db"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/auto_search_local_db"
+			android:textSize="21sp"
+			android:checked="true"/>
+	</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content">
 
 			<Button
