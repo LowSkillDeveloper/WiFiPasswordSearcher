@@ -757,6 +757,8 @@ class MyActivity : AppCompatActivity() {
             return
         }
         val dProccess = ProgressDialog(this@MyActivity)
+        lateinit var scanWiFiReceiverFirst: BroadcastReceiver
+        lateinit var scanWiFiReceiverSecond: BroadcastReceiver
         dProccess.setProgressStyle(ProgressDialog.STYLE_SPINNER)
         dProccess.setMessage(getString(R.string.status_scanning))
         dProccess.setCanceledOnTouchOutside(false)
@@ -764,8 +766,6 @@ class MyActivity : AppCompatActivity() {
 
         val doubleScan = mSettings.AppSettings!!.getBoolean("DOUBLE_SCAN", false)
         val tempResults: MutableList<MyScanResult> = mutableListOf()
-
-        lateinit var scanWiFiReceiverSecond: BroadcastReceiver
 
         val handleScanResults: (MutableList<MyScanResult>) -> Unit = { results ->
             val res = wifiMgr.scanResults
@@ -801,10 +801,11 @@ class MyActivity : AppCompatActivity() {
             binding.WiFiList.adapter = adapter
             ScanInProcess = false
             binding.btnCheckFromBase.isEnabled = true
-            val toast = Toast.makeText(applicationContext, getString(R.string.toast_scan_complete), Toast.LENGTH_SHORT)
-            toast.show()
+            if (!doubleScan || receiver == scanWiFiReceiverSecond) {
+                val toast = Toast.makeText(applicationContext, getString(R.string.toast_scan_complete), Toast.LENGTH_SHORT)
+                toast.show()
+            }
             receiver?.let { context.unregisterReceiver(it) }
-            ScanWiFiReceiverIntent = null
             dProccess.dismiss()
         }
 
@@ -815,7 +816,7 @@ class MyActivity : AppCompatActivity() {
             }
         }
 
-        val scanWiFiReceiverFirst = object : BroadcastReceiver() {
+        scanWiFiReceiverFirst = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 handleScanResults(tempResults)
                 if (doubleScan) {
@@ -829,6 +830,10 @@ class MyActivity : AppCompatActivity() {
                     finishScanning(context, null)
                 }
             }
+        }
+
+        if (ScanInProcess) {
+            return
         }
 
         registerReceiver(scanWiFiReceiverFirst, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
