@@ -1035,6 +1035,7 @@ class MyActivity : AppCompatActivity() {
         var i = 0
 
         for (result in WiFiScanResult!!) {
+            val apData = APData()
             val networksInDb = wifiDatabaseHelper.getNetworksByBssid(result.bssid!!.toUpperCase())
             val elemWiFi = HashMap<String, String?>()
             elemWiFi["ESSID"] = result.essid
@@ -1046,18 +1047,27 @@ class MyActivity : AppCompatActivity() {
             if (networksInDb.isNotEmpty()) {
                 val firstNetwork = networksInDb.first()
                 val keysCount = firstNetwork.keys?.size ?: 0
-                elemWiFi["KEY"] = if (keysCount > 0) "*[color:green]*" + (firstNetwork.keys?.firstOrNull() ?: "[unknown]") else "*[color:gray]*[unknown]"
-                elemWiFi["WPS"] = if (keysCount > 0) "*[color:blue]*" + (firstNetwork.wps?.firstOrNull() ?: "[unknown]") else "*[color:gray]*[unknown]"
+                val keyColor = if (keysCount > 0) "*[color:green]*" else "*[color:gray]*"
+                apData.keys = firstNetwork.keys
+                apData.wps = firstNetwork.wps
+                apData.generated = ArrayList<Boolean>().apply {
+                    repeat(apData.keys?.size ?: 0) { add(false) }
+                }
+
+                elemWiFi["KEY"] = keyColor + (firstNetwork.keys?.firstOrNull() ?: "[unknown]")
+                elemWiFi["WPS"] = keyColor + (firstNetwork.wps?.firstOrNull() ?: "[unknown]")
                 elemWiFi["LOCAL_DB"] = getString(R.string.found_in_local_db)
-                elemWiFi["KEYSCOUNT"] = "*[color:green]*" + keysCount.toString()
+                elemWiFi["KEYSCOUNT"] = keyColor + keysCount.toString()
             } else {
+                apData.keys = ArrayList<String>()
+                apData.wps = ArrayList<String>()
+                apData.generated = ArrayList<Boolean>()
                 elemWiFi["KEY"] = "*[color:gray]*[unknown]"
                 elemWiFi["WPS"] = "*[color:gray]*[unknown]"
                 elemWiFi["KEYSCOUNT"] = "*[color:gray]*0"
             }
-
             list.add(elemWiFi)
-            WiFiKeys!!.add(i, if (networksInDb.isNotEmpty()) networksInDb.first() else APData())
+            WiFiKeys!!.add(i, apData)
             i++
         }
 
