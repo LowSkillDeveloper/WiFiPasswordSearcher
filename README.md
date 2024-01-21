@@ -2,12 +2,15 @@
 
 This is a new version of 3wifi locator, which is based on the version from drygdryg.
 
+
 > [!NOTE]
 > Делать новую версию локатора оказалось интереснее чем я думал, поэтому я запилил огромное обновление, по моему мнению конечно, ведь локатор давно был заброшен.
 Поэтому надеюсь проект 3wifi не умрёт окончательно, и получит вторую жизнь, как и локатор.
 
 # Changelog
 The changelog contains only information about the changes that I made myself. Changes made by drygdryg to the original version can be found in his repository, link at the end of the description.
+
+Descriptions and instructions for my added new functions can be found on the Wiki Github page: https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/wiki
 
 ## Added Features:
 - Server list URLs in the start menu.
