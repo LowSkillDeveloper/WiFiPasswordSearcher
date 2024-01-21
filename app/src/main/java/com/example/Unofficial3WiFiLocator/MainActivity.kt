@@ -1032,12 +1032,11 @@ class MyActivity : AppCompatActivity() {
 
     private fun checkFromLocalDb() {
         val list = ArrayList<HashMap<String, String?>?>()
-        var elemWiFi: HashMap<String, String?>
         var i = 0
 
         for (result in WiFiScanResult!!) {
             val networksInDb = wifiDatabaseHelper.getNetworksByBssid(result.bssid!!.toUpperCase())
-            elemWiFi = HashMap()
+            val elemWiFi = HashMap<String, String?>()
             elemWiFi["ESSID"] = result.essid
             elemWiFi["BSSID"] = result.bssid!!.toUpperCase()
             elemWiFi["SIGNAL"] = getStrSignal(result.level)
@@ -1046,14 +1045,15 @@ class MyActivity : AppCompatActivity() {
 
             if (networksInDb.isNotEmpty()) {
                 val firstNetwork = networksInDb.first()
-                elemWiFi["KEY"] = "*[color:green]*" + (firstNetwork.keys?.firstOrNull() ?: "[unknown]")
-                elemWiFi["WPS"] = "*[color:blue]*" + (firstNetwork.wps?.firstOrNull() ?: "[unknown]")
+                val keysCount = firstNetwork.keys?.size ?: 0
+                elemWiFi["KEY"] = if (keysCount > 0) "*[color:green]*" + (firstNetwork.keys?.firstOrNull() ?: "[unknown]") else "*[color:gray]*[unknown]"
+                elemWiFi["WPS"] = if (keysCount > 0) "*[color:blue]*" + (firstNetwork.wps?.firstOrNull() ?: "[unknown]") else "*[color:gray]*[unknown]"
                 elemWiFi["LOCAL_DB"] = getString(R.string.found_in_local_db)
-                elemWiFi["KEYSCOUNT"] = networksInDb.size.toString()
+                elemWiFi["KEYSCOUNT"] = "*[color:green]*" + keysCount.toString()
             } else {
                 elemWiFi["KEY"] = "*[color:gray]*[unknown]"
                 elemWiFi["WPS"] = "*[color:gray]*[unknown]"
-                elemWiFi["KEYSCOUNT"] = "0"
+                elemWiFi["KEYSCOUNT"] = "*[color:gray]*0"
             }
 
             list.add(elemWiFi)
@@ -1071,14 +1071,19 @@ class MyActivity : AppCompatActivity() {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM ${WiFiDatabaseHelper.TABLE_NAME} WHERE ${WiFiDatabaseHelper.COLUMN_MAC_ADDRESS} = ?", arrayOf(bssid))
         val networks = mutableListOf<APData>()
+        val apData = APData().apply {
+            this.bssid = bssid
+            keys = arrayListOf()
+            wps = arrayListOf()
+        }
 
         while (cursor.moveToNext()) {
-            val apData = APData().apply {
-                essid = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_NAME))
-                this.bssid = bssid
-                keys = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_PASSWORD)))
-                wps = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WPS_CODE)))
-            }
+            apData.essid = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_NAME))
+            apData.keys?.add(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_PASSWORD)))
+            apData.wps?.add(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WPS_CODE)))
+        }
+
+        if (apData.keys?.isNotEmpty() == true || apData.wps?.isNotEmpty() == true) {
             networks.add(apData)
         }
 
