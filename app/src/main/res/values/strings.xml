@@ -105,6 +105,9 @@
     <string name="toast_no_api_keys">No API keys received</string>
     <string name="status_no_internet">No internet connection</string>
     <string name="dialog_work_offline">Do you want to work in offline mode?</string>
+    <string name="double_scan">Double scan</string>
+    <string name="second_scan">Scan 2 of 2…</string>
+
 
     <!-- MyActivity strings-->
     <string name="button_refresh">Refresh</string>

@@ -38,6 +38,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Handler
+import android.os.Looper
 
 private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
 class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -719,7 +721,9 @@ class MyActivity : AppCompatActivity() {
     }
 
     private fun scanAndShowWiFi() {
-        val comparator = Comparator<MyScanResult> { lhs, rhs -> if (lhs.level < rhs.level) 1 else if (lhs.level == rhs.level) 0 else -1 }
+        val comparator = Comparator<MyScanResult> { lhs, rhs ->
+            if (lhs.level < rhs.level) 1 else if (lhs.level == rhs.level) 0 else -1
+        }
         WiFiScanResult = null
         adapter = null
         if (!wifiMgr.isWifiEnabled) {
@@ -727,12 +731,12 @@ class MyActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this@MyActivity)
             builder.setTitle(getString(R.string.toast_wifi_disabled))
             builder.setMessage(getString(R.string.dialog_message_please_enable_wifi))
-            builder.setPositiveButton(getString(R.string.button_open_settings)
-            ) { d, id ->
+            builder.setPositiveButton(getString(R.string.button_open_settings)) { d, id ->
                 this@MyActivity.startActivityForResult(Intent(action), WIFI_ENABLE_REQUEST)
                 d.dismiss()
-            }.setNegativeButton(getString(R.string.cancel)
-            ) { d, id -> d.cancel() }
+            }.setNegativeButton(getString(R.string.cancel)) { d, id ->
+                d.cancel()
+            }
             val alert = builder.create()
             alert.show()
             return
@@ -741,12 +745,12 @@ class MyActivity : AppCompatActivity() {
             val action = android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
             val builder = AlertDialog.Builder(this@MyActivity)
             builder.setMessage(getString(R.string.dialog_message_location_disabled))
-            builder.setPositiveButton(getString(R.string.button_open_settings)
-            ) { d, id ->
+            builder.setPositiveButton(getString(R.string.button_open_settings)) { d, id ->
                 this@MyActivity.startActivityForResult(Intent(action), LOCATION_ENABLE_REQUEST)
                 d.dismiss()
-            }.setNegativeButton(getString(R.string.cancel)
-            ) { d, id -> d.cancel() }
+            }.setNegativeButton(getString(R.string.cancel)) { d, id ->
+                d.cancel()
+            }
             val alert = builder.create()
             alert.show()
             return
@@ -756,47 +760,77 @@ class MyActivity : AppCompatActivity() {
         dProccess.setMessage(getString(R.string.status_scanning))
         dProccess.setCanceledOnTouchOutside(false)
         dProccess.show()
-        ScanWiFiReceiverIntent = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                val res = wifiMgr.scanResults
-                val results: MutableList<MyScanResult> = ArrayList()
-                for (result in res) {
-                    val sc = MyScanResult()
-                    sc.bssid = result.BSSID
-                    sc.essid = result.SSID
-                    sc.level = result.level
-                    sc.frequency = result.frequency
-                    sc.capabilities = result.capabilities
+
+        val doubleScan = mSettings.AppSettings!!.getBoolean("DOUBLE_SCAN", false)
+        val tempResults: MutableList<MyScanResult> = mutableListOf()
+
+        lateinit var scanWiFiReceiverSecond: BroadcastReceiver
+
+        val handleScanResults: (MutableList<MyScanResult>) -> Unit = { results ->
+            val res = wifiMgr.scanResults
+            for (result in res) {
+                val sc = MyScanResult()
+                sc.bssid = result.BSSID
+                sc.essid = result.SSID
+                sc.level = result.level
+                sc.frequency = result.frequency
+                sc.capabilities = result.capabilities
+                if (results.none { it.bssid == result.BSSID }) {
                     results.add(sc)
                 }
-                Collections.sort(results, comparator)
-                WiFiScanResult = results
-                val list = ArrayList<HashMap<String, String?>?>()
-                var ElemWiFi: HashMap<String, String?>
-                for (result in results) {
-                    ElemWiFi = HashMap()
-                    ElemWiFi["ESSID"] = result.essid
-                    ElemWiFi["BSSID"] = result.bssid!!.toUpperCase()
-                    ElemWiFi["KEY"] = "*[color:gray]*[no data]"
-                    ElemWiFi["WPS"] = "*[color:gray]*[no data]"
-                    ElemWiFi["SIGNAL"] = getStrSignal(result.level)
-                    ElemWiFi["KEYSCOUNT"] = "*[color:gray]*0"
-                    ElemWiFi["CAPABILITY"] = result.capabilities
-                    list.add(ElemWiFi)
-                }
-                adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount))
-                binding.WiFiList.adapter = adapter
-                ScanInProcess = false
-                binding.btnCheckFromBase.isEnabled = true
-                val toast = Toast.makeText(applicationContext,
-                        getString(R.string.toast_scan_complete), Toast.LENGTH_SHORT)
-                toast.show()
-                unregisterReceiver(this)
-                ScanWiFiReceiverIntent = null
-                dProccess.dismiss()
             }
         }
-        registerReceiver(ScanWiFiReceiverIntent, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
+
+        val finishScanning: (Context, BroadcastReceiver?) -> Unit = { context, receiver ->
+            Collections.sort(tempResults, comparator)
+            WiFiScanResult = tempResults
+            val list = ArrayList<HashMap<String, String?>?>()
+            for (result in tempResults) {
+                val ElemWiFi = HashMap<String, String?>()
+                ElemWiFi["ESSID"] = result.essid
+                ElemWiFi["BSSID"] = result.bssid!!.toUpperCase()
+                ElemWiFi["KEY"] = "*[color:gray]*[no data]"
+                ElemWiFi["WPS"] = "*[color:gray]*[no data]"
+                ElemWiFi["SIGNAL"] = getStrSignal(result.level)
+                ElemWiFi["KEYSCOUNT"] = "*[color:gray]*0"
+                ElemWiFi["CAPABILITY"] = result.capabilities
+                list.add(ElemWiFi)
+            }
+            adapter = WiFiListSimpleAdapter(this@MyActivity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount))
+            binding.WiFiList.adapter = adapter
+            ScanInProcess = false
+            binding.btnCheckFromBase.isEnabled = true
+            val toast = Toast.makeText(applicationContext, getString(R.string.toast_scan_complete), Toast.LENGTH_SHORT)
+            toast.show()
+            receiver?.let { context.unregisterReceiver(it) }
+            ScanWiFiReceiverIntent = null
+            dProccess.dismiss()
+        }
+
+        scanWiFiReceiverSecond = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                handleScanResults(tempResults)
+                finishScanning(context, scanWiFiReceiverSecond)
+            }
+        }
+
+        val scanWiFiReceiverFirst = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                handleScanResults(tempResults)
+                if (doubleScan) {
+                    context.unregisterReceiver(this)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        dProccess.setMessage(getString(R.string.second_scan))
+                        registerReceiver(scanWiFiReceiverSecond, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
+                        wifiMgr.startScan()
+                    }, 4000)
+                } else {
+                    finishScanning(context, null)
+                }
+            }
+        }
+
+        registerReceiver(scanWiFiReceiverFirst, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
         ScanInProcess = true
         binding.btnCheckFromBase.isEnabled = false
         wifiMgr.startScan()

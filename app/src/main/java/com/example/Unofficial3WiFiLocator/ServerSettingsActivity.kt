@@ -24,6 +24,10 @@ class ServerSettingsActivity : Activity() {
         val serverPassword = mSettings.AppSettings!!.getString(Settings.APP_SERVER_PASSWORD, "")
 
 
+        val doubleScan = mSettings.AppSettings!!.getBoolean("DOUBLE_SCAN", false)
+        val switchDoubleScan = findViewById<Switch>(R.id.switch_double_scan)
+        switchDoubleScan.isChecked = doubleScan
+
         val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
         binding.txtSettings3wifiServer.setText(serverURI)
         val switchAutoSearchLocalDb = findViewById<Switch>(R.id.switch_auto_search_local_db)
@@ -92,6 +96,8 @@ class ServerSettingsActivity : Activity() {
         val switchSaveToDb = findViewById<Switch>(R.id.switch_save_to_db)
         mSettings.Editor!!.putBoolean("SAVE_TO_DB", switchSaveToDb.isChecked).apply()
         mSettings.Editor!!.putBoolean("AUTO_SEARCH_LOCAL_DB", autoSearchLocalDb)
+        val switchDoubleScan = findViewById<Switch>(R.id.switch_double_scan)
+        mSettings.Editor!!.putBoolean("DOUBLE_SCAN", switchDoubleScan.isChecked).apply()
 
         mSettings.Editor!!.putString(Settings.APP_SERVER_LOGIN, login)
         mSettings.Editor!!.putString(Settings.APP_SERVER_PASSWORD, password)
