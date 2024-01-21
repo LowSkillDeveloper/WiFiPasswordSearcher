@@ -14,6 +14,7 @@ The changelog contains only information about the changes that I made myself. Ch
   - Functionality to load server list from online sources (working mirrors or proxy servers).
 - Display of 3WiFi API keys with the ability to copy them.
 - Dark theme and option to switch to it.
+- Added double scanning feature to get more networks (It does two scans in a row with an interval of 4 seconds and then merges it into one list.)
 - Offline vendor database from "Wps Wpa Tester" app.
 - Added history of data founded in 3wifi for networks you scanned. (Local database in the application, where the networks saves when you found data in 3wifi)
   - Added import and export of local database
