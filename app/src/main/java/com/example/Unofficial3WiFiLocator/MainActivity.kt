@@ -49,10 +49,10 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         private const val DATABASE_NAME = "mylocalwifi.db"
         public const val TABLE_NAME = "WiFiNetworks"
         private const val COLUMN_ID = "ID"
-        private const val COLUMN_WIFI_NAME = "WiFiName"
+        const val COLUMN_WIFI_NAME = "WiFiName"
         public const val COLUMN_MAC_ADDRESS = "MACAddress"
-        private const val COLUMN_WIFI_PASSWORD = "WiFiPassword"
-        private const val COLUMN_WPS_CODE = "WPSCode"
+        const val COLUMN_WIFI_PASSWORD = "WiFiPassword"
+        const val COLUMN_WPS_CODE = "WPSCode"
         private const val COLUMN_ADMIN_LOGIN = "AdminLogin"
         private const val COLUMN_ADMIN_PASS = "AdminPass"
     }
@@ -676,7 +676,8 @@ class MyActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_check_local_db -> {
-                Toast.makeText(this, "Проверка по локальной БД (WIP)", Toast.LENGTH_SHORT).show()
+                checkFromLocalDb()
+                Toast.makeText(this, getString(R.string.start_check_local_db), Toast.LENGTH_SHORT).show()
                 return true
             }
             R.id.action_monitor_network -> {
@@ -1027,6 +1028,63 @@ class MyActivity : AppCompatActivity() {
         apdata.generated = gen
         apdata.wps = wpsPins
         return apdata
+    }
+
+    private fun checkFromLocalDb() {
+        val list = ArrayList<HashMap<String, String?>?>()
+        var elemWiFi: HashMap<String, String?>
+        var i = 0
+
+        for (result in WiFiScanResult!!) {
+            val networksInDb = wifiDatabaseHelper.getNetworksByBssid(result.bssid!!.toUpperCase())
+            elemWiFi = HashMap()
+            elemWiFi["ESSID"] = result.essid
+            elemWiFi["BSSID"] = result.bssid!!.toUpperCase()
+            elemWiFi["SIGNAL"] = getStrSignal(result.level)
+            elemWiFi["CAPABILITY"] = result.capabilities
+            elemWiFi["LOCAL_DB"] = ""
+
+            if (networksInDb.isNotEmpty()) {
+                val firstNetwork = networksInDb.first()
+                elemWiFi["KEY"] = "*[color:green]*" + (firstNetwork.keys?.firstOrNull() ?: "[unknown]")
+                elemWiFi["WPS"] = "*[color:blue]*" + (firstNetwork.wps?.firstOrNull() ?: "[unknown]")
+                elemWiFi["LOCAL_DB"] = getString(R.string.found_in_local_db)
+                elemWiFi["KEYSCOUNT"] = networksInDb.size.toString()
+            } else {
+                elemWiFi["KEY"] = "*[color:gray]*[unknown]"
+                elemWiFi["WPS"] = "*[color:gray]*[unknown]"
+                elemWiFi["KEYSCOUNT"] = "0"
+            }
+
+            list.add(elemWiFi)
+            WiFiKeys!!.add(i, if (networksInDb.isNotEmpty()) networksInDb.first() else APData())
+            i++
+        }
+
+        runOnUiThread {
+            adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY", "LOCAL_DB"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount, R.id.localDbStatus))
+            binding.WiFiList.adapter = adapter
+        }
+    }
+
+    fun WiFiDatabaseHelper.getNetworksByBssid(bssid: String): List<APData> {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${WiFiDatabaseHelper.TABLE_NAME} WHERE ${WiFiDatabaseHelper.COLUMN_MAC_ADDRESS} = ?", arrayOf(bssid))
+        val networks = mutableListOf<APData>()
+
+        while (cursor.moveToNext()) {
+            val apData = APData().apply {
+                essid = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_NAME))
+                this.bssid = bssid
+                keys = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_PASSWORD)))
+                wps = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WPS_CODE)))
+            }
+            networks.add(apData)
+        }
+
+        cursor.close()
+        db.close()
+        return networks
     }
 
     private fun passiveVulnerabilityTest(essid: String?, bssid: String): String {
