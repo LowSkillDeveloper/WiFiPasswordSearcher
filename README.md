@@ -13,8 +13,8 @@ The changelog contains only information about the changes that I made myself. Ch
 - Server list URLs in the start menu.
   - Functionality to load server list from online sources (working mirrors or proxy servers).
 - Display of 3WiFi API keys with the ability to copy them.
-- Dark theme and option to switch to it.
-- Added double scanning feature to get more networks (It does two scans in a row with an interval of 4 seconds and then merges it into one list.)
+- Dark theme and option to switch to it. [Enabled in settings, disabled by default]
+- Added double scanning feature to get more networks (It does two scans in a row with an interval of 4 seconds and then merges it into one list.) [Enabled in settings, disabled by default]
 - Offline vendor database from "Wps Wpa Tester" app.
 - Added history of data founded in 3wifi for networks you scanned. (Local database in the application, where the networks saves when you found data in 3wifi)
   - Added import and export of local database
@@ -34,7 +34,7 @@ The changelog contains only information about the changes that I made myself. Ch
 - Local pin.db updated to the 2024 version from "Wps Wpa Tester" (includes 2000 new pins).
 - Update some libraries.
 - Added more buttons for logging out of your account
-- After checking via 3wifi, there is a check using the local database.
+- After checking via 3wifi, there is a check using the local database. [can be disabled in settings, enabled by default]
   - Added a switch to disable searching in local database after 3wifi
 
 ## Fixed Issues:
