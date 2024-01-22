@@ -28,6 +28,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
     - Now the application can import a large myuploads.txt file that containing more than 100K lines
   - Added a switch that disables automatic adding of received data from 3wifi to the local database
 - Added links to the start menu
+- Added a local database search button next to the search button in the online 3wifi database
     
 ## Updated Features:
 - Offline mode button.
