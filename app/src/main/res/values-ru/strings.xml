@@ -93,7 +93,7 @@
     <string name="action_check_local_db">Проверить в локальной БД</string>
     <string name="double_scan">Двойное сканирование</string>
     <string name="second_scan">Сканирование 2 из 2…</string>
-    <string name="start_check_local_db">Начата проверка найденных сетей по локальной базе данных…</string>
+    <string name="start_check_local_db">Идет поиск в локальной базе данных…</string>
 
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>

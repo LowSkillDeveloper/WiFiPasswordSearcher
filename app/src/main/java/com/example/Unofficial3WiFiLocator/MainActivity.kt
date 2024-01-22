@@ -398,9 +398,27 @@ class MyActivity : AppCompatActivity() {
         dProcess.setMessage(resources.getString(R.string.status_searching))
         dProcess.setCanceledOnTouchOutside(false)
         binding.btnCheckFromBase.isEnabled = false
+        binding.btnCheckFromLocalBase.isEnabled = false
         dProcess.show()
         Thread(Runnable {
             checkFromBase()
+            dProcess.dismiss()
+        }).start()
+    }
+
+
+    private val fabCheckFromLocalDbOnClick = View.OnClickListener {
+
+        if (ScanInProcess) return@OnClickListener
+        if (WiFiKeys != null) WiFiKeys!!.clear()
+        val dProcess = ProgressDialog(this@MyActivity)
+        dProcess.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        dProcess.setMessage(getString(R.string.start_check_local_db))
+        dProcess.setCanceledOnTouchOutside(false)
+        binding.btnCheckFromLocalBase.isEnabled = false
+        dProcess.show()
+        Thread(Runnable {
+            checkFromLocalDb()
             dProcess.dismiss()
         }).start()
     }
@@ -634,10 +652,12 @@ class MyActivity : AppCompatActivity() {
         locationMgr = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         sClipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         binding.btnCheckFromBase.setOnClickListener(fabCheckFromBaseOnClick)
+        binding.btnCheckFromLocalBase.setOnClickListener(fabCheckFromLocalDbOnClick)
         binding.WiFiList.onItemClickListener = wifiListOnClick
         if (adapter != null) {
             binding.WiFiList.adapter = adapter
             binding.btnCheckFromBase.isEnabled = true
+            binding.btnCheckFromLocalBase.isEnabled = true
         }
         if (ScanInProcess) {
             //   if(ScanWiFiReceiverIntent != null) unregisterReceiver(ScanWiFiReceiverIntent);
@@ -801,6 +821,7 @@ class MyActivity : AppCompatActivity() {
             binding.WiFiList.adapter = adapter
             ScanInProcess = false
             binding.btnCheckFromBase.isEnabled = true
+            binding.btnCheckFromLocalBase.isEnabled = true
             if (!doubleScan || receiver == scanWiFiReceiverSecond) {
                 val toast = Toast.makeText(applicationContext, getString(R.string.toast_scan_complete), Toast.LENGTH_SHORT)
                 toast.show()
@@ -839,6 +860,7 @@ class MyActivity : AppCompatActivity() {
         registerReceiver(scanWiFiReceiverFirst, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
         ScanInProcess = true
         binding.btnCheckFromBase.isEnabled = false
+        binding.btnCheckFromLocalBase.isEnabled = false
         wifiMgr.startScan()
     }
 
@@ -894,6 +916,7 @@ class MyActivity : AppCompatActivity() {
                         val t = Toast.makeText(applicationContext, errorDesc, Toast.LENGTH_SHORT)
                         t.show()
                         binding.btnCheckFromBase.isEnabled = true
+                        binding.btnCheckFromLocalBase.isEnabled = true
                     }
                     return
                 }
@@ -909,6 +932,7 @@ class MyActivity : AppCompatActivity() {
                     val t = Toast.makeText(applicationContext, getString(R.string.toast_database_failure), Toast.LENGTH_SHORT)
                     t.show()
                     binding.btnCheckFromBase.isEnabled = true
+                    binding.btnCheckFromLocalBase.isEnabled = true
                 }
                 return
             }
@@ -917,6 +941,7 @@ class MyActivity : AppCompatActivity() {
                 val t = Toast.makeText(applicationContext, getString(R.string.status_no_internet), Toast.LENGTH_SHORT)
                 t.show()
                 binding.btnCheckFromBase.isEnabled = true
+                binding.btnCheckFromLocalBase.isEnabled = true
             }
             return
         }
@@ -986,6 +1011,7 @@ class MyActivity : AppCompatActivity() {
                 adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY", "LOCAL_DB"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount, R.id.localDbStatus))
                 binding.WiFiList.adapter = adapter
                 binding.btnCheckFromBase.isEnabled = true
+                binding.btnCheckFromLocalBase.isEnabled = true
             }
         }).start()
     }
@@ -1079,6 +1105,8 @@ class MyActivity : AppCompatActivity() {
         runOnUiThread {
             adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY", "LOCAL_DB"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount, R.id.localDbStatus))
             binding.WiFiList.adapter = adapter
+            binding.btnCheckFromBase.isEnabled = true
+            binding.btnCheckFromLocalBase.isEnabled = true
         }
     }
 
