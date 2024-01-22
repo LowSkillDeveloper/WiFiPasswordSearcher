@@ -979,7 +979,7 @@ class MyActivity : AppCompatActivity() {
                     )
                 } ?: false
                 if (localDbExists && autoSearchLocalDb) {
-                    elemWiFi?.put("LOCAL_DB", getString(R.string.found_in_local_db))
+                    elemWiFi?.put("LOCAL_DB", getString(R.string.available_locally))
                 }
             }
             runOnUiThread {

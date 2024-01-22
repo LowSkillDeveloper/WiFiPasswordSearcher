@@ -87,7 +87,8 @@
     <string name="api_txt">API ключи</string>
     <string name="logout_txt">Сменить аккаунт:</string>
     <string name="logout_btn_txt">Выйти из этого аккаунта</string>
-    <string name="found_in_local_db">Найден в локальной БД</string>
+    <string name="found_in_local_db">Данные из локальной БД</string>
+    <string name="available_locally">Доступен локально</string>
     <string name="auto_search_local_db">Поиск по локальной БД после 3WiFi</string>
     <string name="action_check_local_db">Проверить в локальной БД</string>
     <string name="double_scan">Двойное сканирование</string>

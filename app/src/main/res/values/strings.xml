@@ -80,7 +80,8 @@
     <string name="edit_network">Edit data of this network</string>
     <string name="github_txt">Project GitHub page</string>
     <string name="telegram_txt">Official telegram channel</string>
-    <string name="found_in_local_db">Found in local DB</string>
+    <string name="available_locally">Available locally</string>
+    <string name="found_in_local_db">Data from local DB</string>
     <string name="auto_search_local_db">Search in local DB after 3WiFi</string>
     <string name="action_check_local_db">Check in local DB</string>
     <string name="start_check_local_db">Started checking the founded networks in the local database…</string>
