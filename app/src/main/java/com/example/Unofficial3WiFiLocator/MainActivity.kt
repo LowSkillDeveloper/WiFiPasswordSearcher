@@ -146,8 +146,15 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
 
     fun networkExists(bssid: String, password: String?, wpsCode: String?, adminLogin: String?, adminPass: String?): Boolean {
         val db = this.readableDatabase
-        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_MAC_ADDRESS = ? AND ($COLUMN_WIFI_PASSWORD = ? OR $COLUMN_WPS_CODE = ? OR $COLUMN_ADMIN_LOGIN = ? OR $COLUMN_ADMIN_PASS = ?)"
-        val cursor = db.rawQuery(query, arrayOf(bssid, password ?: "", wpsCode ?: "", adminLogin ?: "", adminPass ?: ""))
+        val query = """
+        SELECT * FROM $TABLE_NAME 
+        WHERE $COLUMN_MAC_ADDRESS = ? 
+        AND $COLUMN_WIFI_PASSWORD = ? 
+        AND $COLUMN_WPS_CODE = ?
+        AND $COLUMN_ADMIN_LOGIN IS NOT NULL 
+        AND $COLUMN_ADMIN_PASS IS NOT NULL
+    """
+        val cursor = db.rawQuery(query, arrayOf(bssid, password ?: "", wpsCode ?: ""))
 
         val exists = cursor.moveToFirst()
         cursor.close()
@@ -980,22 +987,29 @@ class MyActivity : AppCompatActivity() {
             }
             elemWiFi["CAPABILITY"] = result.capabilities
             elemWiFi["LOCAL_DB"] = ""
-            if (saveToDb && !wifiDatabaseHelper.networkExists(
-                    result.bssid!!.toUpperCase(),
-                    apdata.keys?.firstOrNull(),
-                    apdata.wps?.firstOrNull(),
-                    apdata.adminLogin,
-                    apdata.adminPass
-                ) && (apdata.keys?.isNotEmpty() == true || apdata.wps?.isNotEmpty() == true)
-            ) {
-                wifiDatabaseHelper.addNetwork(
-                    result.essid ?: "",
-                    result.bssid!!.toUpperCase(),
-                    apdata.keys?.firstOrNull() ?: "",
-                    apdata.wps?.firstOrNull() ?: "",
-                    apdata.adminLogin ?: "",
-                    apdata.adminPass ?: ""
-                )
+            if (saveToDb) {
+                for (j in apdata.keys!!.indices) {
+                    val key = apdata.keys!![j]
+                    val wps = if (j < apdata.wps!!.size) apdata.wps!![j] else ""
+
+                    if (!wifiDatabaseHelper.networkExists(
+                            result.bssid!!.toUpperCase(),
+                            key,
+                            wps,
+                            apdata.adminLogin,
+                            apdata.adminPass
+                        )
+                    ) {
+                        wifiDatabaseHelper.addNetwork(
+                            result.essid ?: "",
+                            result.bssid!!.toUpperCase(),
+                            key,
+                            wps,
+                            apdata.adminLogin ?: "",
+                            apdata.adminPass ?: ""
+                        )
+                    }
+                }
             }
 
             list.add(elemWiFi)
