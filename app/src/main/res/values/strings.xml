@@ -85,7 +85,7 @@
     <string name="auto_search_local_db">Search in local DB after 3WiFi</string>
     <string name="action_check_local_db">Check in local DB</string>
     <string name="start_check_local_db">Searching in the local database…</string>
-
+    <string name="status_waiting_for_second_scan">Waiting for second scan…</string>
 
 
     <string name="api_txt">API Keys</string>
@@ -109,7 +109,7 @@
     <string name="status_no_internet">No internet connection</string>
     <string name="dialog_work_offline">Do you want to work in offline mode?</string>
     <string name="double_scan">Double scan</string>
-    <string name="second_scan">Scan 2 of 2…</string>
+    <string name="second_scan">Second network scan…</string>
 
 
     <!-- MyActivity strings-->

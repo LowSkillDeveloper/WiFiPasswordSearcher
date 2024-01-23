@@ -839,6 +839,7 @@ class MyActivity : AppCompatActivity() {
                 handleScanResults(tempResults)
                 if (doubleScan) {
                     context.unregisterReceiver(this)
+                    dProccess.setMessage(getString(R.string.status_waiting_for_second_scan))
                     Handler(Looper.getMainLooper()).postDelayed({
                         dProccess.setMessage(getString(R.string.second_scan))
                         registerReceiver(scanWiFiReceiverSecond, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
