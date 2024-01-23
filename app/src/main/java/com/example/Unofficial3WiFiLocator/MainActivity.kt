@@ -830,15 +830,12 @@ class MyActivity : AppCompatActivity() {
             dProccess.dismiss()
         }
 
-        scanWiFiReceiverSecond = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                handleScanResults(tempResults)
-                finishScanning(context, scanWiFiReceiverSecond)
-            }
-        }
+        var isScanning = false
 
         scanWiFiReceiverFirst = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
+                if (isScanning) return
+                isScanning = true
                 handleScanResults(tempResults)
                 if (doubleScan) {
                     context.unregisterReceiver(this)
@@ -849,7 +846,17 @@ class MyActivity : AppCompatActivity() {
                     }, 4000)
                 } else {
                     finishScanning(context, null)
+                    isScanning = false
                 }
+            }
+        }
+
+        scanWiFiReceiverSecond = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (!isScanning) return
+                handleScanResults(tempResults)
+                finishScanning(context, scanWiFiReceiverSecond)
+                isScanning = false
             }
         }
 
