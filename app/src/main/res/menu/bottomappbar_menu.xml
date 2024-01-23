@@ -7,6 +7,11 @@
         android:title="@string/button_refresh"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_router_keygen"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/action_router_keygen"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_check_local_db"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/action_check_local_db"

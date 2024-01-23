@@ -110,7 +110,7 @@
     <string name="dialog_work_offline">Do you want to work in offline mode?</string>
     <string name="double_scan">Double scan</string>
     <string name="second_scan">Second network scan…</string>
-
+    <string name="action_router_keygen" translatable="false">Router keygen (WIP)</string>
 
     <!-- MyActivity strings-->
     <string name="button_refresh">Refresh</string>
