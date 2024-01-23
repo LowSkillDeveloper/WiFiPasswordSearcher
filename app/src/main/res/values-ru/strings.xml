@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">3WiFi Локатор</string>
+    <string name="app_name">3WiFi Локатор V2 Unofficial</string>
     <string-array name="strings_settings_rows">
         <item>Настройки приложения</item>
         <item>Причие настройки</item>
@@ -82,7 +82,7 @@
     <string name="network_deleted">Сеть удалена</string>
     <string name="save_to_local_database">Сохранять данные в локальную базу</string>
     <string name="edit_network">Редактировать данные сети</string>
-    <string name="github_txt">Страница GitHub проекта</string>
+    <string name="github_txt">GitHub страница проекта</string>
     <string name="telegram_txt">Официальный телеграм канал</string>
     <string name="api_txt">API ключи</string>
     <string name="logout_txt">Сменить аккаунт:</string>
@@ -90,7 +90,7 @@
     <string name="found_in_local_db">Данные из локальной БД</string>
     <string name="available_locally">Доступен локально</string>
     <string name="auto_search_local_db">Поиск по локальной БД после 3WiFi</string>
-    <string name="action_check_local_db">Проверить в локальной БД</string>
+    <string name="action_check_local_db">Проверить по локальной БД</string>
     <string name="double_scan">Двойное сканирование</string>
     <string name="second_scan">Сканирование 2 из 2…</string>
     <string name="start_check_local_db">Идет поиск в локальной базе данных…</string>

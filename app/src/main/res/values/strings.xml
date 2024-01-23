@@ -78,7 +78,7 @@
     <string name="network_deleted">Network deleted</string>
     <string name="save_to_local_database">Save data to a local database</string>
     <string name="edit_network">Edit data of this network</string>
-    <string name="github_txt">Project GitHub page</string>
+    <string name="github_txt">GitHub Project page</string>
     <string name="telegram_txt">Official telegram channel</string>
     <string name="available_locally">Available locally</string>
     <string name="found_in_local_db">Data from local DB</string>
