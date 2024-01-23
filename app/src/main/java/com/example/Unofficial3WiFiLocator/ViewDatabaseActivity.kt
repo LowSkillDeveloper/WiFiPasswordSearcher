@@ -569,7 +569,12 @@ class ViewDatabaseActivity : Activity() {
                 if (!folder.exists()) {
                     folder.mkdirs()
                 }
-                val file = File(folder, "wifi_database_export.json")
+                var file = File(folder, "wifi_database_export.json")
+                var count = 1
+                while (file.exists()) {
+                    file = File(folder, "wifi_database_export(${count++}).json")
+                }
+
                 val fileWriter = FileWriter(file)
                 fileWriter.write(jsonArray.toString(4))
                 fileWriter.close()
