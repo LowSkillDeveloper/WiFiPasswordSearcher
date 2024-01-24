@@ -51,6 +51,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 
 # TODO:
 - Add GPS sniffer
+- Integrate RouterKeygen algorithms
 - Add manual language change
 - Fix known minor bugs
 - Fix the message that the application is intended for older versions of Android (Too much to redo)
