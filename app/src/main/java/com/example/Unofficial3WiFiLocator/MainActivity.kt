@@ -658,8 +658,7 @@ class MyActivity : AppCompatActivity() {
         wifiMgr = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         locationMgr = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         sClipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        binding.btnCheckFromBase.setOnClickListener(fabCheckFromBaseOnClick)
-        binding.btnCheckFromLocalBase.setOnClickListener(fabCheckFromLocalDbOnClick)
+        configureButtons()
         binding.WiFiList.onItemClickListener = wifiListOnClick
         if (adapter != null) {
             binding.WiFiList.adapter = adapter
@@ -672,6 +671,23 @@ class MyActivity : AppCompatActivity() {
         }
         scanAndShowWiFi()
     }
+
+    private fun configureButtons() {
+        val primaryButtonIsLocalDb = mSettings.AppSettings!!.getBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", false)
+
+        if (primaryButtonIsLocalDb) {
+            binding.btnCheckFromBase.setOnClickListener(fabCheckFromLocalDbOnClick)
+            binding.btnCheckFromBase.setImageResource(R.drawable.ic_search_black_24dp)
+            binding.btnCheckFromLocalBase.setOnClickListener(fabCheckFromBaseOnClick)
+            binding.btnCheckFromLocalBase.setImageResource(R.drawable.logo_vector)
+        } else {
+            binding.btnCheckFromBase.setOnClickListener(fabCheckFromBaseOnClick)
+            binding.btnCheckFromBase.setImageResource(R.drawable.logo_vector)
+            binding.btnCheckFromLocalBase.setOnClickListener(fabCheckFromLocalDbOnClick)
+            binding.btnCheckFromLocalBase.setImageResource(R.drawable.ic_search_black_24dp)
+        }
+    }
+
 
     private fun setAppTheme() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)

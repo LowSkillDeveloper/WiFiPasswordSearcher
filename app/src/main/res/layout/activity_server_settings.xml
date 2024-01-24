@@ -198,6 +198,22 @@
 		android:textSize="21sp"
 		android:checked="false"/>
 	</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:layout_marginBottom="8dp">
+			<Switch
+				android:id="@+id/switch_primary_button"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/switch_primary_button"
+				android:textSize="21sp"
+				android:checked="false"/>
+		</LinearLayout>
+
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"

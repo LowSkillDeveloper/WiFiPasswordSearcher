@@ -13,6 +13,7 @@ import android.widget.Switch
 class ServerSettingsActivity : Activity() {
     private lateinit var binding: ActivityServerSettingsBinding
     private lateinit var mSettings: Settings
+    private lateinit var switchPrimaryButton: Switch
     override fun onCreate(savedInstanceState: Bundle?) {
         setAppTheme()
         super.onCreate(savedInstanceState)
@@ -23,6 +24,9 @@ class ServerSettingsActivity : Activity() {
         val serverLogin = mSettings.AppSettings!!.getString(Settings.APP_SERVER_LOGIN, "")
         val serverPassword = mSettings.AppSettings!!.getString(Settings.APP_SERVER_PASSWORD, "")
 
+        switchPrimaryButton = findViewById<Switch>(R.id.switch_primary_button)
+        val primaryButtonIsLocalDb = mSettings.AppSettings!!.getBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", false)
+        switchPrimaryButton.isChecked = primaryButtonIsLocalDb
 
         val doubleScan = mSettings.AppSettings!!.getBoolean("DOUBLE_SCAN", false)
         val switchDoubleScan = findViewById<Switch>(R.id.switch_double_scan)
@@ -98,6 +102,7 @@ class ServerSettingsActivity : Activity() {
         mSettings.Editor!!.putBoolean("AUTO_SEARCH_LOCAL_DB", autoSearchLocalDb)
         val switchDoubleScan = findViewById<Switch>(R.id.switch_double_scan)
         mSettings.Editor!!.putBoolean("DOUBLE_SCAN", switchDoubleScan.isChecked).apply()
+        mSettings.Editor!!.putBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", switchPrimaryButton.isChecked).apply()
 
         mSettings.Editor!!.putString(Settings.APP_SERVER_LOGIN, login)
         mSettings.Editor!!.putString(Settings.APP_SERVER_PASSWORD, password)
@@ -111,6 +116,7 @@ class ServerSettingsActivity : Activity() {
         mSettings.Editor!!.putBoolean(Settings.APP_FETCH_ESS, fetchESS)
         mSettings.Editor!!.putBoolean(Settings.APP_CHECK_UPDATES, checkUpdates)
         mSettings.Editor!!.commit()
+        restartApp()
         finish()
     }
 

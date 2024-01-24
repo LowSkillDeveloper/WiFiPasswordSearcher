@@ -95,7 +95,7 @@
     <string name="second_scan">Второе сканирование сетей…</string>
     <string name="start_check_local_db">Идет поиск в локальной базе данных…</string>
     <string name="status_waiting_for_second_scan">Ожидание второго сканирования…</string>
-
+    <string name="switch_primary_button">Сделать основной кнопку поиска по локальной БД</string>
 
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>
