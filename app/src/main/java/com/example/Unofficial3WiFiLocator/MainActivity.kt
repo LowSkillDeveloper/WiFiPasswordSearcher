@@ -714,6 +714,10 @@ class MyActivity : AppCompatActivity() {
             R.id.action_refresh -> {
                 refreshNetworkList()
             }
+            R.id.action_router_keygen -> {
+                checkNetworksWithRouterKeygen()
+                return true
+            }
             R.id.action_gps_sniff -> {
                 Toast.makeText(this, "Функция GPS Sniff (WIP)", Toast.LENGTH_SHORT).show()
                 return true
@@ -1171,6 +1175,57 @@ class MyActivity : AppCompatActivity() {
         cursor.close()
         db.close()
         return networks
+    }
+
+    private fun checkNetworksWithRouterKeygen() {
+        val routerKeygenResults = ArrayList<APData>()
+        for (result in WiFiScanResult!!) {
+            val key = RouterKeygenTest(result.essid, result.bssid!!)
+            if (key.isNotEmpty()) {
+                val apData = APData()
+                apData.bssid = result.bssid
+                apData.essid = result.essid
+                apData.keys = arrayListOf(key)
+                apData.generated = arrayListOf(true)
+                routerKeygenResults.add(apData)
+            }
+        }
+        updateUIWithRouterKeygenResults(routerKeygenResults)
+    }
+
+    private fun updateUIWithRouterKeygenResults(results: ArrayList<APData>) {
+        val list = ArrayList<HashMap<String, String?>?>()
+
+        for (result in WiFiScanResult!!) {
+            val elemWiFi = HashMap<String, String?>()
+            elemWiFi["ESSID"] = result.essid
+            elemWiFi["BSSID"] = result.bssid!!.toUpperCase()
+            elemWiFi["SIGNAL"] = getStrSignal(result.level)
+            elemWiFi["CAPABILITY"] = result.capabilities
+            val routerKeygenResult = results.find { it.bssid == result.bssid }
+            if (routerKeygenResult != null && routerKeygenResult.keys != null && routerKeygenResult.keys!!.isNotEmpty()) {
+                elemWiFi["KEY"] = "*[color:red]*" + routerKeygenResult.keys!!.first()
+                elemWiFi["KEYSCOUNT"] = "*[color:red]*" + routerKeygenResult.keys!!.size.toString()
+            } else {
+                elemWiFi["KEY"] = "*[color:gray]*[unknown]"
+                elemWiFi["KEYSCOUNT"] = "*[color:gray]*0"
+            }
+            list.add(elemWiFi)
+        }
+
+        runOnUiThread {
+            adapter = WiFiListSimpleAdapter(this@MyActivity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY", "LOCAL_DB"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount, R.id.localDbStatus))
+            binding.WiFiList.adapter = adapter
+            binding.btnCheckFromBase.isEnabled = true
+            binding.btnCheckFromLocalBase.isEnabled = true
+        }
+    }
+
+    private fun RouterKeygenTest(essid: String?, bssid: String): String {
+        if (essid == "TestAP") {
+            return "12345678"
+        }
+        return ""
     }
 
     private fun passiveVulnerabilityTest(essid: String?, bssid: String): String {
