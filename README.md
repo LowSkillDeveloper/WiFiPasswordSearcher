@@ -51,7 +51,6 @@ Descriptions and instructions for my added new functions can be found on the Wik
 # TODO:
 - Add GPS sniffer
 - Add manual language change
-- Add a 3wifi sniffer for surrounding networks
 - Fix known minor bugs
 - Fix the message that the application is intended for older versions of Android (Too much to redo)
 
