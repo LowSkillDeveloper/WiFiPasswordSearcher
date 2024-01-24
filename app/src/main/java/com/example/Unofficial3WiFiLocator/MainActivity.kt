@@ -1124,7 +1124,7 @@ class MyActivity : AppCompatActivity() {
                 }
 
                 elemWiFi["KEY"] = keyColor + (firstNetwork.keys?.firstOrNull() ?: "[unknown]")
-                elemWiFi["WPS"] = keyColor + (firstNetwork.wps?.firstOrNull() ?: "[unknown]")
+                elemWiFi["WPS"] = "*[color:blue]*" + (firstNetwork.wps?.firstOrNull() ?: "[unknown]")
                 elemWiFi["LOCAL_DB"] = getString(R.string.found_in_local_db)
                 elemWiFi["KEYSCOUNT"] = keyColor + keysCount.toString()
             } else {
