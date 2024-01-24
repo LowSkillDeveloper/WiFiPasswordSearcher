@@ -14,6 +14,7 @@ class ServerSettingsActivity : Activity() {
     private lateinit var binding: ActivityServerSettingsBinding
     private lateinit var mSettings: Settings
     private lateinit var switchPrimaryButton: Switch
+    private lateinit var switchDarkMode: Switch
     override fun onCreate(savedInstanceState: Bundle?) {
         setAppTheme()
         super.onCreate(savedInstanceState)
@@ -52,12 +53,8 @@ class ServerSettingsActivity : Activity() {
         binding.btnSettitgs3wifiCancel.setOnClickListener(btnCloseOnClick)
         binding.btnSettitgs3wifiSave.setOnClickListener(btnSaveOnClick)
 
-        val switchDarkMode = findViewById<Switch>(R.id.switch_dark_mode)
+        switchDarkMode = findViewById<Switch>(R.id.switch_dark_mode)
         switchDarkMode.isChecked = getDarkModePreference()
-        switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-            setDarkModePreference(isChecked)
-            restartApp()
-        }
     }
 
     private fun restartApp() {
@@ -103,6 +100,8 @@ class ServerSettingsActivity : Activity() {
         val switchDoubleScan = findViewById<Switch>(R.id.switch_double_scan)
         mSettings.Editor!!.putBoolean("DOUBLE_SCAN", switchDoubleScan.isChecked).apply()
         mSettings.Editor!!.putBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", switchPrimaryButton.isChecked).apply()
+        val isDarkMode = switchDarkMode.isChecked
+        setDarkModePreference(isDarkMode)
 
         mSettings.Editor!!.putString(Settings.APP_SERVER_LOGIN, login)
         mSettings.Editor!!.putString(Settings.APP_SERVER_PASSWORD, password)
