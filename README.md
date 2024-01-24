@@ -29,6 +29,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
   - Added a switch that disables automatic adding of received data from 3wifi to the local database
 - Added links to the start menu
 - Added a local database search button next to the search button in the online 3wifi database
+  - Added a primary button switch, now the local DB search button can be made primary.
     
 ## Updated Features:
 - Offline mode button.
