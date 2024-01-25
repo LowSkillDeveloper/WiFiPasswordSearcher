@@ -40,7 +40,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Local pin.db updated to the 2024 version from "Wps Wpa Tester" (includes 2000 new pins).
 - Update some libraries.
 - Added more buttons for logging out of your account
-- After checking via 3wifi, there is a check using the local database. [can be disabled in settings, enabled by default]
+- After checking via 3wifi, there is a check using the local database.
   - Added a switch to disable searching in local database after 3wifi
 
 ## Fixed Issues:
