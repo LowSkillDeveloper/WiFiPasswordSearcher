@@ -56,11 +56,12 @@ class StartActivity : Activity() {
                 runOnUiThread {
                     updateSpinner(servers)
                     showClearButton()
+                    showInitialMessageIfNeeded(servers)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 val defaultServerUrl = resources.getString(R.string.SERVER_URI_DEFAULT)
-                val backupServers = arrayListOf(defaultServerUrl, resources.getString(R.string.specify_own_server))
+                val backupServers = arrayListOf("http://134.0.119.34", defaultServerUrl, resources.getString(R.string.specify_own_server))
                 runOnUiThread {
                     updateSpinner(backupServers)
                 }
@@ -257,6 +258,25 @@ class StartActivity : Activity() {
         }
     }
 
+    private fun showInitialMessageIfNeeded(servers: ArrayList<String>) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
+
+        if (isFirstRun && servers.contains("http://134.0.119.34")) {
+            mSettings.Editor!!.putBoolean("USE_CUSTOM_HOST", true).apply()
+            showInitialDialog()
+            sharedPreferences.edit().putBoolean("isFirstRun", false).apply()
+        }
+    }
+
+    private fun showInitialDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.setTitle(resources.getString(R.string.start_important_message))
+        alertDialog.setMessage(resources.getString(R.string.start_msg_custom_host))
+        alertDialog.setPositiveButton("ОК", null)
+        alertDialog.show()
+    }
+
     private fun setAppTheme() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
@@ -322,6 +342,10 @@ class StartActivity : Activity() {
             connection.requestMethod = "POST"
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+            val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
+            if (useCustomHost && serverURI.startsWith("http://134.0.119.34")) {
+                connection.setRequestProperty("Host", "3wifi.stascorp.com")
+            }
             val writer = DataOutputStream(
                     connection.outputStream)
             writer.writeBytes(

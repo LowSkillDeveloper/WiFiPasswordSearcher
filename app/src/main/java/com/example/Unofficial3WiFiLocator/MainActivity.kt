@@ -921,11 +921,15 @@ class MyActivity : AppCompatActivity() {
             query.put("bssid", bssids)
             if (fetchESS) query.put("essid", essids)
             val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+            val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
             val uri = URL("$serverURI/api/apiquery")
             val connection = uri.openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json")
+            if (useCustomHost && serverURI == "http://134.0.119.34") {
+                connection.setRequestProperty("Host", "3wifi.stascorp.com")
+            }
             val writer = DataOutputStream(connection.outputStream)
             writer.writeBytes(query.toString())
             connection.readTimeout = 10 * 1000

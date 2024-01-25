@@ -22,6 +22,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 class UserInfoActivity : Activity() {
     private lateinit var binding: ActivityUserBinding
@@ -91,19 +95,25 @@ class UserInfoActivity : Activity() {
             pd!!.show()
         }
 
-        override fun doInBackground(input: Array<String?>): String {
-            val hc = DefaultHttpClient()
-            val res: ResponseHandler<String> = BasicResponseHandler()
-
-            mSettings.Reload()
-            val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
-            val http = HttpGet("$serverURI/wpspin")
-            var str = ""
-            try {
-                str = hc.execute(http, res)
-            } catch (ignored: Exception) {
+        override fun doInBackground(vararg input: String?): String {
+            val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT)) ?: ""
+            val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
+            val url = if (useCustomHost && serverURI.startsWith("http://134.0.119.34")) {
+                URL("http://134.0.119.34/wpspin")
+            } else {
+                URL("$serverURI/wpspin")
             }
-            return str
+
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+
+            if (useCustomHost && serverURI.startsWith("http://134.0.119.34")) {
+                connection.setRequestProperty("Host", "3wifi.stascorp.com")
+            }
+
+            val inputStream = connection.inputStream
+            val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+            return bufferedReader.readText()
         }
 
         override fun onPostExecute(str: String) {

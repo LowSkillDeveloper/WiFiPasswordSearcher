@@ -41,6 +41,10 @@ class ServerSettingsActivity : Activity() {
         val autoSearchLocalDb = mSettings.AppSettings!!.getBoolean("AUTO_SEARCH_LOCAL_DB", true)
         switchSaveToDb.isChecked = saveToDb
 
+        val switchUseCustomHost = findViewById<Switch>(R.id.switch_use_custom_host)
+        val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", true)
+        switchUseCustomHost.isChecked = useCustomHost
+
         val fetchESS = mSettings.AppSettings!!.getBoolean(Settings.APP_FETCH_ESS, false)
         val checkUpdates = mSettings.AppSettings!!.getBoolean(Settings.APP_CHECK_UPDATES, true)
         binding.txtSettings3wifiLogin.setText(serverLogin)
@@ -102,6 +106,9 @@ class ServerSettingsActivity : Activity() {
         mSettings.Editor!!.putBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", switchPrimaryButton.isChecked).apply()
         val isDarkMode = switchDarkMode.isChecked
         setDarkModePreference(isDarkMode)
+
+        val switchUseCustomHost = findViewById<Switch>(R.id.switch_use_custom_host)
+        mSettings.Editor!!.putBoolean("USE_CUSTOM_HOST", switchUseCustomHost.isChecked).apply()
 
         mSettings.Editor!!.putString(Settings.APP_SERVER_LOGIN, login)
         mSettings.Editor!!.putString(Settings.APP_SERVER_PASSWORD, password)

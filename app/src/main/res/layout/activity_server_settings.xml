@@ -102,6 +102,15 @@
 
 		</LinearLayout>
 
+		<Switch
+			android:id="@+id/switch_use_custom_host"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/switch_use_custom_host_label"
+			android:textSize="21sp"
+			android:checked="false"
+			android:textColor="@color/orange"/>
+
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"

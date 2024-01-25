@@ -9,4 +9,5 @@
     <color name="dark_primary">#373737</color>
     <color name="dark_primary_text">#FFFFFF</color>
     <color name="dark_secondary_text">#BDBDBD</color>
+    <color name="orange">#D38800</color>
 </resources>
