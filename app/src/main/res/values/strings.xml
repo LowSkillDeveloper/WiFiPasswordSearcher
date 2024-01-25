@@ -89,7 +89,7 @@
     <string name="switch_primary_button">Make the local DB search button primary</string>
     <string name="switch_use_custom_host_label">Adding 3wifi.stascorp.com to the POST request for 134.0.119.34</string>
     <string name="start_important_message">Important message due to access issues</string>
-    <string name="start_msg_custom_host">It is recommended to specify the IP address of the 3wifi server in the server field, rather than using the domain name. This will allow direct requests to the 3wifi.stascorp.com server, bypassing the need for a proxy server for redirection, as the application automatically adds the domain name in POST requests. You can always change the server settings on the main page or disable the addition of the host header in POST requests in the application settings. Simply select http://134.0.119.34 from the server list – this is the IP address of the 3wifi.stascorp.com site. The addition of the host header in POST requests is already enabled in the application settings.</string>
+    <string name="start_msg_custom_host">It is recommended to specify the IP address of the 3wifi server in the server field, instead of using the domain name, which is currently not accessible. This will allow direct requests to the 3wifi.stascorp.com server, as the application automatically adds the domain name in POST requests.\n\nNo need to use an external proxy server for redirection to the main server anymore. Most importantly, you can always change the server on the main page or disable the addition of the host header in POST requests in the application settings.\n\nSimply select http://134.0.119.34 from the list of servers — this is the IP address of the 3wifi.stascorp.com site.</string>
 
 
     <string name="api_txt">API Keys</string>
