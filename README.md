@@ -17,8 +17,8 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Server list URLs in the start menu.
   - Functionality to load server list from online sources (working mirrors or proxy servers).
 - Display of 3WiFi API keys with the ability to copy them.
-- Dark theme and option to switch to it. [Enabled in settings, disabled by default]
-- Added double scanning feature to get more networks (It does two scans in a row with an interval of 4 seconds and then merges it into one list.) [Enabled in settings, disabled by default]
+- Dark theme and option to switch to it.
+- Added double scanning feature to get more networks (It does two scans in a row with an interval of 4 seconds and then merges it into one list.)
 - Offline vendor database from "Wps Wpa Tester" app.
 - Added history of data founded in 3wifi for networks you scanned. (Local database in the application, where the networks saves when you found data in 3wifi)
   - Added import and export of local database
@@ -55,7 +55,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Integrate RouterKeygen algorithms
 - Add manual language change
 - Fix known minor bugs
-- Fix the message that the application is intended for older versions of Android (Too much to redo)
+- Fix the message that the application is intended for older versions of Android (Too much to redo...)
 
 
 
