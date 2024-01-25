@@ -12,6 +12,7 @@
         <item>Locator Settings</item>
         <item>Other Settings</item>
         <item>About app</item>
+        <item>GitHub Project Page</item>
         <item>Check app updates</item>
         <item>Logout</item>
     </string-array>
@@ -89,8 +90,9 @@
     <string name="switch_primary_button">Make the local DB search button primary</string>
     <string name="switch_use_custom_host_label">Adding 3wifi.stascorp.com to the POST request for 134.0.119.34</string>
     <string name="start_important_message">Important message due to access issues</string>
-    <string name="start_msg_custom_host">It is recommended to specify the IP address of the 3wifi server in the server field, instead of using the domain name, which is currently not accessible. This will allow direct requests to the 3wifi.stascorp.com server, as the application automatically adds the domain name in POST requests.\n\nNo need to use an external proxy server for redirection to the main server anymore. Most importantly, you can always change the server on the main page or disable the addition of the host header in POST requests in the application settings.\n\nSimply select http://134.0.119.34 from the list of servers — this is the IP address of the 3wifi.stascorp.com site.</string>
-
+    <string name="start_msg_custom_host">It is recommended to specify the IP address of the 3wifi server in the server field, instead of using the domain name, which is currently not accessible. This will allow direct requests to the 3wifi.stascorp.com server, as the application automatically adds the domain name in POST requests.\n\nNo need to use an external proxy server for redirection to the main server anymore. Most importantly, you can always change the server on the main page or disable the addition of the HOST header in POST requests in the application settings.\n\nSimply select http://134.0.119.34 from the list of servers — this is the IP address of the 3wifi.stascorp.com site.</string>
+    <string name="wip_gps_sniff">GPS Sniff feature under development (WIP)</string>
+    <string name="wip_router_keygen">Password generation function using RouterKeygen algorithms in development (WIP)</string>
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>

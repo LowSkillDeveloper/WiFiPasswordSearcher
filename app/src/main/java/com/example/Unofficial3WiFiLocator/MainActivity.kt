@@ -415,7 +415,7 @@ class MyActivity : AppCompatActivity() {
 
 
     private val fabCheckFromLocalDbOnClick = View.OnClickListener {
-
+        Toast.makeText(this, getString(R.string.start_check_local_db), Toast.LENGTH_SHORT).show()
         if (ScanInProcess) return@OnClickListener
         if (WiFiKeys != null) WiFiKeys!!.clear()
         val dProcess = ProgressDialog(this@MyActivity)
@@ -716,10 +716,11 @@ class MyActivity : AppCompatActivity() {
             }
             R.id.action_router_keygen -> {
                 checkNetworksWithRouterKeygen()
+                Toast.makeText(this, getString(R.string.wip_router_keygen), Toast.LENGTH_LONG).show()
                 return true
             }
             R.id.action_gps_sniff -> {
-                Toast.makeText(this, "Функция GPS Sniff (WIP)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.wip_gps_sniff), Toast.LENGTH_LONG).show()
                 return true
             }
             R.id.action_check_local_db -> {

@@ -2,6 +2,7 @@ package com.example.Unofficial3WiFiLocator
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -31,7 +32,7 @@ class SettingsActivity : Activity() {
         }
     }
 
-    private val generalListOnClick = OnItemClickListener { parent, Item, position, id ->
+    private val generalListOnClick = AdapterView.OnItemClickListener { _, _, _, id ->
         when (id.toInt()) {
             0 -> {
                 val serverSettingsIntent = Intent(this@SettingsActivity, ServerSettingsActivity::class.java)
@@ -47,12 +48,16 @@ class SettingsActivity : Activity() {
                 startActivity(aboutInfoIntent)
             }
             3 -> {
+                val githubIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial"))
+                startActivity(githubIntent)
+            }
+            4 -> {
                 val version = AppVersion(applicationContext)
                 if (!version.isActualyVersion(applicationContext, true)) {
                     version.ShowUpdateDialog(this@SettingsActivity)
                 }
             }
-            4 -> {
+            5 -> {
                 val mSettings = Settings(applicationContext)
                 mSettings.Reload()
                 mSettings.Editor!!.remove(Settings.APP_SERVER_LOGIN)
