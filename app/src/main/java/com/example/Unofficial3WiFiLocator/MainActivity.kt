@@ -715,7 +715,7 @@ class MyActivity : AppCompatActivity() {
                 refreshNetworkList()
             }
             R.id.action_router_keygen -> {
-                checkNetworksWithRouterKeygen()
+                //checkNetworksWithRouterKeygen()
                 Toast.makeText(this, getString(R.string.wip_router_keygen), Toast.LENGTH_LONG).show()
                 return true
             }
