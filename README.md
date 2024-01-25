@@ -13,6 +13,7 @@ The changelog contains only information about the changes that I made myself. Ch
 Descriptions and instructions for my added new functions can be found on the Wiki Github page: https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/wiki
 
 ## Added Features:
+- Added the ability to connect to the 3wifi server directly by IP address (No longer need a proxy server for redirection)
 - Server list URLs in the start menu.
   - Functionality to load server list from online sources (working mirrors or proxy servers).
 - Display of 3WiFi API keys with the ability to copy them.
