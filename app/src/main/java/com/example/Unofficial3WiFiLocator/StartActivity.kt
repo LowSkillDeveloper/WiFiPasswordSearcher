@@ -1,6 +1,7 @@
 package com.example.Unofficial3WiFiLocator
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -10,6 +11,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -29,6 +31,7 @@ import java.net.URL
 import java.net.URLEncoder
 import android.widget.EditText
 import android.preference.PreferenceManager
+import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
@@ -179,7 +182,7 @@ class StartActivity : Activity() {
         updateCurrentServerTextView()
     }
 
-
+    private var clickCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         setAppTheme()
         super.onCreate(savedInstanceState)
@@ -270,6 +273,30 @@ class StartActivity : Activity() {
             clearServerList()
         }
         checkAndRequestPermissions()
+
+        val imageView = findViewById<ImageView>(R.id.imageView)
+        imageView.setOnClickListener {
+            performImageShake()
+            clickCount++
+            if (clickCount == 1) {
+                Toast.makeText(this, resources.getString(R.string.easter_egg), Toast.LENGTH_SHORT).show()
+            } else if (clickCount >= 3) {
+                openRickRoll()
+            }
+        }
+    }
+
+    fun performImageShake() {
+        val imageView = findViewById<ImageView>(R.id.imageView)
+        val shake = ObjectAnimator.ofFloat(imageView, "translationX", 0f, 25f, -25f, 25f, -25f, 15f, -15f, 6f, -6f, 0f)
+        shake.duration = 500
+        shake.start()
+    }
+
+    fun openRickRoll() {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        startActivity(intent)
     }
 
     private fun checkAndRequestPermissions() {

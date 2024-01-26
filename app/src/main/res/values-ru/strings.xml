@@ -109,8 +109,9 @@
     <string name="no_cached_data">Кэшированные данные недоступны</string>
     <string name="label_encryption">Шифрование: </string>
     <string name="label_authentication">Аутентификация: </string>
+    <string name="easter_egg">Не кликай сильно, а то сломаешь!</string>
 
-    <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
+    <string name="label_start">Проект RouterScan будет жить вечно</string>
     <string name="button_3wifi">3WiFi</string>
     <string name="button_gps_sniff">GPS снифер</string>
     <string name="button_offline">Офлайн</string>

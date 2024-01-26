@@ -100,6 +100,7 @@
     <string name="no_cached_data">Cached data not available</string>
     <string name="label_encryption">Encryption: </string>
     <string name="label_authentication">Authentication: </string>
+    <string name="easter_egg">Don\'t click too hard, or you\'ll break it!</string>
 
 
     <string name="api_txt">API Keys</string>
@@ -111,7 +112,7 @@
     <string name="dialog_no">No</string>
 
     <!-- StartActivity strings -->
-    <string name="label_start">If the main server is unavailable, try a proxy or mirror</string>
+    <string name="label_start">The RouterScan project will live forever</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="button_sign_in">Sign in</string>
