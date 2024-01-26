@@ -769,6 +769,7 @@ class MyActivity : AppCompatActivity() {
         toast.show()
     }
 
+    private var isScanning = false
     private fun scanAndShowWiFi() {
         val comparator = Comparator<MyScanResult> { lhs, rhs ->
             if (lhs.level < rhs.level) 1 else if (lhs.level == rhs.level) 0 else -1
@@ -853,12 +854,11 @@ class MyActivity : AppCompatActivity() {
             if (!doubleScan || receiver == scanWiFiReceiverSecond) {
                 val toast = Toast.makeText(applicationContext, getString(R.string.toast_scan_complete), Toast.LENGTH_SHORT)
                 toast.show()
+                isScanning = false
             }
             receiver?.let { context.unregisterReceiver(it) }
             dProccess.dismiss()
         }
-
-        var isScanning = false
 
         scanWiFiReceiverFirst = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -876,6 +876,7 @@ class MyActivity : AppCompatActivity() {
                 } else {
                     finishScanning(context, null)
                     isScanning = false
+                    context.unregisterReceiver(this)
                 }
             }
         }
