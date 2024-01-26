@@ -201,19 +201,23 @@ class WifiDetailsActivity : Activity() {
                 }
                 in 5150..5250 -> {
                     sDiap = "UNII 1"
-                    channel = (5000 + iFreq) / 5
+                    channel = (iFreq - 5000) / 5
                 }
                 in 5250..5350 -> {
                     sDiap = "UNII 2"
-                    channel = (5000 + iFreq) / 5
+                    channel = (iFreq - 5000) / 5
                 }
                 in 5470..5725 -> {
                     sDiap = "UNII 2 Extended"
-                    channel = iFreq / 5 + 1
+                    channel = (iFreq - 5000) / 5
                 }
                 in 5725..5825 -> {
                     sDiap = "UNII 3"
-                    channel = (5000 + iFreq) / 5
+                    channel = (iFreq - 5000) / 5
+                }
+                in 5925..7125 -> {
+                    sDiap = "6 GHz"
+                    channel = (iFreq - 5950) / 5 + 1
                 }
             }
         }
