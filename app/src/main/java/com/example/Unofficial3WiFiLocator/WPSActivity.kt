@@ -481,6 +481,10 @@ class WPSActivity : Activity() {
         wpsPin.clear()
         wpsMet.clear()
         data.clear()
+        val bssdWPS = intent.extras!!.getString("variable1")
+        bssdWPS?.let {
+            checkVendorFromLocalDB(it)
+        }
         for (pin in pins) {
             if (!pin.sugg) continue
             wpsPin.add(pin.pin)
@@ -530,6 +534,9 @@ class WPSActivity : Activity() {
         mSettings.Editor!!.commit()
         binding.WPSlist.adapter = null
         val bssdWPS = intent.extras!!.getString("variable1")
+        bssdWPS?.let {
+            checkVendorFromLocalDB(it)
+        }
         try {
             data.clear()
             wpsPin.clear()
