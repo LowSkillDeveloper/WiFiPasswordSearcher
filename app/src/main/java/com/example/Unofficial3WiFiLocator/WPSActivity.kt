@@ -35,6 +35,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.*
 import android.preference.PreferenceManager
+import org.apache.http.HttpRequestInterceptor
 import org.jsoup.Jsoup
 import java.io.FileOutputStream
 
@@ -344,6 +345,15 @@ class WPSActivity : Activity() {
             wpsPin.clear()
             wpsMet.clear()
             val hc = DefaultHttpClient()
+
+            hc.addRequestInterceptor(HttpRequestInterceptor { request, context ->
+                val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
+                val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+                if (useCustomHost && serverURI?.startsWith("http://134.0.119.34") == true) {
+                    request.setHeader("Host", "3wifi.stascorp.com")
+                }
+            })
+
             val res: ResponseHandler<String> = BasicResponseHandler()
             mSettings.Reload()
             val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
