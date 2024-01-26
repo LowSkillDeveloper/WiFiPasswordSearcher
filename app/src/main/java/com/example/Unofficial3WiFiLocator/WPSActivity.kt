@@ -8,6 +8,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.WpsCallback
 import android.net.wifi.WpsInfo
@@ -324,86 +325,59 @@ class WPSActivity : Activity() {
             wpsDb.clear()
             wpsPin.clear()
             wpsMet.clear()
-            val hc = DefaultHttpClient()
 
-            hc.addRequestInterceptor(HttpRequestInterceptor { request, context ->
-                val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
-                val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
-                if (useCustomHost && serverURI?.startsWith("http://134.0.119.34") == true) {
-                    request.setHeader("Host", "3wifi.stascorp.com")
-                }
-            })
-
-            val res: ResponseHandler<String> = BasicResponseHandler()
-            mSettings.Reload()
-            val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
-            val http = HttpGet("$serverURI/api/apiwps?key=$API_READ_KEY&bssid=$BSSID")
-            try {
-                response = if (cachedPins.isEmpty()) hc.execute(http, res) else cachedPins
-                try {
-                    var jObject = JSONObject(response)
-                    val result = jObject.getBoolean("result")
-                    if (result) {
-                        cachedPins = response
-                        try {
-                            jObject = jObject.getJSONObject("data")
-                            jObject = jObject.getJSONObject(BSSID)
-                            val array = jObject.optJSONArray("scores")
-                            for (i in 0 until array.length()) {
-                                jObject = array.getJSONObject(i)
-                                wpsPin.add(jObject.getString("value"))
-                                wpsMet.add(jObject.getString("name"))
-                                wpsScore.add(jObject.getString("score"))
-                                wpsDb.add(if (jObject.getBoolean("fromdb")) "✔" else "")
-                                val score = Math.round(wpsScore[i].toFloat() * 100)
-                                wpsScore[i] = Integer.toString(score) + "%"
-                                data.add(ItemWps(wpsPin[i], wpsMet[i], wpsScore[i], wpsDb[i]))
-                            }
-                        } catch (ignored: Exception) {
-                        }
-                    } else {
-                        val error = jObject.getString("error")
-                        if (error == "loginfail") {
-                            mSettings.Editor!!.putBoolean(Settings.API_KEYS_VALID, false)
-                            mSettings.Editor!!.commit()
-                            runOnUiThread {
-                                val t = Toast.makeText(applicationContext, getString(R.string.toast_enter_credentials), Toast.LENGTH_SHORT)
-                                t.show()
-                            }
-                            val startActivity = Intent(applicationContext, StartActivity::class.java)
-                            startActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            startActivity(startActivity)
-                        }
-                        response = "api_error"
+            if (isNetworkAvailable()) {
+                val hc = DefaultHttpClient()
+                hc.addRequestInterceptor(HttpRequestInterceptor { request, context ->
+                    val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
+                    val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+                    if (useCustomHost && serverURI?.startsWith("http://134.0.119.34") == true) {
+                        request.setHeader("Host", "3wifi.stascorp.com")
                     }
-                } catch (e: JSONException) {
-                    response = "json_error"
+                })
+
+                val res: ResponseHandler<String> = BasicResponseHandler()
+                mSettings.Reload()
+                val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+                val http = HttpGet("$serverURI/api/apiwps?key=$API_READ_KEY&bssid=$BSSID")
+                try {
+                    response = hc.execute(http, res)
+                    saveToSharedPreferences(BSSID, response)
+                } catch (e: Exception) {
+                    response = "http_error"
                 }
-            } catch (e: Exception) {
-                response = "http_error"
+            } else {
+                response = readFromSharedPreferences(BSSID) ?: "no_cached_data"
             }
-            return response
+
+            return processResponse(response, BSSID)
         }
 
         override fun onPostExecute(str: String) {
             pd.dismiss()
             var msg = ""
             var toast = true
-            when {
-                str == "http_error" -> {
+            when (str) {
+                "http_error" -> {
                     msg = getString(R.string.status_no_internet)
                     toast = false
                 }
-                str == "json_error" -> {
+                "json_error" -> {
                     msg = getString(R.string.connection_failure)
                     toast = false
                 }
-                str == "api_error" -> {
+                "api_error" -> {
                     msg = getString(R.string.toast_database_failure)
                     toast = false
                 }
-                data.isEmpty() -> {
-                    msg = getString(R.string.toast_no_pins_found)
+                "no_cached_data" -> {
+                    msg = getString(R.string.no_cached_data)
+                    toast = false
+                }
+                else -> {
+                    if (data.isEmpty()) {
+                        msg = getString(R.string.toast_no_pins_found)
+                    }
                 }
             }
             if (msg.isNotEmpty()) {
@@ -412,6 +386,55 @@ class WPSActivity : Activity() {
             binding.WPSlist.isEnabled = msg.isEmpty()
             binding.WPSlist.adapter = MyAdapterWps(this@WPSActivity, data)
             if (toast) toastMessage(String.format(getString(R.string.selected_source), "3WiFi Online WPS PIN"))
+        }
+
+        private fun processResponse(response: String, BSSID: String): String {
+            try {
+                val jObject = JSONObject(response)
+                val result = jObject.getBoolean("result")
+                if (result) {
+                    try {
+                        var dataObject = jObject.getJSONObject("data")
+                        dataObject = dataObject.getJSONObject(BSSID)
+                        val array = dataObject.optJSONArray("scores")
+                        for (i in 0 until array.length()) {
+                            var scoreObject = array.getJSONObject(i)
+                            wpsPin.add(scoreObject.getString("value"))
+                            wpsMet.add(scoreObject.getString("name"))
+                            wpsScore.add(scoreObject.getString("score"))
+                            wpsDb.add(if (scoreObject.getBoolean("fromdb")) "✔" else "")
+                            val score = Math.round(wpsScore[i].toFloat() * 100)
+                            wpsScore[i] = Integer.toString(score) + "%"
+                            data.add(ItemWps(wpsPin[i], wpsMet[i], wpsScore[i], wpsDb[i]))
+                        }
+                    } catch (ignored: JSONException) {
+                    }
+                    return "success"
+                } else {
+                    return "api_error"
+                }
+            } catch (e: JSONException) {
+                return "json_error"
+            }
+        }
+
+        private fun isNetworkAvailable(): Boolean {
+            val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
+
+        private fun saveToSharedPreferences(key: String, data: String) {
+            val sharedPref = getSharedPreferences("WPS_CACHE", Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                putString(key, data)
+                apply()
+            }
+        }
+
+        private fun readFromSharedPreferences(key: String): String? {
+            val sharedPref = getSharedPreferences("WPS_CACHE", Context.MODE_PRIVATE)
+            return sharedPref.getString(key, null)
         }
     }
 

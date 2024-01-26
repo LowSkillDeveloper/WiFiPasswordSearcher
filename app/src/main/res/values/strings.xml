@@ -97,6 +97,9 @@
     <string name="download_button_label">Download File</string>
     <string name="download_file_success">File downloaded and saved to Downloads successfully</string>
     <string name="download_file_error">Error while downloading the file</string>
+    <string name="no_cached_data">Cached data not available</string>
+
+
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>

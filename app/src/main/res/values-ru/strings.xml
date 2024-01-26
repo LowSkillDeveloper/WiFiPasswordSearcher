@@ -106,7 +106,8 @@
     <string name="download_button_label">Скачать файл</string>
     <string name="download_file_success">Файл успешно скачан и сохранен в загрузки</string>
     <string name="download_file_error">Ошибка при скачивании файла</string>
-
+    <string name="no_cached_data">Кэшированные данные недоступны</string>
+    
     <string name="label_start">Если основной сервер недоступен, попробуйте прокси-сервер или зеркало</string>
     <string name="button_3wifi">3WiFi</string>
     <string name="button_gps_sniff">GPS снифер</string>
