@@ -236,49 +236,29 @@ class WPSActivity : Activity() {
             pd = ProgressDialog.show(this@WPSActivity, getString(R.string.status_please_wait), getString(R.string.status_initializing))
         }
 
-        override fun doInBackground(BSSDWps: Array<String>): String {
+        override fun doInBackground(vararg BSSDWps: String): String {
             val BSSID = BSSDWps[0]
-            var response2: String
+            var response: String
             try {
                 val url = "https://wpsfinder.com/ethernet-wifi-brand-lookup/MAC:$BSSID"
                 val doc = Jsoup.connect(url).get()
                 val element = doc.select("h4.text-muted > center").first()
-
-                if (element != null) {
-                    response2 = element.text()
-                } else {
-                    response2 = "N/A"
-                }
+                response = element?.text() ?: "N/A"
             } catch (e: Exception) {
-                response2 = "N/A"
+                response = "N/A"
             }
-
-            var wait = 8000
-            while (!wpsReady && wait > 0) {
-                try {
-                    Thread.sleep(100)
-                    wait -= 100
-                } catch (ignored: Exception) {
-                }
-            }
-
-            return response2
+            return response
         }
-        override fun onPostExecute(response2: String) {
-            var response2 = response2
-            val src = mSettings.AppSettings!!.getInt(Settings.WPS_SOURCE, 1)
-            if (src != 1) pd.dismiss()
-
-            // Проверяем длину и содержание ответа
-            response2 = when {
-                response2.length > 50 || response2 == "N/A" -> "unknown vendor"
-                else -> response2
+        override fun onPostExecute(result: String) {
+            super.onPostExecute(result)
+             pd.dismiss()
+            val response = if (result.length > 50 || result == "N/A") {
+                "unknown vendor"
+            } else {
+                result
             }
-
-            // Всегда добавляем "Online DB:" перед результатом
-            binding.VendorWpsTextView.text = "Online DB: $response2"
-
-            when (src) {
+            binding.VendorWpsTextView.text = "Online DB: $response"
+            when (mSettings.AppSettings!!.getInt(Settings.WPS_SOURCE, 1)) {
                 1 -> btnwpsbaseclick(null)
                 2 -> btnGenerate(null)
                 3 -> btnLocalClick(null)
