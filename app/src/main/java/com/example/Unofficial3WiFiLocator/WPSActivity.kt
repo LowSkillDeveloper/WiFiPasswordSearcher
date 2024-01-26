@@ -448,7 +448,7 @@ class WPSActivity : Activity() {
         GetPinsFromBase().execute(bssdWPS)
     }
 
-    private inner class myJavascriptInterface {
+    inner class myJavascriptInterface {
         @JavascriptInterface
         fun initAlgos(json: String?, bssid: String) {
             pins.clear()
@@ -456,14 +456,12 @@ class WPSActivity : Activity() {
                 val arr = JSONArray(json)
                 for (i in 0 until arr.length()) {
                     val obj = arr.getJSONObject(i)
-                    val pin = WPSPin(mode=obj.getInt("mode"), name=obj.getString("name"))
+                    val pin = WPSPin(obj.getInt("mode"), obj.getString("name"))
                     pins.add(pin)
                 }
-                binding.webView.post(Runnable {
-                    fun run() {
-                        binding.webView.loadUrl("javascript:window.JavaHandler.getPins(1,JSON.stringify(pinSuggestAPI(true,'$bssid',null)), '$bssid');")
-                    }
-                })
+                binding.webView.post {
+                    binding.webView.loadUrl("javascript:window.JavaHandler.getPins(1,JSON.stringify(pinSuggestAPI(true,'$bssid',null)), '$bssid');")
+                }
             } catch (e: JSONException) {
                 wpsReady = true
             }
@@ -475,16 +473,17 @@ class WPSActivity : Activity() {
                 val arr = JSONArray(json)
                 for (i in 0 until arr.length()) {
                     val obj = arr.getJSONObject(i)
-                    if (all > 0) {
-                        val pin = pins[i]
-                        pin.pin = obj.getString("pin")
-                        pin.sugg = false
-                    } else {
-                        val pin = pins[obj.getInt("algo")]
-                        pin.sugg = true
-                    }
+                    val pin = if (all > 0) pins[i] else pins[obj.getInt("algo")]
+                    pin.pin = obj.getString("pin")
+                    pin.sugg = all <= 0
                 }
-                if (all > 0) binding.webView.loadUrl("javascript:window.JavaHandler.getPins(0,JSON.stringify(pinSuggestAPI(false,'$bssid',null)), '');") else wpsReady = true
+                if (all > 0) {
+                    binding.webView.post {
+                        binding.webView.loadUrl("javascript:window.JavaHandler.getPins(0,JSON.stringify(pinSuggestAPI(false,'$bssid',null)), '');")
+                    }
+                } else {
+                    wpsReady = true
+                }
             } catch (e: JSONException) {
                 pins.clear()
                 wpsReady = true
