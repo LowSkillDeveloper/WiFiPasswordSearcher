@@ -47,6 +47,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
   - Added a switch to disable searching in local database after 3wifi
 - Updated the way to grant permissions due to the requirements of the new SDK
 - Optimization of wps pin generation initialization (Now PIN code generation loads faster.)
+- Minor updates to the section with detailed information about the network
 
 ## Fixed Issues:
 - Getting online vendor information from wpsfinder.
