@@ -21,8 +21,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
 import android.preference.PreferenceManager
 import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -83,6 +86,69 @@ class UserInfoActivity : Activity() {
             setTheme(R.style.LightTheme)
         }
     }
+
+    fun btnDownloadOnClick(view: View) {
+        AsyncFileDownloader().execute()
+    }
+
+    private inner class AsyncFileDownloader : AsyncTask<Void, Void, Boolean>() {
+        private var pd: ProgressDialog? = null
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            pd = ProgressDialog(this@UserInfoActivity)
+            pd!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+            pd!!.setMessage(getString(R.string.download_button_label))
+            pd!!.setCanceledOnTouchOutside(false)
+            pd!!.show()
+        }
+
+        override fun doInBackground(vararg params: Void?): Boolean {
+            try {
+                val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT)) ?: ""
+                val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
+                val url = if (useCustomHost && serverURI.startsWith("http://134.0.119.34")) {
+                    URL("http://134.0.119.34/wpspin")
+                } else {
+                    URL("$serverURI/wpspin")
+                }
+
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+
+                if (useCustomHost && serverURI.startsWith("http://134.0.119.34")) {
+                    connection.setRequestProperty("Host", "3wifi.stascorp.com")
+                }
+
+                val inputStream = connection.inputStream
+                val buffer = ByteArray(1024)
+                val outputFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "wpspin.html")
+                val outputStream = FileOutputStream(outputFile)
+                var bytesRead: Int
+
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    outputStream.write(buffer, 0, bytesRead)
+                }
+
+                outputStream.close()
+                inputStream.close()
+                return true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return false
+            }
+        }
+
+        override fun onPostExecute(result: Boolean) {
+            super.onPostExecute(result)
+            pd?.dismiss()
+            val toastMessageId = if (result) R.string.download_file_success else R.string.download_file_error
+            val toastMessage = getString(toastMessageId)
+            Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
     private inner class AsyncWpsUpdater : AsyncTask<String?, Void?, String>() {
         private var pd: ProgressDialog? = null

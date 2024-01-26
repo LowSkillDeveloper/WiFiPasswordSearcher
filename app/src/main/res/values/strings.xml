@@ -94,7 +94,9 @@
     <string name="wip_gps_sniff">GPS Sniff feature under development (WIP)</string>
     <string name="wip_router_keygen">Password generation function using RouterKeygen algorithms in development (WIP)</string>
     <string name="message_nolocation_permissions">WiFi on newer versions of Android requires location permission to work</string>
-
+    <string name="download_button_label">Download File</string>
+    <string name="download_file_success">File downloaded and saved to Downloads successfully</string>
+    <string name="download_file_error">Error while downloading the file</string>
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>
