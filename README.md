@@ -53,7 +53,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Fixed a crash when switching passwords (The problem exists in all versions from drygdryg, which migrated from java to kotlin, but I no longer have it)
 - Fixed the message "this app was built for an older version of android" (If Android is 13 or higher, the message still appears, it will not appear until version 13 of Android)
 - Fixed black bars at the top and bottom of the application
-
+- Fixed offline wps generation from wpspin.html file (The problem exists in all versions from drygdryg, which migrated from java to kotlin, but I no longer have it)
 
 # TODO:
 - Add GPS sniffer
