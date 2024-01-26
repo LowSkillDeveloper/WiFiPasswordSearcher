@@ -1,11 +1,13 @@
 package com.example.Unofficial3WiFiLocator
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -27,6 +29,8 @@ import java.net.URL
 import java.net.URLEncoder
 import android.widget.EditText
 import android.preference.PreferenceManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -175,6 +179,7 @@ class StartActivity : Activity() {
         updateCurrentServerTextView()
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setAppTheme()
         super.onCreate(savedInstanceState)
@@ -264,7 +269,42 @@ class StartActivity : Activity() {
         binding.btnClearServerList.setOnClickListener {
             clearServerList()
         }
+        checkAndRequestPermissions()
     }
+
+    private fun checkAndRequestPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        val listPermissionsNeeded = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (listPermissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toTypedArray(), MY_PERMISSIONS_REQUEST)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == MY_PERMISSIONS_REQUEST) {
+            for (i in grantResults.indices) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    if (permissions[i] == Manifest.permission.ACCESS_FINE_LOCATION || permissions[i] == Manifest.permission.ACCESS_COARSE_LOCATION) {
+                        Toast.makeText(this, resources.getString(R.string.message_nolocation_permissions), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
 
     data class MessageInfo(
         val id: Int,
@@ -498,5 +538,6 @@ class StartActivity : Activity() {
     }
     companion object {
         private var VersionAlreadyChecked = false
+        private const val MY_PERMISSIONS_REQUEST = 100
     }
 }

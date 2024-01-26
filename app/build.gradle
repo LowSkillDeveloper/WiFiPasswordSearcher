@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.example.Unofficial3WiFiLocator"
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 27
     }
 
     buildTypes {
