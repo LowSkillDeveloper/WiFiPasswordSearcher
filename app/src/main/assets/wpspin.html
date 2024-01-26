@@ -1,9 +1,9 @@
 <html>
 <head>
-<title>3WiFi: Генератор WPS PIN</title>
+<title>3WiFi: WPS PIN generator</title>
 <meta http-equiv=Content-Type content="text/html;charset=UTF-8">
 <meta name="keywords" content="3wifi, wifi, router, scan, Router Scan, access point, map, internet, free"/>
-<link rel=stylesheet href="css/style.css?2017-06-25" type="text/css">
+<link rel=stylesheet href="css/style.css?1654902327" type="text/css">
 <style type="text/css">
 body { margin: 0px }
 </style>
@@ -11,7 +11,7 @@ body { margin: 0px }
 <script type="text/javascript">
 function isMobile() 
 { 
-	if( navigator.userAgent.match(/Android/i)
+	if (navigator.userAgent.match(/Android/i)
 	|| navigator.userAgent.match(/webOS/i)
 	|| navigator.userAgent.match(/iPhone/i)
 	|| navigator.userAgent.match(/iPad/i)
@@ -22,11 +22,13 @@ function isMobile()
 	{
 		return true;
 	}
-	if(window.innerWidth <= 800 && window.innerHeight <= 600) 
+	if (window.innerWidth <= 800 && window.innerHeight <= 600)
 	{
 		return true;
 	}
-	return false;
+	return (('ontouchstart' in window) ||
+		(navigator.maxTouchPoints > 0) ||
+		(navigator.msMaxTouchPoints > 0));
 }
 
 function errorStr(error)
@@ -34,36 +36,43 @@ function errorStr(error)
 	switch (error)
 	{
 		case 'database':
-		return 'Ошибка направления запроса базе данных';
+		return 'Database cannot handle request';
 		case 'loggedin':
-		return 'Вход уже выполнен';
+		return 'Already logged in';
 		case 'unauthorized':
-		return 'Вы не авторизованы';
+		return 'You are not authorized';
 		case 'loginfail':
-		return 'Неверный логин или пароль';
+		return 'Wrong login or password';
 		case 'form':
-		return 'Поля формы заполнены неверно';
+		return 'Some form fields are incorrect';
 		case 'invite':
-		return 'Неверный код приглашения';
+		return 'Wrong invitation code';
 		case 'login':
-		return 'Такой логин уже существует';
+		return 'Username already exists';
 		case 'nick':
-		return 'Такой ник уже существует';
+		return 'Nickname already exists';
 		case 'password':
-		return 'Пароль не соответствует требованиям';
+		return 'Password does not meet requirements';
 		case 'lowlevel':
-		return 'Ваш уровень доступа не предусматривает использование данной функции';
+		return 'This function is inaccessible with your access level';
 		case 'limit':
-		return 'Достигнут лимит использования данной функции';
+		return 'Usage limit is reached';
 		case 'token':
-		return 'Некорректный токен доступа, очистите кеш и попробуйте ещё раз';
+		return 'Token is incorrect, clear your browser cache and try again';
 		case 'notfound':
-		return 'Не найдено';
+		return 'Not found';
 		case 'cooldown':
-		return 'Временное ограничение на запрос, попробуйте ещё раз';
+		return 'Time limitation encountered, please try again';
 		default:
-		return 'Неизвестная ошибка';
+		return 'Unknown error';
 	}
+}
+function banReasonStr(error)
+{
+	if (error in BanReasons)
+		return BanReasons[error];
+	else
+		return 'Unknown error';
 }
 function encodeHTML(str, spaces)
 {
@@ -169,13 +178,25 @@ function doLogin()
 	{
 		if (json.result)
 		{
-			$('#loginstat').html('<img src="img/ok.png" style="position: relative; top: 3px"> Вход выполнен успешно!');
+			$('#loginstat').html('<img src="img/ok.png" style="position: relative; top: 3px"> Login success!');
 			setTimeout($('#stayhere').prop('checked') ? (typeof refreshLocation == "function" ? 'refreshLocation();' : 'window.location.reload();') : 'window.location.href = \'user\';', 1000);
 		}
 		else
 		{
 			var errstr = (typeof json.error == 'string' ? json.error : '');
-			$('#loginstat').html('<img src="img/no.png" style="position: relative; top: 3px"> ' + errorStr(errstr));
+			var err = '';
+			if (errstr == 'lowlevel')
+			{
+				err = 'Account is disabled. Reason: ';
+				if (json.inherited)
+					err += banReasonStr('inherit');
+				err += banReasonStr(json.reason);
+			}
+			else
+			{
+				err = errorStr(errstr);
+			}
+			$('#loginstat').html('<img src="img/no.png" style="position: relative; top: 3px"> ' + err);
 			$('#frm_login :input').prop('disabled', false);
 		}
 	});
@@ -184,7 +205,7 @@ function doLogout()
 {
 	var onFail = function(jqXHR, textStatus, errorThrown)
 	{
-		alert('Ошибка загрузки данных');
+		alert('No data received');
 	};
 	$.get('user.php?a=token', function(json)
 	{
@@ -212,7 +233,7 @@ function doReg()
 		if (json.result)
 		{
 			$('#checkinv').empty();
-			$('#regstat').html('<img src="img/ok.png" style="position: relative; top: 3px"> Регистрация успешна!');
+			$('#regstat').html('<img src="img/ok.png" style="position: relative; top: 3px"> Registration success!');
 			setTimeout('window.location.href = \'user\';', 2000);
 		}
 		else
@@ -223,6 +244,39 @@ function doReg()
 			$('#frm_reg :input').prop('disabled', false);
 		}
 	});
+}
+function doReturnView()
+{
+	var onFail = function(jqXHR, textStatus, errorThrown)
+	{
+		alert('No data received');
+	};
+	$.get('user.php?a=token', function(json)
+	{
+		if (!json.result)
+		{
+			alert(errorStr(json.error));
+			return false;
+		} else {
+			var postdata = '';
+			postdata += 'token=' + encodeURIComponent(json.token);
+			postdata += '&uid=0';
+			postdata += '&view=0';
+			$.post('user.php?a=setuser', postdata, function(json)
+			{
+				if (!json.result)
+				{
+					alert(errorStr(json.error));
+				}
+				else
+				{
+					window.location.reload();
+				}
+				return false;
+			}).fail(onFail);
+		}
+	}).fail(onFail);
+	return false;
 }
 function loginBtn(force)
 {
@@ -235,7 +289,7 @@ function loginBtn(force)
 }
 function loginRequireMsg()
 {
-	return 'Вы не авторизованы. <a href="javascript://" onclick="loginBtn(true)">Выполните вход.</a>';
+	return 'You are not authorized. <a href="javascript://" onclick="loginBtn(true)">Please login.</a>';
 }
 function getCookie(cname)
 {
@@ -282,10 +336,10 @@ function recheckCoordsLock()
 {
 	if (getCookie('uselocation') != '')
 	{
-		$('.coordlock').html('<img src="img/icon-location.png"/> Локация закреплена &nbsp;<button class=delcoord>Сбросить</button>');
+		$('.coordlock').html('<img src="img/icon-location.png"/> Location locked &nbsp;<button class=delcoord>Reset</button>');
 		$('button.delcoord').click(function ()
 		{
-			if (!confirm('Сбросить привязку к локации?')) return false;
+			if (!confirm('Reset current location?')) return false;
 			delCookie('uselocation');
 			if (getCookie('uselocation') == '')
 			{
@@ -298,17 +352,29 @@ function recheckCoordsLock()
 		$('.coordlock').html('');
 }
 
-var ProfileInfo = {isUser: 0, Nickname: "", Level: -1, invites: 0};
+var ProfileInfo = {isUser: 0, Nickname: "", Level: -1, invites: 0, viewUser: ""};
+var BanReasons = {"guest":"Guest account is <a href=\"https:\/\/forum.antichat.ru\/posts\/4370935\" target=\"_blank\">temporarily disabled<\/a>","parsing":"Mass download \/ parsing attempt \/ high load","commerce":"Commercial use","public":"Creation of public account","inherit":"The user who invited you was banned \u2014 ","weak":"Security issue \u2014 your login or password is weak","left":"You are no longer in community","contact":"Ask for help in Router Scan telegram chat"};
 
 function initmenu()
 {
-	if(this != top)
+	if (this != top)
 	{
 		top.location.href = this.location.href;
 	}
-	if (ProfileInfo.isUser == 0) $('a[href=user]').hide();
 
-	if(!isMobile())
+	if (ProfileInfo.isUser == 0)
+	{
+		$('a[href=user]').hide();
+	}
+	else if (ProfileInfo.viewUser != '')
+	{
+		var str = $('#returnbtn > p').html();
+		str = str.replace(/%username%/g, encodeHTML(ProfileInfo.viewUser));
+		$('#returnbtn > p').html(str);
+		$($('a[href=user]')[0]).hide().next().show();
+	}
+
+	if (!isMobile())
 	{
 		$('.multi').mouseenter(function()
 		{
@@ -428,7 +494,7 @@ function pinSuggest()
 		mt = insert(mt, ':', 6);
 		mt = insert(mt, ':', 4);
 		mt = insert(mt, ':', 2);
-		$('#suggpin').text("Подходящие пин-коды для "+mt+"\n\n");
+		$('#suggpin').text("Suggested PIN codes for "+mt+"\n\n");
 		var sugg = pinSuggestAPI(false, mt, z[1]);
 		for (var i = 0; i < sugg.length; i++)
 		{
@@ -439,7 +505,7 @@ function pinSuggest()
 
 			if (algos[sugg[i].algo].mode == ALGO_STATIC)
 			{
-				$('#suggpin').append(encodeHTML(pin, true) + ' | Статичный PIN - ' + algos[sugg[i].algo].name + "\n");
+				$('#suggpin').append(encodeHTML(pin, true) + ' | Static PIN - ' + algos[sugg[i].algo].name + "\n");
 			} else {
 				$('#suggpin').append(encodeHTML(pin, true) + ' | ' + algos[sugg[i].algo].name + "\n");
 			}
@@ -452,15 +518,15 @@ function getAll()
 {
 	var m = $('#bssids').val().replace(/^\s+|\s+$/g, '').split("\n");
 	if (m.length > 1)
-		return alert('Эта функция только для одного BSSID.');
+		return alert('This function only for one BSSID.');
 	var bss = m[0].replace(/ /g, '').toUpperCase();
 	var z = m[0].split('|');
 	m[0] = z[0];
 	m = m[0].replace(/:/g, '').replace(/-/g, '').replace(/\./g, '').replace(/ /g, '');
 	m = parseInt(m, 16);
 	if (isNaN(m) || m > 0xFFFFFFFFFFFF)
-		return alert('Некорректный BSSID.');
-	$('#result').text("Пин-коды для "+bss+"\n\n");
+		return alert('Incorrect BSSID.');
+	$('#result').text("PIN codes for "+bss+"\n\n");
 	var res = pinSuggestAPI(true, bss, z[1]);
 	for (var i = 0; i < res.length; i++)
 	{
@@ -471,7 +537,7 @@ function getAll()
 
 		if (algos[res[i].algo].mode == ALGO_STATIC)
 		{
-			$('#result').append(encodeHTML(pin, true) + ' | Статичный PIN - ' + algos[res[i].algo].name + "\n");
+			$('#result').append(encodeHTML(pin, true) + ' | Static PIN - ' + algos[res[i].algo].name + "\n");
 		} else {
 			$('#result').append(encodeHTML(pin, true) + ' | ' + algos[res[i].algo].name + "\n");
 		}
@@ -490,16 +556,16 @@ function showAlgo()
 			{
 			case ALGO_MAC:
 			case ALGO_MACSN:
-				$('#result').append(algos[i].name + " алгоритм,\n");
+				$('#result').append(algos[i].name + " algorithm,\n");
 				break;
 			case ALGO_STATIC:
-				$('#result').append(algos[i].name + " статичный пин,\n");
+				$('#result').append(algos[i].name + " static PIN,\n");
 				break;
 			case ALGO_EMPTY:
 				$('#result').append(algos[i].name + ",\n");
 				break;
 			}
-			$('#result').append("используется этими устройствами:\n\n");
+			$('#result').append("used by these devices:\n\n");
 			$('#result').append($('#' + algos[i].id).val());
 			break;
 		}
@@ -522,24 +588,24 @@ function checkDSLkeys(keys)
 				}
 			if (amb)
 			{
-				$('#result').append("[*] Найденный ключ неоднозначен, введите больше данных.\n");
+				$('#result').append("[*] Found key is ambiguous, specify more data.\n");
 				return false;
 			}
 			else
 			{
-				$('#result').append("[+] Ключ найден: "+keys.reverse().join(', ')+"\n");
+				$('#result').append("[+] Key found: "+keys.reverse().join(', ')+"\n");
 				return true;
 			}
 		}
 		else
 		{
-			$('#result').append("[*] Слишком много ключей (" + keys.length + "), введите больше данных.\n");
+			$('#result').append("[*] Too many keys (" + keys.length + "), specify more data.\n");
 			return false;
 		}
 	}
 	else
 	{
-		$('#result').append("[-] Ключи не найдены, похоже алгоритм не подходит.\n");
+		$('#result').append("[-] No keys found, algorithm seems unapplicable.\n");
 		return false;
 	}
 }
@@ -547,7 +613,7 @@ function runDSLcrack(data, bss_offset, sn_offset)
 {
 	if (bss_offset == 0 && sn_offset == 0)
 	{
-		$('#result').append("[*] Используем прямой перебор...\n");
+		$('#result').append("[*] Using straight mode...\n");
 	}
 	else
 	{
@@ -562,7 +628,7 @@ function runDSLcrack(data, bss_offset, sn_offset)
 			a.push("derived SN (dec)");
 		if (sn_offset == -2)
 			a.push("derived SN (hex)");
-		$('#result').append("[*] Используем режим " + a.join(', ') + "...\n");
+		$('#result').append("[*] Using mode " + a.join(', ') + "...\n");
 		for (var i = 0; i < data.length; i++)
 		{
 			if (bss_offset != 0)
@@ -627,7 +693,7 @@ function crackAlgo()
 	}
 	if (pairs.length > 1)
 	{
-		$('#result').append("\nУтилита расшифровки алгоритма DSL:\n");
+		$('#result').append("\nDSL derivation algorithm cracker:\n");
 
 		var result = runDSLcrack(unreference(pairs), 0, 0); // try without offset
 		if (!result)
@@ -686,7 +752,7 @@ function detect()
 	$('button').prop('disabled', true);
 	$('#fdata').empty();
 	$('#fhead').empty();
-	$('#fhead').append('<tr><th>Алгоритм</th><th>Пин WPS</th><th>Инфо</th><th>Вероятость</th></tr>');
+	$('#fhead').append('<tr><th>Algorithm</th><th>WPS PIN</th><th>Notes</th><th>Probability</th></tr>');
 	$('#fdata').append('<tr><td colspan=4><img src="img/loading.gif"></td></tr>');
 
 	$.post('3wifi.php?a=wpspin', formdata, function(d)
@@ -701,7 +767,7 @@ function detect()
 			}
 			else if (d.error == 'bssid')
 			{
-				$('#fdata > tr:first-child > :first-child').text('Некорректный BSSID.');
+				$('#fdata > tr:first-child > :first-child').text('Incorrect BSSID.');
 			}
 			else
 			{
@@ -717,9 +783,9 @@ function detect()
 				var info = '';
 				var pin = d.scores[i].value;
 				if (d.scores[i].fromdb)
-					info += '<img src="img/ok.png" title="Точка из базы данных"/>';
+					info += '<img src="img/ok.png" title="AP from database"/>';
 				if (pinChecksum(Math.floor(pin / 10)) != pin)
-					info += ' <img src="img/icon-warning.png" title="Нестандартный пин код (неверная контрольная сумма)"/>';
+					info += ' <img src="img/icon-warning.png" title="Non-standart PIN (wrong checksum)"/>';
 				$('#fdata').append('<tr><td>'+d.scores[i].name+'</td><td>'+pin+'</td><td>'+info+'</td><td style="text-align: left"><span class=perc></span><b>&nbsp; '+Math.round(d.scores[i].score * 100)+'%</b></td></tr>');
 				var perc = $('.perc:last');
 				var wid = 180;
@@ -729,10 +795,10 @@ function detect()
 				perc.html(chld);
 			}
 		} else {
-			$('#fdata > tr:first-child > :first-child').text('Устройства и/или подходящие алгоритмы не найдены.');
+			$('#fdata > tr:first-child > :first-child').text('No matched devices and/or algorithms found.');
 		}
 	}).fail(function(jqXHR, textStatus, errorThrown) {
-		$('#fdata > tr:first-child > :first-child').text('Ошибка загрузки данных.');
+		$('#fdata > tr:first-child > :first-child').text('No data received.');
 		$('input').prop('disabled', false);
 		$('button').prop('disabled', false);
 	});
@@ -1112,7 +1178,7 @@ function initAlgos()
 		var nic = parseInt(mac.substr(6, 6), 16);
 		return oui ^ nic;
 	}});
-	algos.push({id: "pinEmpty", name: "Пустой PIN", mode: ALGO_EMPTY, func: function (mac) {return '';}});
+	algos.push({id: "pinEmpty", name: "Empty PIN", mode: ALGO_EMPTY, func: function (mac) {return '';}});
 	algos.push({id: "pinCisco", name: "Cisco", mode: ALGO_STATIC, func: function (mac) {return 1234567;}});
 	algos.push({id: "pinBrcm1", name: "Broadcom 1", mode: ALGO_STATIC, func: function (mac) {return 2017252;}});
 	algos.push({id: "pinBrcm2", name: "Broadcom 2", mode: ALGO_STATIC, func: function (mac) {return 4626484;}});
@@ -1159,34 +1225,40 @@ function initpage()
 		<a href="home"><img class=menulogo src="img/logo.png"></a>
 		<div class="menubtn logoplace"><p></p></div>
 		<span class=multi>
-			<a href="home"><div class="menubtn"><p>О проекте</p></div></a>
+			<a href="home"><div class="menubtn"><p>About</p></div></a>
 			<span class=submenu>
-				<a href="home"><div class="submbtn"><p>Главная</p></div></a>
+				<a href="home"><div class="submbtn"><p>Home</p></div></a>
 				<a href="faq"><div class="submbtn"><p>F.A.Q</p></div></a>
-				<a href="apidoc"><div class="submbtn"><p>Описание API</p></div></a>
-				<a href="rules"><div class="submbtn"><p>Соглашение</p></div></a>
+				<a href="apidoc"><div class="submbtn"><p>3WiFi API</p></div></a>
+				<a href="rules"><div class="submbtn"><p>Site rules</p></div></a>
 			</span>
 		</span>
-		<a href="map"><div class="menubtn"><p>Карта</p></div></a>
-		<a href="find"><div class="menubtn"><p>Поиск</p></div></a>
+		<a href="map"><div class="menubtn"><p>Map</p></div></a>
+		<a href="find"><div class="menubtn"><p>Search</p></div></a>
 		<span class=multi>
-			<a href="ranges"><div class="menubtn mbsel"><p>Инструменты</p></div></a>
+			<a href="ranges"><div class="menubtn mbsel"><p>Tools</p></div></a>
 			<span class=submenu>
-				<a href="ranges"><div class="submbtn"><p>Поиск диапазонов</p></div></a>
-				<a href="devmac"><div class="submbtn"><p>Устройство по MAC</p></div></a>
-				<a href="wpspin"><div class="submbtn smsel"><p>Генератор WPS PIN</p></div></a>
+				<a href="ranges"><div class="submbtn"><p>Search IP ranges</p></div></a>
+				<a href="devmac"><div class="submbtn"><p>Device by MAC</p></div></a>
+				<a href="wpspin"><div class="submbtn smsel"><p>WPS PIN generator</p></div></a>
 			</span>
 		</span>
-		<a href="upload"><div class="menubtn"><p>Добавить</p></div></a>
+		<a href="upload"><div class="menubtn"><p>Upload</p></div></a>
 		<span class=multi>
-			<a href="stat"><div class="menubtn"><p>Состояние</p></div></a>
+			<a href="stat"><div class="menubtn"><p>State</p></div></a>
 			<span class=submenu>
-				<a href="stat"><div class="submbtn"><p>Статистика</p></div></a>
-				<a href="graph"><div class="submbtn"><p>Динамика</p></div></a>
+				<a href="stat"><div class="submbtn"><p>Statistics</p></div></a>
+				<a href="graph"><div class="submbtn"><p>Dynamics</p></div></a>
 			</span>
 		</span>
-		<a href="javascript://" onclick="loginBtn(false)" style="float: right"><div class=menubtn><p>Вход</p></div></a>
-		<a href="user"><div class="menubtn" style="float: right" id=nickname><p></p></div></a>
+		<a href="javascript://" onclick="loginBtn(false)" style="float: right"><div class=menubtn><p>Login</p></div></a>
+		<a href="user"><div class="menubtn" style="float: right"><p></p></div></a>
+		<span class=multi style="display: none; float: right">
+			<a href="user"><div class="menubtn"><p></p></div></a>
+			<span class=submenu>
+				<a href="#" onclick="return doReturnView()"><div class="submbtn" id=returnbtn><p>Return to %username%</p></div></a>
+			</span>
+		</span>
 	</div>
 </div>
 
@@ -1194,13 +1266,13 @@ function initpage()
 <div class="content wpspin">
 <table width=100%>
 	<tr><td width=50% style="vertical-align: top">
-		<p>Оффлайн генератор WPS PIN Companion из Router Scan.</p>
-		<p>Использует известные алгоритмы, не подключается к базе.</p>
+		<p>Offline WPS PIN Companion from Router Scan.</p>
+		<p>Uses known algorithms, does not use database.</p>
 		<table>
 			<tr><td>
 				<textarea id=bssids rows=3 cols=32 autofocus>12:34:56:78:9A:BC</textarea>
 			</td><td>
-				<button onclick="pinSuggest()">Угадать</button> <button onclick="getAll()">Получить все</button>
+				<button onclick="pinSuggest()">Suggest</button> <button onclick="getAll()">Get All</button>
 			</td></tr>
 
 			<tr><td colspan=2>
@@ -1208,25 +1280,25 @@ function initpage()
 			</td></tr>
 		</table>
 
-		<div>Реализованные алгоритмы (выберите для информации):</div>
+		<div>Implemented algorithms (choose for info):</div>
 
-		<select id=algosel onchange="showAlgo()"><option value=algonone>Не выбран</option></select>
+		<select id=algosel onchange="showAlgo()"><option value=algonone>Not selected</option></select>
 
-		&nbsp; <button onclick="crackAlgo()">Проверка алгоритма</button>
+		&nbsp; <button onclick="crackAlgo()">Check algorithm</button>
 	</td><td width=50% style="vertical-align: top">
-		<p>Онлайн генератор 3WiFi WPS PIN.</p>
-		<p>Подключается к базе, определяет линейные последовательности, статические пин-коды, и другие алгоритмы.</p>
+		<p>Online 3WiFi WPS PIN generator.</p>
+		<p>Takes advantage of collected data in the database, detects linear sequences, static PIN codes, and other algorithms.</p>
 		<form id=fdeviceform enctype="multipart/form-data" method="POST" onsubmit="detect(); return false">
 		<table>
 			<tbody>
 				<tr>
 					<td><nobr>BSSID / MAC:</nobr></td>
 					<td><input name="bssid" type="text" value="" pattern="([0-9A-Fa-f]{2}[:-]?){5}[0-9A-Fa-f]{2}" /></td>
-					<td><nobr> (в формате <tt>00:11:22:33:44:55</tt>)</nobr></td>
+					<td><nobr> (like <tt>00:11:22:33:44:55</tt>)</nobr></td>
 				</tr>
 			</tbody>
 			<tbody>
-				<tr><td><input type=submit value="Определить" /></td><td></td></tr>
+				<tr><td><input type=submit value="Detect" /></td><td></td></tr>
 			</tbody>
 		</table>
 		</form>
@@ -1268,7 +1340,7 @@ function initpage()
   F2:B2:DC:xx:xx:xx
   FC:F5:28:xx:xx:xx
   FE:F5:28:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     ZyXEL Internet Center
     Keenetic Giga II
     Keenetic Lite III
@@ -1276,24 +1348,24 @@ function initpage()
     RalinkAPS
 ZyXEL DEL1201-T10A
   4C:9E:FF:xx:xx:xx
-TRENDnet (некоторые прошивки)
+TRENDnet (some firmwares)
 TRENDnet TEW-651BR
   00:14:D1:xx:xx:xx
 TRENDnet TEW-735AP
   D8:EB:97:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     Wireless-N Multi-function AP
 D-Link DIR-300NRU B5
   1C:7E:E5:xx:xx:xx
   84:C9:B2:xx:xx:xx
   FC:75:16:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RalinkAPS
 D-Link DIR-620
   14:D6:4D:xx:xx:xx
   90:94:E4:xx:xx:xx
   BC:F6:85:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RalinkAPS
 D-Link DSL-2600U
   C4:A8:1D:xx:xx:xx
@@ -1311,7 +1383,7 @@ Huawei HG532e
   EC:23:3D:xx:xx:xx
   EC:CB:30:xx:xx:xx
   F4:9F:F3:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RalinkAPS
 ASUS RT-G32
 ASUS RT-N13U
@@ -1322,7 +1394,7 @@ ASUS RT-N13U Rev.B1
 Upvel UR-309BN
 Upvel UR-309NB
   D4:BF:7F:4x:xx:xx
-Upvel (некоторые прошивки)
+Upvel (some firmwares)
   F8:C0:91:xx:xx:xx
 Belkin F5D8231-4v5000
   00:1C:DF:xx:xx:xx
@@ -1409,7 +1481,7 @@ MitraStar HGW-2501GN-R2
   E2:41:36:xx:xx:xx
 PIX-LINK LV-WR02
   00:E0:20:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RalinkAPS
 Samsung SMT-G7440
   5C:A3:9D:xx:xx:xx
@@ -1420,7 +1492,7 @@ Samsung SWL
   E4:7C:F9:xx:xx:xx
 Sitecom WLR-6000
   00:0C:F6:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     Sitecom Wireless Gigabit Router
 TELDAT iRouter1104-W
   00:A0:26:xx:xx:xx
@@ -1434,7 +1506,7 @@ TP-Link TD-W8961NDv2.1
 B+B Smartworx BB-WR-600N
   34:BA:9A:xx:xx:xx
   B4:94:4E:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RalinkAPS
 
 Technical details:
@@ -1450,23 +1522,23 @@ https://web.archive.org/web/20171019081951/http://hellocow.cn/2012/04/get-the-pi
 Technical details:
 Pin = MAC[6..12]</textarea>
 
-<textarea id=pin32>D-Link DIR-300 (некоторые прошивки)
+<textarea id=pin32>D-Link DIR-300 (some firmwares)
   00:07:26:xx:xx:xx
   D8:FE:E3:xx:xx:xx
   FC:8B:97:xx:xx:xx
-D-Link DIR-825AC (некоторые прошивки)
+D-Link DIR-825AC (some firmwares)
   10:62:EB:xx:xx:xx
   1C:5F:2B:xx:xx:xx
   48:EE:0C:xx:xx:xx
   80:26:89:xx:xx:xx
   90:8D:78:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     DIR-825AC
-D-Link DAP-1360 (некоторые прошивки)
+D-Link DAP-1360 (some firmwares)
   E8:CC:18:xx:xx:xx
 Beeline DIR-300
   2C:AB:25:xx:xx:xx
-ASUS (некоторые прошивки)
+ASUS (some firmwares)
 ASUS RT-N13U Rev.B1
   10:BF:48:xx:xx:xx
   14:DA:E9:xx:xx:xx
@@ -1484,67 +1556,67 @@ EDIMAX BR6228GNS
 Technical details:
 Pin = MAC[5..12]</textarea>
 
-<textarea id=pin36>Неизвестно, для тестирования
+<textarea id=pin36>Unknown, for testing
 
 Technical details:
 Pin = MAC[4..12]</textarea>
 
-<textarea id=pin40>Неизвестно, для тестирования
+<textarea id=pin40>Unknown, for testing
 
 Technical details:
 Pin = MAC[3..12]</textarea>
 
-<textarea id=pin44>Неизвестно, для тестирования
+<textarea id=pin44>Unknown, for testing
 
 Technical details:
 Pin = MAC[2..12]</textarea>
 
-<textarea id=pin48>Неизвестно, для тестирования
+<textarea id=pin48>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..12]</textarea>
 
-<textarea id=pin24rh>Неизвестно, для тестирования
+<textarea id=pin24rh>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..7]</textarea>
 
-<textarea id=pin32rh>Неизвестно, для тестирования
+<textarea id=pin32rh>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..5]</textarea>
 
-<textarea id=pin48rh>Неизвестно, для тестирования
+<textarea id=pin48rh>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..1]</textarea>
 
-<textarea id=pin24rn>Неизвестно, для тестирования
+<textarea id=pin24rn>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..7]</textarea>
 
-<textarea id=pin32rn>Неизвестно, для тестирования
+<textarea id=pin32rn>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..5]</textarea>
 
-<textarea id=pin48rn>Неизвестно, для тестирования
+<textarea id=pin48rn>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..1]</textarea>
 
-<textarea id=pin24rb>Неизвестно, для тестирования
+<textarea id=pin24rb>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..7]</textarea>
 
-<textarea id=pin32rb>Неизвестно, для тестирования
+<textarea id=pin32rb>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..5]</textarea>
 
-<textarea id=pin48rb>Неизвестно, для тестирования
+<textarea id=pin48rb>Unknown, for testing
 
 Technical details:
 Pin = MAC[12..1]</textarea>
@@ -1568,7 +1640,7 @@ TRENDnet TEW-652BRP
 TRENDnet TEW-731BR
   00:14:D1:xx:xx:xx
   D8:EB:97:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     TEW-651BR
 
 Technical details:
@@ -1601,7 +1673,7 @@ D-Link DIR-857
   C8:BE:19:xx:xx:xx
   C8:D3:A3:xx:xx:xx
   CC:B2:55:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     D-Link Systems DIR-615
     Wireless N Router
 TRENDnet TEW-652BRP
@@ -1643,7 +1715,7 @@ Belkin F9K1118 v2
   B4:75:0E:xx:xx:xx
   C0:56:27:xx:xx:xx
   EC:1A:59:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     Belkin Wireless Router(WFA)
 
 Technical details:
@@ -1674,7 +1746,7 @@ Livebox 2.2 (Arcadyan)
   A8:D3:F7:xx:xx:xx
   D0:05:2A:xx:xx:xx
   D4:63:FE:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     Livebox Wireless Router(WFA)
 
 Technical details:
@@ -1745,7 +1817,7 @@ ASUS RX3041 Rev.B
   E0:3F:49:xx:xx:xx
   F0:79:59:78:xx:xx
   F8:32:E4:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     ASUS WPS Router
     RT-N10PV2
     RT-N10U
@@ -1853,32 +1925,32 @@ https://forum.antichat.ru/posts/3978417/</textarea>
 Technical details:
 https://forum.antichat.ru/posts/3975451/</textarea>
 
-<textarea id=pinInvNIC>Неизвестно, для тестирования
+<textarea id=pinInvNIC>Unknown, for testing
 
 Technical details:
 Pin = Inv(MAC[7..12])</textarea>
 
-<textarea id=pinNIC2>Неизвестно, для тестирования
+<textarea id=pinNIC2>Unknown, for testing
 
 Technical details:
 Pin = MAC[7..12] * 2</textarea>
 
-<textarea id=pinNIC3>Неизвестно, для тестирования
+<textarea id=pinNIC3>Unknown, for testing
 
 Technical details:
 Pin = MAC[7..12] * 3</textarea>
 
-<textarea id=pinOUIaddNIC>Неизвестно, для тестирования
+<textarea id=pinOUIaddNIC>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..6] + MAC[7..12]</textarea>
 
-<textarea id=pinOUIsubNIC>Неизвестно, для тестирования
+<textarea id=pinOUIsubNIC>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..6] - MAC[7..12]</textarea>
 
-<textarea id=pinOUIxorNIC>Неизвестно, для тестирования
+<textarea id=pinOUIxorNIC>Unknown, for testing
 
 Technical details:
 Pin = MAC[1..6] ^ MAC[7..12]</textarea>
@@ -1886,11 +1958,11 @@ Pin = MAC[1..6] ^ MAC[7..12]</textarea>
 <textarea id=pinEmpty>D-Link DIR-620
   E4:6F:13:xx:xx:xx
   EC:22:80:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     DIR-620
 D-Link DIR-822
   58:D5:6E:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     DIR-822
 D-Link DIR-825/AC
   10:62:EB:xx:xx:xx
@@ -1898,15 +1970,15 @@ D-Link DIR-825/AC
   1C:5F:2B:xx:xx:xx
   80:26:89:xx:xx:xx
   A0:AB:1B:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     DIR-825AC
 D-Link DIR-825/AC/G1
   74:DA:DA:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     DIR-825ACG1
 D-Link DSL-2640U
   9C:D6:43:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     DSL-2640U
 Huawei HG658c
   68:A0:F6:xx:xx:xx
@@ -1916,12 +1988,12 @@ Huawei B683-24V 3G
   78:F5:FD:xx:xx:xx
   AC:E2:15:xx:xx:xx
   C8:D1:5E:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     3G Wireless gateway
 SERCOMM RV6688BCM
   00:0E:8F:xx:xx:xx
   D4:21:22:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RV6688BCM
 SERCOMM WiFire S1010
   3C:98:72:xx:xx:xx
@@ -1929,7 +2001,7 @@ SERCOMM WiFire S1010
   78:94:B4:xx:xx:xx
   D4:60:E3:xx:xx:xx
   E0:60:66:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     S1010
 ZTE ZXHN H108N
   00:4A:77:xx:xx:xx
@@ -1945,7 +2017,7 @@ ZTE ZXHN H218N
   7C:39:53:xx:xx:xx
   8C:68:C8:xx:xx:xx
   D4:76:EA:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     ADSL Modem/Router
 ZTE ZXHN H298N
   34:4D:EA:xx:xx:xx
@@ -1963,7 +2035,7 @@ https://hg658c.wordpress.com/2015/06/20/obtaining-the-wifi-password-in-a-few-sec
 
 <textarea id=pinCisco>ASUS RT-N12 HG
   00:1A:2B:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     ASUS Wireless Router
 Cisco DPC2420
 Cisco EPC2100R2
@@ -1976,7 +2048,7 @@ Cisco EPC2325
   E0:CB:4E:xx:xx:xx
 Huawei Technologies HG8245T
   70:54:F5:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     Atheros AP
 
 Technical details:
@@ -2012,7 +2084,7 @@ D-Link DSL-2740U
   B8:A3:86:xx:xx:xx
   BC:F6:85:xx:xx:xx
   C8:BE:19:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     BroadcomAP
 
 Technical details:
@@ -2028,11 +2100,11 @@ D-Link DSL-2740U
   B8:A3:86:xx:xx:xx
   BC:F6:85:xx:xx:xx
   C8:BE:19:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     BroadcomAP
 Sagemcom F@ST2304v2 MTS
   7C:03:4C:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     BroadcomAP
 
 Technical details:
@@ -2175,7 +2247,7 @@ Pin = 9566146</textarea>
 <textarea id=pinRealtek2>Netis WF2780
   00:72:63:xx:xx:xx
   E4:BE:ED:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RTK_AP
 
 Technical details:
@@ -2187,7 +2259,7 @@ Pin = 9571911</textarea>
 Technical details:
 Pin = 4856371</textarea>
 
-<textarea id=pinUpvel>Upvel (некоторые прошивки)
+<textarea id=pinUpvel>Upvel (some firmwares)
 Upvel UR-315BN
 Upvel UR-325BN
   78:44:76:xx:xx:xx
@@ -2206,7 +2278,7 @@ Pin = 4397768</textarea>
 <textarea id=pinUR825AC>Upvel UR-825AC
 Upvel UR-825N4G
   D4:BF:7F:5x:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     UR-825N4G
 
 Technical details:
@@ -2216,16 +2288,16 @@ Pin = 0529417</textarea>
 Upvel Onlime UR-319BN
   D4:BF:7F:xx:xx:xx
   F8:C0:91:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RTK_AP
     RTK_AP_2x
 TOTOLINK N150RT
 TOTOLINK N300RT
   14:4D:67:xx:xx:xx
   78:44:76:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     RTL8196E
-TRENDnet (редко)
+TRENDnet (rarely)
 TRENDnet TEW-637AP
 TRENDnet TEW-638APB
   00:14:D1:xx:xx:xx
@@ -2285,7 +2357,7 @@ Pin = 3425928</textarea>
   C8:64:C7:xx:xx:xx
   DC:02:8E:xx:xx:xx
   FC:C8:97:xx:xx:xx
-  Имена устройств WSC:
+  WSC Device Names:
     H108L
 
 Technical details:
@@ -2301,7 +2373,7 @@ Pin = 9575521</textarea>
 </div>
 </div>
 
-<div class=footer>&copy; 2015-2019 akokarev, binarymaster, Felis-Sapiens, Fusix</div>
+<div class=footer>&copy; 2015-2022 akokarev, binarymaster, Felis-Sapiens, Fusix</div>
 
 <div class=modal>
 	<div class=modal_bkg onclick="hideModal()"></div>
