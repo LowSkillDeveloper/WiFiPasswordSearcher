@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "messages": {
+    "en": {
+      "title": "Important message due to access issues",
+      "message": "It is recommended to specify the IP address of the 3wifi server in the server field, instead of using the domain name, which is currently not accessible. This will allow direct requests to the 3wifi.stascorp.com server, as the application automatically adds the domain name in POST requests.\n\nNo need to use an external proxy server for redirection to the main server anymore. Most importantly, you can always change the server on the main page or disable the addition of the HOST header in POST requests in the application settings.\n\nSimply select http://134.0.119.34 from the list of servers — this is the IP address of the 3wifi.stascorp.com site."
+    },
+    "ru": {
+      "title": "Важное сообщение из-за проблем с доступом",
+      "message": "Рекомендуется указать в поле сервера IP-адрес сервера 3wifi, а не использовать доменное имя, которрое сейчас не доступно. Это позволит напрямую отправлять запросы на сервер 3wifi.stascorp.com, так как приложение автоматически добавляет доменное имя в POST-запросах.\n\nБольше не нужно использовать сторонний прокси-сервер для перенаправления на основной сервер. А главное, вы всегда можете изменить сервера на главной странице или отключить добавление заголовка HOST в POST-запросах в настройках приложения.\n\nПросто выберите http://134.0.119.34 из списка серверов — это IP-адрес сайта 3wifi.stascorp.com"
+    }
+  }
+}
