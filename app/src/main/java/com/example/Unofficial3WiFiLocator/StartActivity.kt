@@ -3,9 +3,11 @@ package com.example.Unofficial3WiFiLocator
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -25,7 +27,12 @@ import java.net.URL
 import java.net.URLEncoder
 import android.widget.EditText
 import android.preference.PreferenceManager
-
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class StartActivity : Activity() {
 
@@ -56,7 +63,7 @@ class StartActivity : Activity() {
                 runOnUiThread {
                     updateSpinner(servers)
                     showClearButton()
-                    showInitialMessageIfNeeded(servers)
+                    FirstRunIfNeeded(servers)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -191,6 +198,7 @@ class StartActivity : Activity() {
         updateSpinnerWithSavedServers()
         loadServerList()
         setupSpinner()
+        loadAndShowMessage()
         onConfigurationChanged(resources.configuration)
 
         val currentServerUri = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
@@ -258,23 +266,80 @@ class StartActivity : Activity() {
         }
     }
 
-    private fun showInitialMessageIfNeeded(servers: ArrayList<String>) {
+    data class MessageInfo(
+        val id: Int,
+        val messages: Map<String, Message>
+    )
+
+    data class Message(
+        val title: String,
+        val message: String
+    )
+
+    fun loadAndShowMessage() = CoroutineScope(Dispatchers.IO).launch {
+        if (!isNetworkAvailable()) {
+            return@launch
+        }
+
+        val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg.json")
+        val connection = url.openConnection() as HttpURLConnection
+        try {
+            connection.apply {
+                requestMethod = "GET"
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    inputStream.use { stream ->
+                        val jsonStr = stream.reader().use { reader -> reader.readText() }
+                        val messageInfo = Gson().fromJson<MessageInfo>(jsonStr, MessageInfo::class.java)
+                        withContext(Dispatchers.Main) {
+                            handleJsonResponse(messageInfo)
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
+    }
+
+    fun handleJsonResponse(messageInfo: MessageInfo) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val lastShownMessageId = sharedPreferences.getInt("lastShownMessageId", 0)
+
+        if (messageInfo.id != 0 && messageInfo.id != lastShownMessageId) {
+            val currentLanguage = Locale.getDefault().language
+            val message = messageInfo.messages[currentLanguage] ?: messageInfo.messages["en"]
+
+            message?.let {
+                showAlertDialog(it.title, it.message)
+                sharedPreferences.edit().putInt("lastShownMessageId", messageInfo.id).apply()
+            }
+        }
+    }
+
+    fun showAlertDialog(title: String, message: String) {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.setTitle(title)
+        alertDialog.setMessage(message)
+        alertDialog.setPositiveButton("OK", null)
+        alertDialog.show()
+    }
+
+    private fun FirstRunIfNeeded(servers: ArrayList<String>) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
 
         if (isFirstRun && servers.contains("http://134.0.119.34")) {
             mSettings.Editor!!.putBoolean("USE_CUSTOM_HOST", true).apply()
-            showInitialDialog()
             sharedPreferences.edit().putBoolean("isFirstRun", false).apply()
         }
-    }
-
-    private fun showInitialDialog() {
-        val alertDialog = AlertDialog.Builder(this)
-        alertDialog.setTitle(resources.getString(R.string.start_important_message))
-        alertDialog.setMessage(resources.getString(R.string.start_msg_custom_host))
-        alertDialog.setPositiveButton("ОК", null)
-        alertDialog.show()
     }
 
     private fun setAppTheme() {
@@ -347,11 +412,11 @@ class StartActivity : Activity() {
                 connection.setRequestProperty("Host", "3wifi.stascorp.com")
             }
             val writer = DataOutputStream(
-                    connection.outputStream)
+                connection.outputStream)
             writer.writeBytes(
-                    "login=" + URLEncoder.encode(Login, "UTF-8") +
-                            "&password=" + URLEncoder.encode(Password, "UTF-8") +
-                            "&genread=1")
+                "login=" + URLEncoder.encode(Login, "UTF-8") +
+                        "&password=" + URLEncoder.encode(Password, "UTF-8") +
+                        "&genread=1")
             connection.readTimeout = 10 * 1000
             connection.connect()
             reader = BufferedReader(InputStreamReader(connection.inputStream))
@@ -419,9 +484,9 @@ class StartActivity : Activity() {
             }
             val builder = AlertDialog.Builder(this@StartActivity)
             builder.setTitle(resources.getString(R.string.status_no_internet))
-                    .setMessage(resources.getString(R.string.dialog_work_offline))
-                    .setPositiveButton(resources.getString(R.string.dialog_yes), dialogClickListener)
-                    .setNegativeButton(resources.getString(R.string.dialog_no), dialogClickListener).show()
+                .setMessage(resources.getString(R.string.dialog_work_offline))
+                .setPositiveButton(resources.getString(R.string.dialog_yes), dialogClickListener)
+                .setNegativeButton(resources.getString(R.string.dialog_no), dialogClickListener).show()
         }
         return false
     }
