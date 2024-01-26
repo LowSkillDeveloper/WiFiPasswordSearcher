@@ -34,6 +34,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
     
 ## Updated Features:
 - Offline mode button.
+- Upgraded the SDK version
 - In network security definition, WPA3 definition has been added
 - Feature for checking application updates.
 - Latest wpspin.html from 3WiFi.
@@ -42,12 +43,15 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Added more buttons for logging out of your account
 - After checking via 3wifi, there is a check using the local database.
   - Added a switch to disable searching in local database after 3wifi
+- Updated the way to grant permissions due to the requirements of the new SDK
 
 ## Fixed Issues:
 - Getting online vendor information from wpsfinder.
 - Remade some hardcoded lines
 - Visibility of some objects
 - Fixed a crash when switching passwords (The problem exists in all versions from drygdryg, which migrated from java to kotlin, but I no longer have it)
+- Fixed the message "this app was built for an older version of android" (If Android is 13 or higher, the message still appears, it will not appear until version 13 of Android)
+- Fixed black bars at the top and bottom of the application
 
 
 # TODO:
@@ -55,7 +59,6 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Integrate RouterKeygen algorithms
 - Add manual language change
 - Fix known minor bugs
-- Fix the message that the application is intended for older versions of Android (Too much to redo...)
 
 
 # Screenshots
