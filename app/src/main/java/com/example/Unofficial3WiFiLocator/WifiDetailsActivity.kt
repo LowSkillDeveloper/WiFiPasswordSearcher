@@ -118,11 +118,27 @@ class WifiDetailsActivity : Activity() {
     }
 
     private fun update() {
-        setBSSID(wifiInfo.BSSID)
-        setESSID(wifiInfo.SSID)
-        setFreq(wifiInfo.frequency.toString())
-        setSignal(wifiInfo.level.toString())
+        runOnUiThread {
+            setBSSID(wifiInfo.BSSID)
+            setESSID(wifiInfo.SSID)
+            setFreq(wifiInfo.frequency.toString())
+            setSignal(wifiInfo.level.toString())
+
+            val capabilities = wifiInfo.capabilities
+            val encryptionType = when {
+                capabilities.contains("WPA3") -> "WPA3"
+                capabilities.contains("WPA2") -> "WPA2"
+                capabilities.contains("WPA") -> "WPA"
+                capabilities.contains("WEP") -> "WEP"
+                else -> "Open"
+            }
+            binding.txtEncryptionType.text = getString(R.string.label_encryption) + encryptionType
+
+            val authenticationType = if (capabilities.contains("PSK")) "PSK" else "EAP"
+            binding.txtAuthenticationType.text = getString(R.string.label_authentication) + authenticationType
+        }
     }
+
 
     private fun detectorWorker() {
         val pickSoundId = mSoundPool.load(applicationContext, R.raw.pick, 1)

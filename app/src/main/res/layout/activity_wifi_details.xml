@@ -13,58 +13,69 @@
 		android:layout_height="wrap_content">
 
 		<TextView
+			android:id="@+id/txtDetailsESSID"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:text="ESSID"
-			android:id="@+id/txtDetailsESSID"
+			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textSize="30dp"
-			android:layout_weight="0.03"
 			android:layout_gravity="center_horizontal"/>
 
 		<TextView
+			android:id="@+id/txtDetailsBSSID"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:text="BSSID"
-			android:id="@+id/txtDetailsBSSID"/>
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
 
 		<TextView
+			android:id="@+id/txtDetailsChannel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:text="Channel: 12"
-			android:id="@+id/txtDetailsChannel"/>
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
 
 		<TextView
+			android:id="@+id/txtDetailsFreq"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:text="Freq: 200 Ghz"
-			android:id="@+id/txtDetailsFreq"/>
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
 
 		<TextView
+			android:id="@+id/txtDetailsSignal"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:text="Signal: 56%"
-			android:id="@+id/txtDetailsSignal"/>
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+		<TextView
+			android:id="@+id/txtEncryptionType"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Encryption Type"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+		<TextView
+			android:id="@+id/txtAuthenticationType"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Authentication Type"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+
 
 		<CheckBox
+			android:id="@+id/chkbUseDetector"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/checkbox_enable_peak_monitor"
-			android:id="@+id/chkbUseDetector"
-			android:layout_weight="0.03"/>
+			android:text="@string/checkbox_enable_peak_monitor"/>
 
 	</LinearLayout>
 
 	<com.jjoe64.graphview.GraphView
-		android:orientation="vertical"
+		android:id="@+id/signalGraph"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"
-		android:id="@+id/signalGraph">
-
-	</com.jjoe64.graphview.GraphView>
+		android:orientation="vertical"/>
 
 </LinearLayout>
