@@ -3,6 +3,7 @@ package com.example.Unofficial3WiFiLocator
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.media.AudioManager
 import android.media.SoundPool
 import android.net.wifi.ScanResult
@@ -222,20 +223,32 @@ class WifiDetailsActivity : Activity() {
         lastFreq = iFreq
     }
 
-    private fun setSignal(Signal: String?) {
-        var iSignal = Signal!!.toInt()
-        iSignal = (100 + iSignal) * 2
-        iSignal = iSignal.coerceAtLeast(0).coerceAtMost(100)
-        val fSignal = iSignal
-        lastSignal = iSignal
+    private fun setSignal(signal: String?) {
+        val iSignal = signal?.toIntOrNull() ?: return
+        val normalizedSignal = (iSignal + 100).coerceIn(0, 100)
+        val fSignal = normalizedSignal.toDouble()
+
+        lastSignal = normalizedSignal
+        updateGraph(fSignal)
+        updateSignalText(fSignal)
+    }
+
+    private fun updateGraph(fSignal: Double) {
         runOnUiThread {
-            graphSeries.appendData(
-                    DataPoint(iGraphPointCount.toDouble(), fSignal.toDouble()),
-                    true,
-                    25
-            )
-            iGraphPointCount++
-            binding.txtDetailsSignal.text = "${getString(R.string.label_signal)} $fSignal%"
+            val color = when (fSignal) {
+                in 0.0..33.0 -> Color.RED
+                in 34.0..66.0 -> Color.YELLOW
+                else -> Color.GREEN
+            }
+            graphSeries.color = color
+            graphSeries.appendData(DataPoint(iGraphPointCount++.toDouble(), fSignal), true, 100)
+        }
+    }
+
+    private fun updateSignalText(fSignal: Double) {
+        runOnUiThread {
+            val signalText = "${getString(R.string.label_signal)} ${fSignal.toInt()}%"
+            binding.txtDetailsSignal.text = signalText
         }
     }
 
