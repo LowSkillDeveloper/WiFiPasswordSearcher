@@ -1044,12 +1044,18 @@ class MyActivity : AppCompatActivity() {
         Thread(Runnable {
             for (elemWiFi in list) {
                 val bssid = elemWiFi?.get("BSSID")?.toUpperCase()
-                val localDbExists = bssid?.let {
-                    wifiDatabaseHelper.networkExists(
-                        it,
-                        null, null, null, null
-                    )
-                } ?: false
+                val essid = elemWiFi?.get("ESSID")
+                val keys = WiFiKeys!!.find { it.bssid == bssid }?.keys
+                val wps = WiFiKeys!!.find { it.bssid == bssid }?.wps
+
+                val localDbExists = if (keys != null && wps != null) {
+                    keys.any { key ->
+                        wifiDatabaseHelper.networkExists(bssid ?: "", key ?: "", wps.firstOrNull() ?: "", null, null)
+                    }
+                } else {
+                    false
+                }
+
                 if (localDbExists && autoSearchLocalDb) {
                     elemWiFi?.put("LOCAL_DB", getString(R.string.available_locally))
                 }
