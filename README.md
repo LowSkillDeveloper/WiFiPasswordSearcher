@@ -31,6 +31,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Added links to the start menu
 - Added a local database search button next to the search button in the online 3wifi database
   - Added a primary button switch, now the local DB search button can be made primary.
+- Added the ability to download wpspin.html to the phone
     
 ## Updated Features:
 - Offline mode button.
