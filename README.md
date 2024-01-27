@@ -21,13 +21,14 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Added double scanning feature to get more networks (It does two scans in a row with an interval of 4 seconds and then merges it into one list.)
 - Offline vendor database from "Wps Wpa Tester" app.
 - Added history of data founded in 3wifi for networks you scanned. (Local database in the application, where the networks saves when you found data in 3wifi)
-  - Added import and export of local database
+  - Added import and export of local database in .json file
   - Manually adding to the database
   - Interaction with networks in the database (wps generation, wps connection, copying)
   - Added columns for login and password to the router admin panel. (only manual addition or import from router scan txt)
   - Import txt file from RouterScan to local DB (or myuploads.txt from 3wifi)
     - Now the application can import a large myuploads.txt file that containing more than 100K lines
   - Added a switch that disables automatic adding of received data from 3wifi to the local database
+  - Added function to optimize the database and remove duplicates.
 - Added links to the start menu
 - Added a local database search button next to the search button in the online 3wifi database
   - Added a primary button switch, now the local DB search button can be made primary.
