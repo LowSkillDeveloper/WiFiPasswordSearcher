@@ -509,6 +509,8 @@ class ViewDatabaseActivity : Activity() {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val jsonArray = JSONArray(jsonContents)
+                    val networksToInsert = mutableListOf<Array<String>>()
+
                     for (i in 0 until jsonArray.length()) {
                         val jsonObject = jsonArray.getJSONObject(i)
                         val essid = jsonObject.optString("essid")
@@ -517,11 +519,23 @@ class ViewDatabaseActivity : Activity() {
                         val wpsCode = jsonObject.optString("wpsCode")
                         val adminLogin = jsonObject.optString("adminLogin")
                         val adminPass = jsonObject.optString("adminPass")
+
                         if (importType == "update" && wifiDatabaseHelper.networkExists(bssid, password, wpsCode, adminLogin, adminPass)) {
                             continue
                         }
-                        wifiDatabaseHelper.addNetwork(essid, bssid, password, wpsCode, adminLogin, adminPass)
+
+                        networksToInsert.add(arrayOf(essid, bssid, password, wpsCode, adminLogin, adminPass))
+
+                        if (networksToInsert.size >= 100) {
+                            wifiDatabaseHelper.addNetworksInTransaction(networksToInsert)
+                            networksToInsert.clear()
+                        }
                     }
+
+                    if (networksToInsert.isNotEmpty()) {
+                        wifiDatabaseHelper.addNetworksInTransaction(networksToInsert)
+                    }
+
                     withContext(Dispatchers.Main) {
                         displayDatabaseInfo()
                         progressDialog.dismiss()
