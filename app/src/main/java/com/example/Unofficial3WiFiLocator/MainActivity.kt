@@ -83,6 +83,25 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         db.execSQL(createTableStatement)
     }
 
+    fun removeDuplicates() {
+        val db = wifiDatabaseHelper.writableDatabase
+        db.execSQL("""
+            DELETE FROM ${WiFiDatabaseHelper.TABLE_NAME}
+            WHERE ${WiFiDatabaseHelper.COLUMN_ID} NOT IN (
+                SELECT MAX(${WiFiDatabaseHelper.COLUMN_ID})
+                FROM ${WiFiDatabaseHelper.TABLE_NAME}
+                GROUP BY ${WiFiDatabaseHelper.COLUMN_MAC_ADDRESS}, ${WiFiDatabaseHelper.COLUMN_WIFI_PASSWORD}, ${WiFiDatabaseHelper.COLUMN_WPS_CODE}
+            )
+        """)
+        db.close()
+    }
+
+    fun vacuumDatabase() {
+        val db = wifiDatabaseHelper.writableDatabase
+        db.execSQL("VACUUM")
+        db.close()
+    }
+
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 2) {
             db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COLUMN_ADMIN_LOGIN TEXT")

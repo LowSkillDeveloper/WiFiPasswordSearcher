@@ -20,6 +20,14 @@
         />
 
     <item
+        android:id="@+id/optimize_database"
+        android:title="@string/optimize_database" />
+
+    <item
+        android:id="@+id/remove_duplicates"
+        android:title="@string/remove_duplicates" />
+
+    <item
         android:id="@+id/clear_database"
         android:title="@string/clear_database"
         />

@@ -58,7 +58,7 @@ class ViewDatabaseActivity : Activity() {
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            Toast.makeText(this, "Проверка окружающих wifi по базе (WIP)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Not working (WIP)", Toast.LENGTH_SHORT).show()
         }
 
 
@@ -315,6 +315,17 @@ class ViewDatabaseActivity : Activity() {
                 }
                 R.id.add_network_manually -> {
                     showAddNetworkDialog()
+                    true
+                }
+                R.id.optimize_database -> {
+                    wifiDatabaseHelper.vacuumDatabase()
+                    Toast.makeText(this, "Database Optimized", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.remove_duplicates -> {
+                    wifiDatabaseHelper.removeDuplicates()
+                    displayDatabaseInfo()
+                    Toast.makeText(this, "Duplicates Removed", Toast.LENGTH_SHORT).show()
                     true
                 }
                 else -> false

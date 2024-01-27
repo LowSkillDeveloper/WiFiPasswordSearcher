@@ -101,7 +101,8 @@
     <string name="label_encryption">Encryption: </string>
     <string name="label_authentication">Authentication: </string>
     <string name="easter_egg">Don\'t click too hard, or you\'ll break it!</string>
-
+    <string name="optimize_database">Optimize Database</string>
+    <string name="remove_duplicates">Remove Duplicates</string>
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>

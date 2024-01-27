@@ -110,6 +110,8 @@
     <string name="label_encryption">Шифрование: </string>
     <string name="label_authentication">Аутентификация: </string>
     <string name="easter_egg">Не кликай сильно, а то сломаешь!</string>
+    <string name="optimize_database">Оптимизировать базу данных</string>
+    <string name="remove_duplications">Удалить дубликаты</string>
 
     <string name="label_start">Проект RouterScan будет жить вечно</string>
     <string name="button_3wifi">3WiFi</string>
