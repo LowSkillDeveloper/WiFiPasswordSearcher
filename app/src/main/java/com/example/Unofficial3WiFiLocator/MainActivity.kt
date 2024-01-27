@@ -111,6 +111,34 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         }
     }
 
+    fun addNetworksInTransactionRS(networks: List<Triple<String, String, String>>) {
+        val db = this.writableDatabase
+        db.beginTransaction()
+        try {
+            val insertStatement = db.compileStatement(
+                "INSERT INTO $TABLE_NAME " +
+                        "($COLUMN_WIFI_NAME, $COLUMN_MAC_ADDRESS, $COLUMN_WIFI_PASSWORD, " +
+                        "$COLUMN_WPS_CODE, $COLUMN_ADMIN_LOGIN, $COLUMN_ADMIN_PASS) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)"
+            )
+
+            for (network in networks) {
+                insertStatement.bindString(1, network.first)
+                insertStatement.bindString(2, network.second)
+                insertStatement.bindString(3, network.third)
+                insertStatement.bindString(4, "")
+                insertStatement.bindString(5, "")
+                insertStatement.bindString(6, "")
+                insertStatement.executeInsert()
+            }
+
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+
     fun removeDuplicates() {
         val db = wifiDatabaseHelper.writableDatabase
         db.execSQL("""

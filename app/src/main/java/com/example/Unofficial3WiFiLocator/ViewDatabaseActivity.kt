@@ -354,11 +354,18 @@ class ViewDatabaseActivity : Activity() {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val inputStream = contentResolver.openInputStream(uri)
+                    val networksToAdd = mutableListOf<Triple<String, String, String>>()
+
                     inputStream?.bufferedReader()?.useLines { lines ->
                         lines.forEach { line ->
-                            parseAndAddToDatabaseFromRouterScan(line, importType)
+                            parseRouterScanLine(line, importType)?.let { networkTriple ->
+                                networksToAdd.add(networkTriple)
+                            }
                         }
                     }
+
+                    wifiDatabaseHelper.addNetworksInTransactionRS(networksToAdd)
+
                     withContext(Dispatchers.Main) {
                         displayDatabaseInfo()
                         progressDialog.dismiss()
@@ -382,7 +389,8 @@ class ViewDatabaseActivity : Activity() {
         startActivityForResult(intent, REQUEST_CODE_IMPORT_ROUTERSCAN)
     }
 
-    private fun parseAndAddToDatabaseFromRouterScan(line: String, importType: String) {
+
+    private fun parseRouterScanLine(line: String, importType: String): Triple<String, String, String>? {
         val parts = line.split("\t")
         if (parts.size >= 14) {
             val adminCredentials = parts[4].split(":")
@@ -393,12 +401,13 @@ class ViewDatabaseActivity : Activity() {
             val keys = parts[11]
             val wps = parts[12]
             if (importType == "update" && wifiDatabaseHelper.networkExists(bssid, keys, wps, adminLogin, adminPass)) {
-                return
+                return null
             }
             if (essid.isNotEmpty() || bssid.isNotEmpty()) {
-                wifiDatabaseHelper.addNetwork(essid, bssid, keys, wps, adminLogin, adminPass)
+                return Triple(essid, bssid, keys)
             }
         }
+        return null
     }
 
     private fun showImportTypeDialog(importFunction: (String) -> Unit) {
