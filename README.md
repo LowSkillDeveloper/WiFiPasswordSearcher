@@ -34,6 +34,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
   - Added a primary button switch, now the local DB search button can be made primary.
 - Added the ability to download wpspin.html to the phone
 - Added caching of wps pin code data from the 3wifi server (reduces the load on the server and makes offline re-viewing available)
+- Added the ability to login using only the API key
     
 ## Updated Features:
 - Offline mode button.
