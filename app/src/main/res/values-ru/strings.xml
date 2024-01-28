@@ -112,6 +112,9 @@
     <string name="easter_egg">Не кликай сильно, а то сломаешь!</string>
     <string name="optimize_database">Оптимизировать базу данных</string>
     <string name="remove_duplications">Удалить дубликаты</string>
+    <string name="api">API</string>
+    <string name="hint_api_key">Введите ваш API ключь чтения</string>
+    <string name="unable_save_api_key">Невозможно сохранить API ключ</string>
 
     <string name="label_start">Проект RouterScan будет жить вечно</string>
     <string name="button_3wifi">3WiFi</string>

@@ -67,35 +67,54 @@
 
 		<LinearLayout
 			android:orientation="horizontal"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp">
 
-			<EditText
-				android:layout_width="fill_parent"
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:layout_gravity="right"
-				android:hint="@string/hint_username"
-				android:id="@+id/edtLogin"
-				android:inputType="textNoSuggestions"
-				android:maxLines="1"
-				android:singleLine="true"/>
+				android:layout_weight="1">
+
+				<!-- Поле для логина -->
+				<EditText
+					android:id="@+id/edtLogin"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/hint_username"
+					android:inputType="textNoSuggestions"
+					android:maxLines="1"
+					android:singleLine="true"/>
+
+				<!-- Поле для пароля -->
+				<EditText
+					android:id="@+id/edtPassword"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/hint_password"
+					android:inputType="textPassword"
+					android:maxLines="1"
+					android:singleLine="true"/>
+
+				<!-- Поле для API ключа (изначально скрытое) -->
+				<EditText
+					android:id="@+id/edtApiKey"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/hint_api_key"
+					android:inputType="text"
+					android:visibility="gone"/>
+			</LinearLayout>
+
+			<!-- Кнопка переключения -->
+			<Button
+				android:id="@+id/btnToggleLoginMethod"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:text="@string/api" />
 		</LinearLayout>
 
-		<LinearLayout
-			android:orientation="horizontal"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
-
-			<EditText
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_gravity="right"
-				android:hint="@string/hint_password"
-				android:id="@+id/edtPassword"
-				android:inputType="textPassword"
-				android:maxLines="1"
-				android:singleLine="true"/>
-		</LinearLayout>
 
 		<LinearLayout
 			android:orientation="horizontal"
@@ -204,8 +223,6 @@
 		android:clickable="true"
 		android:layout_gravity="center"
 		android:gravity="center"
-		android:autoLink="web"
-		/>
+		android:autoLink="web"/>
 
 </LinearLayout>
-

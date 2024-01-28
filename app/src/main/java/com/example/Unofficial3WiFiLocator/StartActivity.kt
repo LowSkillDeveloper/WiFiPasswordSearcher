@@ -232,6 +232,17 @@ class StartActivity : Activity() {
                 }).start()
             }
         }
+        binding.btnToggleLoginMethod.setOnClickListener {
+            if (binding.edtApiKey.visibility == View.GONE) {
+                binding.edtLogin.visibility = View.GONE
+                binding.edtPassword.visibility = View.GONE
+                binding.edtApiKey.visibility = View.VISIBLE
+            } else {
+                binding.edtLogin.visibility = View.VISIBLE
+                binding.edtPassword.visibility = View.VISIBLE
+                binding.edtApiKey.visibility = View.GONE
+            }
+        }
         binding.edtLogin.setText(savedLogin)
         binding.edtPassword.setText(savedPassword)
         binding.btnGetApiKeys.setOnClickListener {
@@ -240,24 +251,38 @@ class StartActivity : Activity() {
             dProcess.setMessage(resources.getString(R.string.status_signing_in))
             dProcess.setCanceledOnTouchOutside(false)
             dProcess.show()
-            Thread(Runnable {
-                var res = false
-                try {
-                    res = getApiKeys(binding.edtLogin.text.toString(), binding.edtPassword.text.toString())
-                } catch (e: IOException) {
-                    e.printStackTrace()
+
+            if (binding.edtApiKey.visibility == View.VISIBLE) {
+                val apiKey = binding.edtApiKey.text.toString()
+                mSettings.Editor!!.putString(Settings.API_READ_KEY, apiKey).apply()
+                mSettings.Editor!!.putBoolean(Settings.API_KEYS_VALID, true).apply()
+
+                runOnUiThread {
+                    dProcess.dismiss()
+                    binding.llStartMenu.visibility = View.VISIBLE
+                    binding.edtApiKey.isEnabled = false
+                    binding.btnGetApiKeys.visibility = View.GONE
                 }
-                if (res) {
-                    user.fromSettings
-                    runOnUiThread {
-                        binding.btnGetApiKeys.visibility = View.GONE
-                        binding.llStartMenu.visibility = View.VISIBLE
-                        binding.edtLogin.isEnabled = false
-                        binding.edtPassword.isEnabled = false
+            } else {
+                Thread(Runnable {
+                    var res = false
+                    try {
+                        res = getApiKeys(binding.edtLogin.text.toString(), binding.edtPassword.text.toString())
+                    } catch (e: IOException) {
+                        e.printStackTrace()
                     }
-                }
-                dProcess.dismiss()
-            }).start()
+
+                    runOnUiThread {
+                        dProcess.dismiss()
+                        if (res) {
+                            binding.llStartMenu.visibility = View.VISIBLE
+                            binding.edtLogin.isEnabled = false
+                            binding.edtPassword.isEnabled = false
+                            binding.btnGetApiKeys.visibility = View.GONE
+                        }
+                    }
+                }).start()
+            }
         }
         binding.btnUserInfo.setOnClickListener {
             val userActivity = Intent(this@StartActivity, UserInfoActivity::class.java)

@@ -103,6 +103,10 @@
     <string name="easter_egg">Don\'t click too hard, or you\'ll break it!</string>
     <string name="optimize_database">Optimize Database</string>
     <string name="remove_duplicates">Remove Duplicates</string>
+    <string name="api">API</string>
+    <string name="hint_api_key">Enter your Read API Key</string>
+    <string name="unable_save_api_key">Unable to save API key</string>
+
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>
