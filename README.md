@@ -36,6 +36,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Added caching of wps pin code data from the 3wifi server (reduces the load on the server and makes offline re-viewing available)
 - Added the ability to login using only the API key
 - Ability to open 3wifi website in WebView
+- Added the ability to manually search by BSSID in the 3WiFi database
     
 ## Updated Features:
 - Offline mode button.
