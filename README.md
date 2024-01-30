@@ -37,6 +37,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Added the ability to login using only the API key
 - Ability to open 3wifi website in WebView
 - Added the ability to manually search by BSSID in the 3WiFi database
+- Added WPS connection via Root (not tested)
     
 ## Updated Features:
 - Offline mode button.
