@@ -22,7 +22,12 @@
     <string-array name="menu_wps_pin">
         <item>Подключится через WPS… (без root)</item>
         <item>Скопировать пин-код</item>
+        <item>Подключится через WPS… (используя root)</item>
     </string-array>
+
+    <string name="wps_connection_initiated_success">Соединение WPS успешно инициировано</string>
+    <string name="error_executing_wps_command">Ошибка выполнения команды подключения WPS</string>
+    <string name="root_access_unavailable">Доступ к Root-правам недоступен</string>
 
     <string name="copy_api_keys">Скопировать API ключи</string>
     <string name="dark_mode">Тёмная тема</string>
@@ -111,7 +116,7 @@
     <string name="label_authentication">Аутентификация: </string>
     <string name="easter_egg">Не кликай сильно, а то сломаешь!</string>
     <string name="optimize_database">Оптимизировать базу данных</string>
-    <string name="remove_duplications">Удалить дубликаты</string>
+    <string name="remove_duplicates">Удалить дубликаты</string>
     <string name="api">API</string>
     <string name="hint_api_key">Введите ваш API ключь чтения</string>
     <string name="unable_save_api_key">Невозможно сохранить API ключ</string>

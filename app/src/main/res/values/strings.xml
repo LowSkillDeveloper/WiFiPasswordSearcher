@@ -220,7 +220,12 @@
     <string-array name="menu_wps_pin">
         <item>Connect using WPS… (without root)</item>
         <item>Copy this WPS PIN</item>
+        <item>Connect using WPS… (with root)</item>
     </string-array>
+
+    <string name="wps_connection_initiated_success">WPS connection initiated successfully</string>
+    <string name="error_executing_wps_command">Error executing WPS connect command</string>
+    <string name="root_access_unavailable">Root access is not available</string>
 
     <string name="status_connecting_to_the_network">Connecting to the network…</string>
     <string name="toast_connection_canceled">Connection cancelled</string>

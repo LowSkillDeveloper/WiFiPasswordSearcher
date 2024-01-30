@@ -39,6 +39,8 @@ import android.preference.PreferenceManager
 import org.apache.http.HttpRequestInterceptor
 import org.jsoup.Jsoup
 import java.io.FileOutputStream
+import eu.chainfire.libsuperuser.Shell
+
 
 data class WPSPin (var mode: Int, var name: String, var pin: String = "", var sugg: Boolean = false)
 
@@ -226,9 +228,28 @@ class WPSActivity : Activity() {
                     } catch (e: Exception) {
                     }
                 }
+                2 -> {
+                    connectWithWpsRoot(BSSID, pin)
+                }
             }
         }
         dialogBuilder.show()
+    }
+
+    private fun connectWithWpsRoot(BSSID: String?, pin: String?) {
+        if (Shell.SU.available()) {
+            val command = "wpa_cli -i wlan0 wps_pin $BSSID $pin"
+            val result = Shell.SU.run(command)
+
+            if (result != null) {
+
+                Toast.makeText(applicationContext, getString(R.string.wps_connection_initiated_success), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(applicationContext, getString(R.string.error_executing_wps_command), Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(applicationContext, getString(R.string.root_access_unavailable), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private inner class AsyncInitActivity : AsyncTask<String, Void?, String>() {
