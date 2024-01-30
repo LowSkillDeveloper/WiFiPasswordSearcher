@@ -115,6 +115,8 @@
     <string name="api">API</string>
     <string name="hint_api_key">Введите ваш API ключь чтения</string>
     <string name="unable_save_api_key">Невозможно сохранить API ключ</string>
+    <string name="open_3wifi_webview">Открыть сайт 3WiFi в WebView</string>
+
 
     <string name="label_start">Проект RouterScan будет жить вечно</string>
     <string name="button_3wifi">3WiFi</string>

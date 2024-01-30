@@ -106,6 +106,8 @@
     <string name="api">API</string>
     <string name="hint_api_key">Enter your Read API Key</string>
     <string name="unable_save_api_key">Unable to save API key</string>
+    <string name="open_3wifi_webview">Open 3WiFi site in WebView</string>
+
 
 
     <string name="api_txt">API Keys</string>

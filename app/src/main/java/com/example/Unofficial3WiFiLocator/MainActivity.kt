@@ -794,6 +794,11 @@ class MyActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.wip_router_keygen), Toast.LENGTH_LONG).show()
                 return true
             }
+            R.id.action_open_webview -> {
+                val intent = Intent(this, WebViewActivity::class.java)
+                startActivity(intent)
+                return true
+            }
             R.id.action_gps_sniff -> {
                 Toast.makeText(this, getString(R.string.wip_gps_sniff), Toast.LENGTH_LONG).show()
                 return true

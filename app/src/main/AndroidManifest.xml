@@ -53,5 +53,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.MyActivity" />
         </activity>
+        <activity android:name="WebViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.Unofficial3WiFiLocator.MyActivity" />
+        </activity>
+
     </application>
 </manifest>
