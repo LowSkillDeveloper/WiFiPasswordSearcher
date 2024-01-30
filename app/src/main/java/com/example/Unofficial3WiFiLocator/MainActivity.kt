@@ -41,6 +41,11 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.os.Handler
 import android.os.Looper
 import android.content.ContentValues
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 
 private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
 class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -799,6 +804,33 @@ class MyActivity : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
+            R.id.action_open_fetchBssid -> {
+                val dialogView = layoutInflater.inflate(R.layout.dialog_fetch_bssid, null)
+                val bssidEditText = dialogView.findViewById<EditText>(R.id.bssidEditText)
+                val submitButton = dialogView.findViewById<Button>(R.id.submitButton)
+                val resultTextView = dialogView.findViewById<TextView>(R.id.resultTextView)
+
+                resultTextView.movementMethod = LinkMovementMethod.getInstance()
+
+                val dialog = AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.search_by_bssid))
+                    .setView(dialogView)
+                    .create()
+
+                submitButton.setOnClickListener {
+                    val bssid = bssidEditText.text.toString()
+                    if (bssid.isNotEmpty()) {
+                        fetchBssidData(bssid) { result ->
+                            resultTextView.visibility = View.VISIBLE
+                            resultTextView.text = result
+                        }
+                    } else {
+                        Toast.makeText(this, getString(R.string.enter_bssid), Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                dialog.show()
+            }
             R.id.action_gps_sniff -> {
                 Toast.makeText(this, getString(R.string.wip_gps_sniff), Toast.LENGTH_LONG).show()
                 return true
@@ -843,6 +875,123 @@ class MyActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+
+    private fun fetchBssidData(bssid: String, callback: (String) -> Unit) {
+        val thread = Thread {
+            try {
+                val apiKey = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "")
+                val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+                val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
+
+                val url = URL("$serverURI/api/apiquery")
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.doOutput = true
+                connection.setRequestProperty("Content-Type", "application/json")
+
+                if (useCustomHost && serverURI == "http://134.0.119.34") {
+                    connection.setRequestProperty("Host", "3wifi.stascorp.com")
+                }
+
+                val jsonRequest = JSONObject().apply {
+                    put("key", apiKey)
+                    put("bssid", JSONArray().put(bssid))
+                }
+
+                val outputStream = DataOutputStream(connection.outputStream)
+                outputStream.writeBytes(jsonRequest.toString())
+                outputStream.flush()
+                outputStream.close()
+
+                val responseCode = connection.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val inputStream = BufferedReader(InputStreamReader(connection.inputStream))
+                    val response = StringBuilder()
+                    var inputLine: String?
+                    while (inputStream.readLine().also { inputLine = it } != null) {
+                        response.append(inputLine)
+                    }
+                    inputStream.close()
+                    runOnUiThread {
+                        callback(handleApiResponse(response.toString()).toString())
+                    }
+                } else {
+                    runOnUiThread {
+                        callback(getString(R.string.error_request) + responseCode)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                runOnUiThread {
+                    callback(getString(R.string.error_generic) + e.message)
+                }
+            }
+        }
+        thread.start()
+    }
+
+    private fun copyToClipboard(text: String) {
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("Copied Text", text)
+        clipboardManager.setPrimaryClip(clipData)
+        Toast.makeText(this, getString(R.string.toast_copied), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleApiResponse(response: String): CharSequence {
+        return try {
+            val jsonResponse = JSONObject(response)
+            val result = jsonResponse.getBoolean("result")
+
+            if (result) {
+                formatApiResponse(jsonResponse.getJSONObject("data"))
+            } else {
+                getString(R.string.data_not_found)
+            }
+        } catch (e: JSONException) {
+            getString(R.string.error_processing_response) + e.message
+        }
+    }
+
+
+    private fun formatApiResponse(jsonResponse: JSONObject): SpannableStringBuilder {
+        val formattedText = SpannableStringBuilder()
+        val keys = jsonResponse.keys()
+
+        while (keys.hasNext()) {
+            val bssid = keys.next()
+            val entries = jsonResponse.getJSONArray(bssid)
+
+            for (i in 0 until entries.length()) {
+                val entry = entries.getJSONObject(i)
+                val essid = entry.getString("essid")
+                val key = entry.getString("key")
+                val wps = entry.getString("wps")
+
+                formattedText.append("BSSID: $bssid\n")
+                formattedText.append("ESSID: $essid\n")
+                formattedText.append(makeSpannable("Key: $key\n") {
+                    copyToClipboard(key)
+                })
+                formattedText.append(makeSpannable("WPS: $wps\n\n") {
+                    copyToClipboard(wps)
+                })
+            }
+        }
+
+        return formattedText
+    }
+
+
+    private fun makeSpannable(text: String, onClick: () -> Unit): SpannableString {
+        val spannable = SpannableString(text)
+        spannable.setSpan(object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                onClick()
+            }
+        }, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannable
+    }
+
 
     private fun Context.toast(message: CharSequence) {
         val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)

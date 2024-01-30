@@ -23,6 +23,10 @@
         android:title="@string/open_3wifi_webview"
     app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_open_fetchBssid"
+        android:title="@string/fetchBssid"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_gps_sniff"

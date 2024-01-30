@@ -116,7 +116,14 @@
     <string name="hint_api_key">Введите ваш API ключь чтения</string>
     <string name="unable_save_api_key">Невозможно сохранить API ключ</string>
     <string name="open_3wifi_webview">Открыть сайт 3WiFi в WebView</string>
-
+    <string name="fetchBssid">Найти BSSID в 3WiFi</string>
+    <string name="Search_in_3WiFi">Поиск в 3WiFi</string>
+    <string name="error_request">Ошибка запроса: </string>
+    <string name="error_generic">Ошибка: </string>
+    <string name="data_not_found">Данные не найдены</string>
+    <string name="error_processing_response">Ошибка обработки ответа: </string>
+    <string name="search_by_bssid">Поиск по BSSID</string>
+    <string name="enter_bssid">Введите BSSID</string>
 
     <string name="label_start">Проект RouterScan будет жить вечно</string>
     <string name="button_3wifi">3WiFi</string>
