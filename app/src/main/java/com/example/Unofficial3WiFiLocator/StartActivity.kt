@@ -245,6 +245,12 @@ class StartActivity : Activity() {
         }
         binding.edtLogin.setText(savedLogin)
         binding.edtPassword.setText(savedPassword)
+        val savedApiKey = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "")
+        if (savedApiKey != "offline") {
+            binding.edtApiKey.setText(savedApiKey)
+        } else {
+            binding.edtApiKey.setText("")
+        }
         binding.btnGetApiKeys.setOnClickListener {
             val dProcess = ProgressDialog(this@StartActivity)
             dProcess.setProgressStyle(ProgressDialog.STYLE_SPINNER)
