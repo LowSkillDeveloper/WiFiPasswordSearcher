@@ -71,23 +71,32 @@ Descriptions and instructions for my added new functions can be found on the Wik
 
 
 # Screenshots
+
 <div>
   <table>
     <tr>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/e264f3a6-7b54-4074-8390-2cae6521e778" alt="Скриншот 1" width="216" height="480"></td>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/0f9ad4bc-e9b6-4b3e-a236-698f00719e2f" alt="Скриншот 2" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/49600f7a-971b-482b-ae75-8f96f9e2d1f8" alt="Скриншот 1" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/40cf05ed-fa75-4b96-995e-e927b689441e" alt="Скриншот 2" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/5a268bcc-a5ed-486a-aafa-0aa81439e52a" alt="Скриншот 3" width="216" height="480"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/c3772448-8e41-479f-ad63-99fb7f5cf226" alt="Скриншот 4" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/d618c1b4-e868-492f-b6f0-ce1e409ca3e9" alt="Скриншот 6" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/e28e9344-87f4-4b75-8dd1-bae01c59e7a8" alt="Скриншот 7" width="216" height="480"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/0e30c1e2-6c60-4831-a082-a972c693b593" alt="Скриншот 8" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/266d45c7-56ea-4031-b76e-ea2ba8d01ff1" alt="Скриншот 9" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/34600782-8e4a-4c2f-9b7f-e8cfc06a3ab1" alt="Скриншот 10" width="216" height="480"></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/b2ece9a2-2e24-4541-8186-c2b97faaadd4" alt="Скриншот 11" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/b1a12727-7666-4403-9aa0-de5db84f4fd0" alt="Скриншот 12" width="216" height="480"></td>
+      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/20d5bff3-4a71-4604-8624-9f670daec963" alt="Скриншот 13" width="216" height="480"></td>
+    </tr>
+<tr>
       <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/fa29982c-5d15-4cc5-82df-a86cb1db84d2" alt="Скриншот 4" width="216" height="480"></td>
-    </tr>
-    <tr>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/53e450dc-6802-4451-bf1b-86105f5187d8" alt="Скриншот 5" width="216" height="480"></td>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/aac7d763-48d5-4b61-b772-b21b073367cb" alt="Скриншот 6" width="216" height="480"></td>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/8e518654-3c24-4516-878a-6edb421076d1" alt="Скриншот 7" width="216" height="480"></td>
-    </tr>
-    <tr>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/7dabe98f-d94d-4568-ba5a-4f3630572e4d" alt="Скриншот 8" width="216" height="480"></td>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/56aa1231-4855-4002-ab80-4a56bb7f7e63" alt="Скриншот 9" width="216" height="480"></td>
-      <td><img src="https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/assets/25121341/25769ac7-8fcd-41ec-9db6-ae0b464f895d" alt="Скриншот 10" width="216" height="480"></td>
-    </tr>
+</tr>
   </table>
 </div>
 ------------------
