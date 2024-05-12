@@ -1,6 +1,3 @@
-Омг Internet User дев локатора 2.0 😱
-
-
 # Unofficial 3WiFi Locator v2 for Android 
 
 This is a new version of 3wifi locator, which is based on the version from drygdryg.
