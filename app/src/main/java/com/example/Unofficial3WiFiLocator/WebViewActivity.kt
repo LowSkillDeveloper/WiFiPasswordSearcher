@@ -2,20 +2,20 @@ package com.example.Unofficial3WiFiLocator
 
 import android.app.DownloadManager
 import android.net.Uri
-import android.os.Bundle
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.webkit.SslErrorHandler
 import android.net.http.SslError
+import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
+import android.webkit.SslErrorHandler
 import android.webkit.URLUtil
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import android.webkit.WebResourceResponse
-import android.widget.Toast
-import java.io.IOException
 
 class WebViewActivity : AppCompatActivity() {
 

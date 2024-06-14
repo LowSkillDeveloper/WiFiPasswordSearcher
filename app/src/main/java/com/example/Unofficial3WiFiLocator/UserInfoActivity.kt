@@ -3,32 +3,29 @@ package com.example.Unofficial3WiFiLocator
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.ProgressDialog
-import android.os.AsyncTask
-import android.os.Build
-import android.os.Bundle
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.Toast
-import com.example.Unofficial3WiFiLocator.databinding.ActivityUserBinding
-import org.apache.http.client.ResponseHandler
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.BasicResponseHandler
-import org.apache.http.impl.client.DefaultHttpClient
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
+import android.os.Build
+import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.Toast
+import com.example.Unofficial3WiFiLocator.databinding.ActivityUserBinding
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class UserInfoActivity : Activity() {
     private lateinit var binding: ActivityUserBinding

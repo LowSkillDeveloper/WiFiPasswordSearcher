@@ -13,12 +13,22 @@ import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.Unofficial3WiFiLocator.databinding.ActivityStartBinding
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -29,16 +39,6 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
-import android.widget.EditText
-import android.preference.PreferenceManager
-import android.widget.ImageView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 
 class StartActivity : Activity() {

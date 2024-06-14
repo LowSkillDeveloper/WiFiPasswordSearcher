@@ -9,14 +9,13 @@ import android.media.SoundPool
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.example.Unofficial3WiFiLocator.databinding.ActivityWifiDetailsBinding
 import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import java.util.*
-import android.preference.PreferenceManager
 
 class WifiDetailsActivity : Activity() {
     private lateinit var binding: ActivityWifiDetailsBinding

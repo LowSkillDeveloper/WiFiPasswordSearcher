@@ -3,7 +3,10 @@ package com.example.Unofficial3WiFiLocator
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.DialogInterface
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
@@ -16,6 +19,7 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
+import android.preference.PreferenceManager
 import android.text.InputType
 import android.view.View
 import android.webkit.JavascriptInterface
@@ -25,21 +29,19 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.EditText
 import android.widget.Toast
 import com.example.Unofficial3WiFiLocator.databinding.ActivityWpsBinding
+import eu.chainfire.libsuperuser.Shell
+import org.apache.http.HttpRequestInterceptor
 import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.BasicResponseHandler
 import org.apache.http.impl.client.DefaultHttpClient
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.IOException
-import java.util.*
-import android.preference.PreferenceManager
-import org.apache.http.HttpRequestInterceptor
 import org.jsoup.Jsoup
 import java.io.FileOutputStream
-import eu.chainfire.libsuperuser.Shell
+import java.io.IOException
+import java.util.Locale
 
 
 data class WPSPin (var mode: Int, var name: String, var pin: String = "", var sugg: Boolean = false)

@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
-import com.example.Unofficial3WiFiLocator.databinding.ActivitySettingsBinding
 import android.preference.PreferenceManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import com.example.Unofficial3WiFiLocator.databinding.ActivitySettingsBinding
 
 class SettingsActivity : Activity() {
     private lateinit var binding: ActivitySettingsBinding

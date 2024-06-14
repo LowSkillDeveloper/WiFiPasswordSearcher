@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import java.util.*
 
 class MyAdapterWps(context: Context, arr: ArrayList<ItemWps>?) : BaseAdapter() {
     var data = ArrayList<ItemWps>()
