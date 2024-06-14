@@ -73,20 +73,27 @@ class ViewDatabaseActivity : Activity() {
         displayDatabaseInfo()
 
         listView.setOnItemClickListener { _, _, position, _ ->
-            val cursor = (listView.adapter as WiFiCursorAdapter).cursor
-            if (cursor.moveToPosition(position)) {
-                val network = APData().apply {
-                    id = cursor.getInt(cursor.getColumnIndex("ID"))
-                    essid = cursor.getString(cursor.getColumnIndexOrThrow("WiFiName"))
-                    bssid = cursor.getString(cursor.getColumnIndexOrThrow("MACAddress"))
-                    keys = arrayListOf(cursor.getString(cursor.getColumnIndexOrThrow("WiFiPassword")))
-                    wps = arrayListOf(cursor.getString(cursor.getColumnIndexOrThrow("WPSCode")))
-                    adminLogin = cursor.getString(cursor.getColumnIndexOrThrow("AdminLogin"))
-                    adminPass = cursor.getString(cursor.getColumnIndexOrThrow("AdminPass"))
+            val adapter = listView.adapter
+            if (adapter is WiFiCursorAdapter) {
+                val cursor = adapter.cursor
+                if (cursor.moveToPosition(position)) {
+                    val network = APData().apply {
+                        id = cursor.getInt(cursor.getColumnIndex("ID"))
+                        essid = cursor.getString(cursor.getColumnIndexOrThrow("WiFiName"))
+                        bssid = cursor.getString(cursor.getColumnIndexOrThrow("MACAddress"))
+                        keys = arrayListOf(cursor.getString(cursor.getColumnIndexOrThrow("WiFiPassword")))
+                        wps = arrayListOf(cursor.getString(cursor.getColumnIndexOrThrow("WPSCode")))
+                        adminLogin = cursor.getString(cursor.getColumnIndexOrThrow("AdminLogin"))
+                        adminPass = cursor.getString(cursor.getColumnIndexOrThrow("AdminPass"))
+                    }
+                    showNetworkOptionsDialog(network)
                 }
-                showNetworkOptionsDialog(network)
+            } else if (adapter is WiFiNetworkAdapter) {
+                val network = adapter.getItem(position)
+                network?.let { showNetworkOptionsDialog(it) }
             }
         }
+
         val searchField = findViewById<EditText>(R.id.search_field)
         searchField.addTextChangedListener(object : TextWatcher {
             private var searchJob: Job? = null
