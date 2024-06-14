@@ -125,7 +125,7 @@ class WifiDetailsActivity : Activity() {
 
             val capabilities = wifiInfo.capabilities
             val encryptionType = when {
-                capabilities.contains("WPA3") -> "WPA3"
+                capabilities.contains("WPA3") || capabilities.contains("SAE") || capabilities.contains("OWE") || capabilities.contains("EAP_WPA3_ENTERPRISE_192_BIT") || capabilities.contains("EAP_WPA3_ENTERPRISE") -> "WPA3"
                 capabilities.contains("WPA2") -> "WPA2"
                 capabilities.contains("WPA") -> "WPA"
                 capabilities.contains("WEP") -> "WEP"
@@ -133,10 +133,15 @@ class WifiDetailsActivity : Activity() {
             }
             binding.txtEncryptionType.text = getString(R.string.label_encryption) + encryptionType
 
-            val authenticationType = if (capabilities.contains("PSK")) "PSK" else "EAP"
+            val authenticationType = when {
+                capabilities.contains("PSK") -> "PSK"
+                capabilities.contains("EAP") -> "EAP"
+                else -> "Unknown"
+            }
             binding.txtAuthenticationType.text = getString(R.string.label_authentication) + authenticationType
         }
     }
+
 
 
     private fun detectorWorker() {

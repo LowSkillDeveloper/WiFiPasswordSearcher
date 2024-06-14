@@ -320,47 +320,55 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
         imgSec.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         imgWPS.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
         var svgImg: SVG
-        if (capability!!.contains("WPA3")) {
-            var img = SvgImageCache["WPA3"]
-            if (img == null) {
-                val svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa3_ico)
-                img = svgImg.createPictureDrawable()
-                SvgImageCache["WPA3"] = img
+
+        when {
+            capability!!.contains("WPA3") || capability.contains("SAE") || capability.contains("OWE") || capability.contains("EAP_WPA3_ENTERPRISE_192_BIT") || capability.contains("EAP_WPA3_ENTERPRISE") -> {
+                var img = SvgImageCache["WPA3"]
+                if (img == null) {
+                    val svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa3_ico)
+                    img = svgImg.createPictureDrawable()
+                    SvgImageCache["WPA3"] = img
+                }
+                imgSec.setImageDrawable(img)
             }
-            imgSec.setImageDrawable(img)
-        } else if (capability.contains("WPA2")) {
-            var img = SvgImageCache["WPA2"]
-            if (img == null) {
-                svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa2_ico)
-                img = svgImg.createPictureDrawable()
-                SvgImageCache["WPA2"] = img
+            capability.contains("WPA2") -> {
+                var img = SvgImageCache["WPA2"]
+                if (img == null) {
+                    svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa2_ico)
+                    img = svgImg.createPictureDrawable()
+                    SvgImageCache["WPA2"] = img
+                }
+                imgSec.setImageDrawable(img)
             }
-            imgSec.setImageDrawable(img)
-        } else if (capability.contains("WPA")) {
-            var img = SvgImageCache["WPA"]
-            if (img == null) {
-                svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa_ico)
-                img = svgImg.createPictureDrawable()
-                SvgImageCache["WPA"] = img
+            capability.contains("WPA") -> {
+                var img = SvgImageCache["WPA"]
+                if (img == null) {
+                    svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wpa_ico)
+                    img = svgImg.createPictureDrawable()
+                    SvgImageCache["WPA"] = img
+                }
+                imgSec.setImageDrawable(img)
             }
-            imgSec.setImageDrawable(img)
-        } else if (capability.contains("WEP")) {
-            var img = SvgImageCache["WEP"]
-            if (img == null) {
-                svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wep_ico)
-                img = svgImg.createPictureDrawable()
-                SvgImageCache["WEP"] = img
+            capability.contains("WEP") -> {
+                var img = SvgImageCache["WEP"]
+                if (img == null) {
+                    svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.wep_ico)
+                    img = svgImg.createPictureDrawable()
+                    SvgImageCache["WEP"] = img
+                }
+                imgSec.setImageDrawable(img)
             }
-            imgSec.setImageDrawable(img)
-        } else {
-            var img = SvgImageCache["OPEN"]
-            if (img == null) {
-                svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.open_ico)
-                img = svgImg.createPictureDrawable()
-                SvgImageCache["OPEN"] = img
+            else -> {
+                var img = SvgImageCache["OPEN"]
+                if (img == null) {
+                    svgImg = SVGParser.getSVGFromResource(context.resources, R.raw.open_ico)
+                    img = svgImg.createPictureDrawable()
+                    SvgImageCache["OPEN"] = img
+                }
+                imgSec.setImageDrawable(img)
             }
-            imgSec.setImageDrawable(img)
         }
+
         if (capability.contains("WPS")) {
             var img = SvgImageCache["WPS"]
             if (img == null) {
@@ -372,6 +380,7 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
         } else {
             imgWPS.setImageResource(android.R.color.transparent)
         }
+
         val txtKey = view.findViewById<View>(R.id.KEY) as TextView
         val txtSignal = view.findViewById<View>(R.id.txtSignal) as TextView
         val txtRowId = view.findViewById<View>(R.id.txtRowId) as TextView
@@ -387,7 +396,6 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
         llKeys.isClickable = keysCount > 1
         txtRowId.text = position.toString()
 
-
         val localDbStatusTextView = view.findViewById<TextView>(R.id.localDbStatus)
         val localDbStatus = elemWiFi["LOCAL_DB"]
         if (!localDbStatus.isNullOrEmpty()) {
@@ -399,6 +407,7 @@ internal class WiFiListSimpleAdapter(private val context: Context, data: List<Mu
 
         return view
     }
+
 
     private val onKeyClick = View.OnClickListener { v ->
         if (MyActivity.WiFiKeys == null || MyActivity.WiFiKeys!!.size == 0) return@OnClickListener
