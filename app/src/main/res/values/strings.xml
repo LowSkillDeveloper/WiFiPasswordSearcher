@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">3WiFi Locator V2 Unofficial</string>
-    <string name="app_version" translatable="false">2.0</string>
+    <string name="app_version" translatable="false">2.1</string>
     <string name="SERVER_URI_DEFAULT" translatable="false">http://3wifi.stascorp.com</string>
     <string name="GITHUB_START_URI" translatable="false">https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial</string>
     <string name="TELEGRAM_START_URI" translatable="false">https://t.me/routerscan</string>
