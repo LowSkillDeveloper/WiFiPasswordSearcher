@@ -531,7 +531,7 @@ class ViewDatabaseActivity : Activity() {
                         val essid = jsonObject.optString("essid")
                         val bssid = jsonObject.optString("bssid")
                         val password = jsonObject.optString("password")
-                        val wpsCode = jsonObject.optString("wpsCode")
+                        val wpsCode = jsonObject.optString("wpsCode").takeIf { it.isNotEmpty() } ?: jsonObject.optString("wps")
                         val adminLogin = jsonObject.optString("adminLogin")
                         val adminPass = jsonObject.optString("adminPass")
 
