@@ -38,6 +38,7 @@
 			android:id="@+id/btnCheckFromLocalBase"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_marginLeft="120dp"
 			app:layout_anchor="@id/bottomAppBar"
 			android:src="@drawable/ic_search_black_24dp"
 			app:layout_anchorGravity="bottom|start"
