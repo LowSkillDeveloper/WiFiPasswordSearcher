@@ -140,7 +140,12 @@ class StartActivity : Activity() {
         val input = EditText(this@StartActivity)
         alertDialog.setView(input)
         alertDialog.setPositiveButton(resources.getString(R.string.ok)) { dialog, whichButton ->
-            val customServerUrl = input.text.toString()
+            var customServerUrl = input.text.toString()
+
+            if (customServerUrl.endsWith("/")) {
+                customServerUrl = customServerUrl.removeSuffix("/")
+            }
+
             mSettings.Editor!!.putString(Settings.APP_SERVER_URI, customServerUrl)
             mSettings.Editor!!.commit()
             saveServerList(customServerUrl)
@@ -149,6 +154,7 @@ class StartActivity : Activity() {
         alertDialog.setNegativeButton(resources.getString(R.string.cancel), null)
         alertDialog.show()
     }
+
 
     private fun saveServerList(newServer: String) {
         val servers = getSavedServers()
