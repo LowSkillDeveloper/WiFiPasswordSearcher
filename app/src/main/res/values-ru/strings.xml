@@ -169,6 +169,8 @@
     <string name="toast_network_stored">Сетевой профиль добавлен!</string>
     <string name="toast_no_api_keys">API-ключи не получены</string>
     <string name="toast_no_data">Здесь нет данных! Нажмите кнопку 3WiFi, чтобы получить пароли</string>
+    <string name="toast_no_scan_results">Здесь нет данных!</string>
+    <string name="toast_no_data_to_save">Здесь нет данных!</string>
     <string name="toast_scan_complete">Сканирование завершено!</string>
     <string name="toast_wifi_disabled">Интерфейс Wi-Fi отключен</string>
     <string name="label_registration_date">Дата регистрации</string>

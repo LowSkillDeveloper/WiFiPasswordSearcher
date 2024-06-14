@@ -556,7 +556,14 @@ class MyActivity : AppCompatActivity() {
         dialogBuilder.setItems(listContextMenuItems, DialogInterface.OnClickListener { dialog, item ->
             val apdata: APData
             var needToast = false
-            val scanResult = WiFiScanResult!![id.toInt()]
+
+            if (WiFiScanResult.isNullOrEmpty()) {
+                Toast.makeText(applicationContext, getString(R.string.toast_no_scan_results), Toast.LENGTH_SHORT).show()
+                return@OnClickListener
+            }
+
+            val scanResult = WiFiScanResult!![position]
+
             when (item) {
                 0 -> {
                     val detailsActivityIntent = Intent(this@MyActivity, WifiDetailsActivity::class.java)
@@ -585,15 +592,15 @@ class MyActivity : AppCompatActivity() {
                 3 -> run {
                     if (WiFiKeys!!.isEmpty()) {
                         val toast = Toast.makeText(applicationContext,
-                                getString(R.string.toast_no_data),
-                                Toast.LENGTH_LONG)
+                            getString(R.string.toast_no_data),
+                            Toast.LENGTH_LONG)
                         toast.show()
                         return@run
                     }
-                    apdata = WiFiKeys!![id.toInt()]
+                    apdata = WiFiKeys!![position]
                     if (apdata.keys!!.size < 1) {
                         val toast = Toast.makeText(applicationContext,
-                                getString(R.string.toast_key_not_found), Toast.LENGTH_SHORT)
+                            getString(R.string.toast_key_not_found), Toast.LENGTH_SHORT)
                         toast.show()
                         return@OnClickListener
                     }
@@ -604,20 +611,20 @@ class MyActivity : AppCompatActivity() {
                 4 -> run {
                     if (WiFiKeys!!.isEmpty()) {
                         val toast = Toast.makeText(applicationContext,
-                                getString(R.string.toast_no_data),
-                                Toast.LENGTH_LONG)
+                            getString(R.string.toast_no_data),
+                            Toast.LENGTH_LONG)
                         toast.show()
                         return@run
                     }
-                    apdata = WiFiKeys!![id.toInt()]
+                    apdata = WiFiKeys!![position]
                     if (apdata.keys!!.size < 1) {
                         val toast = Toast.makeText(applicationContext,
-                                getString(R.string.toast_key_not_found), Toast.LENGTH_SHORT)
+                            getString(R.string.toast_key_not_found), Toast.LENGTH_SHORT)
                         toast.show()
                     }
                     if (!wifiMgr.isWifiEnabled) {
                         val toast = Toast.makeText(applicationContext,
-                                getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT)
+                            getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT)
                         toast.show()
                         return@run
                     }
@@ -637,9 +644,9 @@ class MyActivity : AppCompatActivity() {
                         }
                         val builder = AlertDialog.Builder(this@MyActivity)
                         builder.setTitle(getString(R.string.dialog_are_you_sure))
-                                .setMessage(String.format(getString(R.string.dialog_already_stored), scanResult.essid, cnt))
-                                .setPositiveButton(getString(R.string.dialog_yes), dialogClickListener)
-                                .setNegativeButton(getString(R.string.dialog_no), dialogClickListener).show()
+                            .setMessage(String.format(getString(R.string.dialog_already_stored), scanResult.essid, cnt))
+                            .setPositiveButton(getString(R.string.dialog_yes), dialogClickListener)
+                            .setNegativeButton(getString(R.string.dialog_no), dialogClickListener).show()
                     } else addNetworkProfile(scanResult, apdata)
                 }
                 5 -> run {
@@ -654,9 +661,9 @@ class MyActivity : AppCompatActivity() {
                         }
                         val builder = AlertDialog.Builder(this@MyActivity)
                         builder.setTitle(getString(R.string.dialog_are_you_sure))
-                                .setMessage(String.format(getString(R.string.dialog_wps_disabled), scanResult.essid))
-                                .setPositiveButton(getString(R.string.dialog_yes), dialogClickListener)
-                                .setNegativeButton(getString(R.string.dialog_no), dialogClickListener).show()
+                            .setMessage(String.format(getString(R.string.dialog_wps_disabled), scanResult.essid))
+                            .setPositiveButton(getString(R.string.dialog_yes), dialogClickListener)
+                            .setNegativeButton(getString(R.string.dialog_no), dialogClickListener).show()
                         return@run
                     }
                     wpsGenStart(essdWps, bssdWps)
@@ -664,7 +671,7 @@ class MyActivity : AppCompatActivity() {
             }
             if (needToast) {
                 val toast = Toast.makeText(applicationContext,
-                        getString(R.string.toast_copied), Toast.LENGTH_SHORT)
+                    getString(R.string.toast_copied), Toast.LENGTH_SHORT)
                 toast.show()
             }
             dialog.dismiss()
@@ -685,6 +692,12 @@ class MyActivity : AppCompatActivity() {
         WifiCfg.SSID = String.format("\"%s\"", scanResult.essid)
         WifiCfg.hiddenSSID = false
         WifiCfg.priority = 1000
+
+        if (apdata.keys.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.toast_no_data_to_save), Toast.LENGTH_SHORT).show()
+            return
+        }
+
         if (scanResult.capabilities!!.contains("WEP")) {
             WifiCfg.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE)
             WifiCfg.allowedProtocols.set(WifiConfiguration.Protocol.RSN)
@@ -700,6 +713,7 @@ class MyActivity : AppCompatActivity() {
         } else {
             WifiCfg.preSharedKey = String.format("\"%s\"", apdata.keys!![0])
         }
+
         val netId = wifiMgr.addNetwork(WifiCfg)
         when {
             netId > -1 -> toast(getString(R.string.toast_network_stored))

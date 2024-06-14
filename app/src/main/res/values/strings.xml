@@ -161,6 +161,8 @@
     <string name="status_searching">Searching in 3WiFi…</string>
     <string name="status_scanning">Scanning networks…</string>
     <string name="toast_no_data">No data here! Click 3WiFi button to fetch some keys</string>
+    <string name="toast_no_scan_results">No data here!</string>
+    <string name="toast_no_data_to_save">No data here!</string>
     <string name="toast_key_not_found_nothing_copy">Key not found! Nothing to copy</string>
     <string name="toast_key_not_found">Key not found!</string>
     <string name="toast_wifi_disabled">Wi-Fi interface is disabled</string>
