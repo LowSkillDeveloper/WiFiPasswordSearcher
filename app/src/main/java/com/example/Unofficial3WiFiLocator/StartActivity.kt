@@ -371,7 +371,9 @@ class StartActivity : Activity() {
 
     data class Message(
         val title: String,
-        val message: String
+        val message: String,
+        val button_text: String? = null,
+        val download_url: String? = null
     )
 
     fun loadAndShowMessage() = CoroutineScope(Dispatchers.IO).launch {
@@ -379,7 +381,7 @@ class StartActivity : Activity() {
             return@launch
         }
 
-        val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg.json")
+        val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg21.json")
         val connection = url.openConnection() as HttpURLConnection
         try {
             connection.apply {
@@ -416,19 +418,30 @@ class StartActivity : Activity() {
             val message = messageInfo.messages[currentLanguage] ?: messageInfo.messages["en"]
 
             message?.let {
-                showAlertDialog(it.title, it.message)
+                showAlertDialog(it.title, it.message, it.button_text, it.download_url)
                 sharedPreferences.edit().putInt("lastShownMessageId", messageInfo.id).apply()
             }
         }
     }
 
-    fun showAlertDialog(title: String, message: String) {
+
+    fun showAlertDialog(title: String, message: String, buttonText: String?, downloadUrl: String?) {
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setTitle(title)
         alertDialog.setMessage(message)
         alertDialog.setPositiveButton("OK", null)
+        buttonText?.let { text ->
+            alertDialog.setNegativeButton(text) { dialog, which ->
+                downloadUrl?.let {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(downloadUrl)
+                    startActivity(intent)
+                }
+            }
+        }
         alertDialog.show()
     }
+
 
     private fun FirstRunIfNeeded(servers: ArrayList<String>) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)

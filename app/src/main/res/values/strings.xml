@@ -218,10 +218,17 @@
 
     <!-- WPSActivity strings -->
     <string-array name="menu_wps_pin">
-        <item>Connect using WPS… (without root)</item>
+        <item>Connect using WPS method 1 (without root)</item>
+        <item>Connect using WPS method 2 (without root)</item>
+        <item>Connect using WPS method 3 (without root)</item>
+        <item>Connect using WPS PixieDust (without root)</item>
         <item>Copy this WPS PIN</item>
-        <item>Connect using WPS… (with root)</item>
+        <item>Connect using WPS method 1 (with root)</item>
+        <item>Connect using WPS method 2 (with root)</item>
+        <item>Connect using WPS method 3 (with root)</item>
+        <item>Connect using WPS PixieDust (with root)</item>
     </string-array>
+
 
     <string name="wps_connection_initiated_success">WPS connection initiated successfully</string>
     <string name="error_executing_wps_command">Error executing WPS connect command</string>
