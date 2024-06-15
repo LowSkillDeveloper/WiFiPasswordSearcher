@@ -360,12 +360,12 @@ class ViewDatabaseActivity : Activity() {
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val inputStream = contentResolver.openInputStream(uri)
-                    val networksToAdd = mutableListOf<Triple<String, String, String>>()
+                    val networksToAdd = mutableListOf<Array<String>>()
 
                     inputStream?.bufferedReader()?.useLines { lines ->
                         lines.forEach { line ->
-                            parseRouterScanLine(line, importType)?.let { networkTriple ->
-                                networksToAdd.add(networkTriple)
+                            parseRouterScanLine(line, importType)?.let { networkArray ->
+                                networksToAdd.add(networkArray)
                             }
                         }
                     }
@@ -396,7 +396,7 @@ class ViewDatabaseActivity : Activity() {
     }
 
 
-    private fun parseRouterScanLine(line: String, importType: String): Triple<String, String, String>? {
+    private fun parseRouterScanLine(line: String, importType: String): Array<String>? {
         val parts = line.split("\t")
         if (parts.size >= 14) {
             val adminCredentials = parts[4].split(":")
@@ -410,7 +410,7 @@ class ViewDatabaseActivity : Activity() {
                 return null
             }
             if (essid.isNotEmpty() || bssid.isNotEmpty()) {
-                return Triple(essid, bssid, keys)
+                return arrayOf(essid, bssid, keys, wps, adminLogin, adminPass)
             }
         }
         return null

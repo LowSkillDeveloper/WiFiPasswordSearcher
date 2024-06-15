@@ -129,7 +129,7 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         }
     }
 
-    fun addNetworksInTransactionRS(networks: List<Triple<String, String, String>>) {
+    fun addNetworksInTransactionRS(networks: List<Array<String>>) {
         val db = this.writableDatabase
         db.beginTransaction()
         try {
@@ -141,12 +141,12 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
             )
 
             for (network in networks) {
-                insertStatement.bindString(1, network.first)
-                insertStatement.bindString(2, network.second)
-                insertStatement.bindString(3, network.third)
-                insertStatement.bindString(4, "")
-                insertStatement.bindString(5, "")
-                insertStatement.bindString(6, "")
+                insertStatement.bindString(1, network[0])
+                insertStatement.bindString(2, network[1])
+                insertStatement.bindString(3, network[2])
+                insertStatement.bindString(4, network[3])
+                insertStatement.bindString(5, network[4])
+                insertStatement.bindString(6, network[5])
                 insertStatement.executeInsert()
             }
 
