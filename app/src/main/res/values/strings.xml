@@ -34,6 +34,9 @@
     <string name="database_exported_successfully_to">Database exported successfully to</string>
     <string name="error_exporting_database">Error exporting database</string>
     <string name="database_management_menu">Database management menu</string>
+    <string name="select_csv_file">Select CSV File</string>
+    <string name="export_to_csv">Export to CSV File</string>
+    <string name="import_from_csv">Import from CSV File</string>
     <string name="change_server">Change server</string>
     <string name="specify_own_server">Enter your server</string>
     <string name="enter_server_address">Enter server address</string>

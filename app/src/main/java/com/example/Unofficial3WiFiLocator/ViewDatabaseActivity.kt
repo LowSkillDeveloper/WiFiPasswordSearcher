@@ -31,6 +31,8 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.opencsv.CSVReader
+import com.opencsv.CSVWriter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -48,6 +50,7 @@ class ViewDatabaseActivity : Activity() {
     companion object {
         private const val REQUEST_CODE_IMPORT_DB = 1
         private const val REQUEST_CODE_IMPORT_ROUTERSCAN = 2
+        private const val REQUEST_CODE_IMPORT_CSV = 3
     }
     private lateinit var listView: ListView
     private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
@@ -335,10 +338,95 @@ class ViewDatabaseActivity : Activity() {
                     Toast.makeText(this, "Duplicates Removed", Toast.LENGTH_SHORT).show()
                     true
                 }
+                R.id.export_to_csv -> {
+                    exportDatabaseToCSV()
+                    true
+                }
+                R.id.import_from_csv -> {
+                    selectImportFileCSV()
+                    true
+                }
                 else -> false
             }
         }
         popupMenu.show()
+    }
+
+    private fun selectImportFileCSV() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "*/*"
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        startActivityForResult(Intent.createChooser(intent, (getString(R.string.select_csv_file))), REQUEST_CODE_IMPORT_CSV)
+    }
+
+    private fun importDatabaseFromCSV(uri: Uri) {
+        showImportTypeDialog { importType ->
+            val progressDialog = ProgressDialog(this).apply {
+                setMessage(getString(R.string.importing_data))
+                setCancelable(false)
+                show()
+            }
+
+            val handler = Handler(Looper.getMainLooper())
+            val updateMessageRunnable = Runnable {
+                if (progressDialog.isShowing) {
+                    progressDialog.setMessage(getString(R.string.importing_large_amount))
+                }
+            }
+            handler.postDelayed(updateMessageRunnable, 30000) // 30 секунд
+
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val inputStream = contentResolver.openInputStream(uri)
+                    val networksToInsert = mutableListOf<Array<String>>()
+                    inputStream?.bufferedReader()?.use { reader ->
+                        val csvReader = CSVReader(reader)
+                        var nextLine: Array<String>?
+                        csvReader.readNext() // пропускаем заголовок
+                        while (csvReader.readNext().also { nextLine = it } != null) {
+                            nextLine?.let { line ->
+                                val essid = line[0]
+                                val bssid = line[1]
+                                val password = line[2]
+                                val wpsCode = line[3]
+                                val adminLogin = line[4]
+                                val adminPass = line[5]
+
+                                if (importType == "update" && wifiDatabaseHelper.networkExists(bssid, password, wpsCode, adminLogin, adminPass)) {
+                                    return@let
+                                }
+
+                                networksToInsert.add(arrayOf(essid, bssid, password, wpsCode, adminLogin, adminPass))
+
+                                if (networksToInsert.size >= 100) {
+                                    wifiDatabaseHelper.addNetworksInTransaction(networksToInsert)
+                                    networksToInsert.clear()
+                                }
+                            }
+                        }
+                        csvReader.close()
+                    }
+
+                    if (networksToInsert.isNotEmpty()) {
+                        wifiDatabaseHelper.addNetworksInTransaction(networksToInsert)
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        displayDatabaseInfo()
+                        progressDialog.dismiss()
+                        toast(getString(R.string.import_complete))
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        progressDialog.dismiss()
+                        toast(getString(R.string.import_error, e.message))
+                    }
+                } finally {
+                    handler.removeCallbacks(updateMessageRunnable)
+                }
+            }
+        }
     }
 
     private fun importDataFromRouterScanAsync(uri: Uri) {
@@ -493,9 +581,15 @@ class ViewDatabaseActivity : Activity() {
                         importDataFromRouterScanAsync(uri)
                     }
                 }
+                REQUEST_CODE_IMPORT_CSV -> {
+                    data?.data?.also { uri ->
+                        importDatabaseFromCSV(uri)
+                    }
+                }
             }
         }
     }
+
     private fun selectImportFile() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "application/json"
@@ -633,6 +727,45 @@ class ViewDatabaseActivity : Activity() {
         }
     }
 
+    private fun exportDatabaseToCSV() {
+        val progressDialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.exporting_data))
+            setCancelable(false)
+            show()
+        }
+
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val wifiList = wifiDatabaseHelper.getAllNetworks()
+                val csvFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "wifi_database_export.csv")
+                csvFile.bufferedWriter().use { writer ->
+                    val csvWriter = CSVWriter(writer)
+                    csvWriter.writeNext(arrayOf("essid", "bssid", "password", "wps", "adminLogin", "adminPass"))
+                    wifiList.forEach { network ->
+                        csvWriter.writeNext(arrayOf(
+                            network.essid,
+                            network.bssid,
+                            network.keys?.joinToString(", "),
+                            network.wps?.joinToString(", "),
+                            network.adminLogin,
+                            network.adminPass
+                        ))
+                    }
+                    csvWriter.close()
+                }
+
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    toast(getString(R.string.database_exported_successfully_to) + " ${csvFile.absolutePath}")
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    progressDialog.dismiss()
+                    toast(getString(R.string.error_exporting_database) + ": ${e.message}")
+                }
+            }
+        }
+    }
 
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()

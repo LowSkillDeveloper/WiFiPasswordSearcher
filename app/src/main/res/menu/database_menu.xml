@@ -31,4 +31,12 @@
         android:id="@+id/clear_database"
         android:title="@string/clear_database"
         />
+
+    <item
+        android:id="@+id/export_to_csv"
+        android:title="@string/export_to_csv"/>
+
+    <item
+        android:id="@+id/import_from_csv"
+        android:title="@string/import_from_csv"/>
 </menu>
