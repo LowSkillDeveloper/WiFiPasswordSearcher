@@ -20,17 +20,10 @@
     </string-array>
 
     <string-array name="menu_wps_pin">
-        <item>Подключиться, используя метод WPS 1 (без root)</item>
-        <item>Подключиться, используя метод WPS 2 (без root)</item>
-        <item>Подключиться, используя метод WPS 3 (без root)</item>
-        <item>Подключиться, используя метод PixieDust (без root)</item>
-        <item>Скопировать этот WPS PIN</item>
-        <item>Подключиться, используя метод WPS 1 (с root)</item>
-        <item>Подключиться, используя метод WPS 2 (с root)</item>
-        <item>Подключиться, используя метод WPS 3 (с root)</item>
-        <item>Подключиться, используя метод PixieDust (с root)</item>
+        <item>Подключится через WPS… (без root)</item>
+        <item>Скопировать пин-код</item>
+        <item>Подключится через WPS… (используя root)</item>
     </string-array>
-
 
     <string name="wps_connection_initiated_success">Соединение WPS успешно инициировано</string>
     <string name="error_executing_wps_command">Ошибка выполнения команды подключения WPS</string>

@@ -1,6 +1,5 @@
 package com.example.Unofficial3WiFiLocator
 
-import WifiUtil
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -22,7 +21,6 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.preference.PreferenceManager
 import android.text.InputType
-import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
@@ -200,11 +198,30 @@ class WPSActivity : Activity() {
         dialogBuilder.setTitle(getString(R.string.selected_pin) + spin)
         dialogBuilder.setItems(listContextMenuItems) { dialog, item ->
             when (item) {
-                0 -> connectUsingWpsMethod1WithoutRoot(BSSID, pin)
-                1 -> connectUsingWpsMethod2WithoutRoot(BSSID, pin)
-                2 -> connectUsingWpsMethod3WithoutRoot(BSSID, pin)
-                3 -> connectUsingWpsMethod4WithoutRoot(BSSID, pin)
-                4 -> {
+                0 -> {
+                    if (!wifiMgr.isWifiEnabled) {
+                        val toast = Toast.makeText(applicationContext,
+                                getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT)
+                        toast.show()
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        val wpsInfo = WpsInfo()
+                        wpsInfo.BSSID = BSSID
+                        wpsInfo.pin = pin
+                        wpsInfo.setup = WpsInfo.KEYPAD
+                        wpsLastPin = pin
+                        wifiMgr.startWps(wpsInfo, wpsCallback)
+                    } else {
+                        val builder = AlertDialog.Builder(this@WPSActivity)
+                        builder.setTitle(getString(R.string.dialog_title_unsupported_android))
+                                .setMessage(getString(R.string.dialog_message_unsupported_android))
+                                .setCancelable(false)
+                                .setPositiveButton(getString(R.string.ok)) { dialog, id -> dialog.dismiss() }
+                        val alert = builder.create()
+                        alert.show()
+                    }
+                }
+                1 -> {
                     Toast.makeText(applicationContext, String.format(getString(R.string.toast_pin_copied), pin), Toast.LENGTH_SHORT).show()
                     try {
                         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -213,84 +230,13 @@ class WPSActivity : Activity() {
                     } catch (e: Exception) {
                     }
                 }
-                5 -> connectUsingWpsMethod1WithRoot(BSSID, pin)
-                6 -> connectUsingWpsMethod2WithRoot(BSSID, pin)
-                7 -> connectUsingWpsMethod3WithRoot(BSSID, pin)
-                8 -> connectUsingWpsMethod4WithRoot(BSSID, pin)
+                2 -> {
+                    connectWithWpsRoot(BSSID, pin)
+                }
             }
         }
         dialogBuilder.show()
     }
-
-    private fun connectUsingWpsMethod4WithoutRoot(BSSID: String?, pin: String?) {
-        val pixieDustHelper = PixieDustHelper(this, wifiMgr, object : PixieDustHelper.PixieDustListener {
-            override fun onPinFound(pin: String) {
-                Toast.makeText(applicationContext, "PIN Found: $pin", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onPinNotFound() {
-                Toast.makeText(applicationContext, "PIN Not Found", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onProcessOutput(output: String) {
-                Log.d("PixieDust", output)
-            }
-        })
-        pixieDustHelper.startPixieDust()
-    }
-
-    private fun connectUsingWpsMethod4WithRoot(BSSID: String?, pin: String?) {
-        if (Shell.SU.available()) {
-            val pixieDustHelper = PixieDustHelper(this, wifiMgr, object : PixieDustHelper.PixieDustListener {
-                override fun onPinFound(pin: String) {
-                    Toast.makeText(applicationContext, "PIN Found: $pin", Toast.LENGTH_LONG).show()
-                }
-
-                override fun onPinNotFound() {
-                    Toast.makeText(applicationContext, "PIN Not Found", Toast.LENGTH_LONG).show()
-                }
-
-                override fun onProcessOutput(output: String) {
-                    Log.d("PixieDust", output)
-                }
-            })
-            pixieDustHelper.startPixieDust()
-        } else {
-            Toast.makeText(applicationContext, getString(R.string.root_access_unavailable), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    private fun connectUsingWpsMethod1WithoutRoot(BSSID: String?, pin: String?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (!wifiMgr.isWifiEnabled) {
-                val toast = Toast.makeText(applicationContext, getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT)
-                toast.show()
-            }
-            val wpsInfo = WpsInfo()
-            wpsInfo.BSSID = BSSID
-            wpsInfo.pin = pin
-            wpsInfo.setup = WpsInfo.KEYPAD
-            wpsLastPin = pin
-            wifiMgr.startWps(wpsInfo, wpsCallback)
-        } else {
-            Toast.makeText(applicationContext, "This method is only available on Android 5.0 (Lollipop) and above.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    private fun connectUsingWpsMethod2WithoutRoot(BSSID: String?, pin: String?) {
-        connectWithWpsMethod2(BSSID, pin, root = false)
-    }
-
-    private fun connectUsingWpsMethod1WithRoot(BSSID: String?, pin: String?) {
-        connectWithWpsRoot(BSSID, pin)
-    }
-
-    private fun connectUsingWpsMethod2WithRoot(BSSID: String?, pin: String?) {
-        connectWithWpsMethod2(BSSID, pin, root = true)
-    }
-
 
     private fun connectWithWpsRoot(BSSID: String?, pin: String?) {
         if (Shell.SU.available()) {
@@ -306,55 +252,6 @@ class WPSActivity : Activity() {
         } else {
             Toast.makeText(applicationContext, getString(R.string.root_access_unavailable), Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun connectWithWpsMethod2(BSSID: String?, pin: String?, root: Boolean) {
-        val wpaSupplicantConf = getWpaSupplicantConf()
-        if (root) {
-            if (Shell.SU.available()) {
-                val command = "wpa_cli -i wlan0 wps_pin $BSSID $pin"
-                val result = Shell.SU.run(command)
-                if (result != null) {
-                    Toast.makeText(applicationContext, getString(R.string.wps_connection_initiated_success), Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(applicationContext, getString(R.string.error_executing_wps_command), Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(applicationContext, getString(R.string.root_access_unavailable), Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            try {
-                val process = Runtime.getRuntime().exec("wpa_cli -i wlan0 wps_pin $BSSID $pin")
-                val result = process.inputStream.bufferedReader().use { it.readText() }
-                Toast.makeText(applicationContext, getString(R.string.wps_connection_initiated_success), Toast.LENGTH_SHORT).show()
-            } catch (e: IOException) {
-                Toast.makeText(applicationContext, getString(R.string.error_executing_wps_command), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun connectUsingWpsMethod3WithoutRoot(BSSID: String?, pin: String?) {
-        val wifiUtil = WifiUtil(this)
-        val ssid = binding.ESSDWpsTextView.text.toString()
-        val result = wifiUtil.connectUsingWpsPin(ssid, pin ?: "")
-        Toast.makeText(applicationContext, result, Toast.LENGTH_LONG).show()
-    }
-
-    private fun connectUsingWpsMethod3WithRoot(BSSID: String?, pin: String?) {
-        if (Shell.SU.available()) {
-            val wifiUtil = WifiUtil(this)
-            val ssid = binding.ESSDWpsTextView.text.toString()
-            val result = Shell.SU.run(wifiUtil.connectUsingWpsPin(ssid, pin ?: ""))
-            Toast.makeText(applicationContext, result.toString(), Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(applicationContext, getString(R.string.root_access_unavailable), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    private fun getWpaSupplicantConf(): String {
-        // Load wpa_supplicant.conf from assets
-        return applicationContext.assets.open("wpa_supplicant.conf").bufferedReader().use { it.readText() }
     }
 
     private inner class AsyncInitActivity : AsyncTask<String, Void?, String>() {
