@@ -29,7 +29,6 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.EditText
 import android.widget.Toast
 import com.example.Unofficial3WiFiLocator.databinding.ActivityWpsBinding
-import eu.chainfire.libsuperuser.Shell
 import org.apache.http.HttpRequestInterceptor
 import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpGet
@@ -42,6 +41,7 @@ import org.jsoup.Jsoup
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Locale
+import eu.chainfire.libsuperuser.Shell
 
 
 data class WPSPin (var mode: Int, var name: String, var pin: String = "", var sugg: Boolean = false)
@@ -201,7 +201,7 @@ class WPSActivity : Activity() {
                 0 -> {
                     if (!wifiMgr.isWifiEnabled) {
                         val toast = Toast.makeText(applicationContext,
-                                getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT)
+                            getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT)
                         toast.show()
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -214,9 +214,9 @@ class WPSActivity : Activity() {
                     } else {
                         val builder = AlertDialog.Builder(this@WPSActivity)
                         builder.setTitle(getString(R.string.dialog_title_unsupported_android))
-                                .setMessage(getString(R.string.dialog_message_unsupported_android))
-                                .setCancelable(false)
-                                .setPositiveButton(getString(R.string.ok)) { dialog, id -> dialog.dismiss() }
+                            .setMessage(getString(R.string.dialog_message_unsupported_android))
+                            .setCancelable(false)
+                            .setPositiveButton(getString(R.string.ok)) { dialog, id -> dialog.dismiss() }
                         val alert = builder.create()
                         alert.show()
                     }
@@ -239,12 +239,12 @@ class WPSActivity : Activity() {
     }
 
     private fun connectWithWpsRoot(BSSID: String?, pin: String?) {
+        val cliHelper = CliHelper(applicationContext)
         if (Shell.SU.available()) {
-            val command = "wpa_cli -i wlan0 wps_pin $BSSID $pin"
-            val result = Shell.SU.run(command)
+            val command = CliHelper.CLI_PATH + CliHelper.CLI_NAME + " -i wlan0 wps_pin $BSSID $pin"
+            val result = Shell.SU.run(arrayOf(command))
 
-            if (result != null) {
-
+            if (result != null && result.isNotEmpty()) {
                 Toast.makeText(applicationContext, getString(R.string.wps_connection_initiated_success), Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(applicationContext, getString(R.string.error_executing_wps_command), Toast.LENGTH_SHORT).show()
