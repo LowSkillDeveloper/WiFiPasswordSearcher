@@ -102,7 +102,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
 ------------------
 
 
-drygdryg version of Locator (abandoned?): https://github.com/drygdryg/WiFiPasswordSearcher
+drygdryg version of Locator (abandoned and deleted): https://github.com/drygdryg/WiFiPasswordSearcher
 
 Original locator source (abandoned): https://github.com/FusixGit/WiFiPasswordSearcher
 
