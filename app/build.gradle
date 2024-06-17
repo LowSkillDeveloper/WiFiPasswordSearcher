@@ -9,6 +9,7 @@ android {
         applicationId "com.example.Unofficial3WiFiLocator"
         minSdkVersion 14
         targetSdkVersion 27
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -40,6 +41,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'eu.chainfire:libsuperuser:1.1.1'
     implementation 'com.opencsv:opencsv:5.5.2'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
 repositories {
     mavenCentral()
