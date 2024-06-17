@@ -4,11 +4,9 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 
 
 > [!NOTE]
-> Делать новую версию локатора оказалось интереснее чем я думал, поэтому я запилил огромное обновление, по моему мнению конечно, ведь локатор давно был заброшен.
-Поэтому надеюсь проект 3wifi не умрёт окончательно, и получит вторую жизнь, как и локатор.
+> The changelog contains only information about the changes that I made myself in version of locator by drygdryg. The original drygdryg version repository has been removed.
 
 # Changelog
-The changelog contains only information about the changes that I made myself. Changes made by drygdryg to the original version can be found in his repository, link at the end of the description.
 
 Descriptions and instructions for my added new functions can be found on the Wiki Github page: https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/wiki
 
@@ -22,22 +20,17 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Offline vendor database from "Wps Wpa Tester" app.
 - Added history of data founded in 3wifi for networks you scanned. (Local database in the application, where the networks saves when you found data in 3wifi)
   - Added import and export of local database in .json file
-  - Manually adding to the database
-  - Interaction with networks in the database (wps generation, wps connection, copying)
-  - Added columns for login and password to the router admin panel. (only manual addition or import from router scan txt)
+  - Added import and export in .csv file
+  - Manually adding wifi to the database
   - Import txt file from RouterScan to local DB (or myuploads.txt from 3wifi)
-    - Now the application can import a large myuploads.txt file that containing more than 100K lines
-  - Added a switch that disables automatic adding of received data from 3wifi to the local database
-  - Added function to optimize the database and remove duplicates.
 - Added links to the start menu
 - Added a local database search button next to the search button in the online 3wifi database
-  - Added a primary button switch, now the local DB search button can be made primary.
 - Added the ability to download wpspin.html to the phone
 - Added caching of wps pin code data from the 3wifi server (reduces the load on the server and makes offline re-viewing available)
 - Added the ability to login using only the API key
 - Ability to open 3wifi website in WebView
 - Added the ability to manually search by BSSID in the 3WiFi database
-- Added WPS connection via Root (not tested)
+- Added WPS connection via Root
     
 ## Updated Features:
 - Offline mode button.
@@ -48,8 +41,6 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Local pin.db updated to the 2024 version from "Wps Wpa Tester" (includes 2000 new pins).
 - Update some libraries.
 - Added more buttons for logging out of your account
-- After checking via 3wifi, there is a check using the local database.
-  - Added a switch to disable searching in local database after 3wifi
 - Updated the way to grant permissions due to the requirements of the new SDK
 - Optimization of wps pin generation initialization (Now PIN code generation loads faster.)
 - Minor updates to the section with detailed information about the network
@@ -62,12 +53,8 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Fixed the message "this app was built for an older version of android" (If Android is 13 or higher, the message still appears, it will not appear until version 13 of Android)
 - Fixed black bars at the top and bottom of the application
 - Fixed offline wps generation from wpspin.html file (The problem exists in all versions from drygdryg, which migrated from java to kotlin, but I no longer have it)
-
-# TODO:
-- Add GPS sniffer
-- Integrate RouterKeygen algorithms
-- Add manual language change
-- Fix known minor bugs
+- Fixed Error when trying to save an empty network profile after checking in the database
+- Added multidex to the application because the application hit the limit of methods.
 
 
 # Screenshots
