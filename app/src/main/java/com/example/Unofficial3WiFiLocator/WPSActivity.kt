@@ -55,7 +55,7 @@ class WPSActivity : Activity() {
     private lateinit var mSettings: Settings
     private var wpsCallback: WpsCallback? = null
     private var wpsConnecting = false
-    private var wpsLastPin: String? = ""
+    private var currentPin: String? = null
     var wpsPin = ArrayList<String?>()
     var wpsMet = ArrayList<String?>()
     var wpsScore = ArrayList<String>()
@@ -95,11 +95,15 @@ class WPSActivity : Activity() {
         val bssdWPS = intent.extras!!.getString("variable1")
         binding.BSSDWpsTextView.text = bssdWPS // BSSID
         wifiMgr = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        wpsCallback = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             wpsCallback = object : WpsCallback() {
                 @Deprecated("Deprecated in Java")
-                override fun onStarted(pin: String) {
+                override fun onStarted(pin: String?) {
+                    val actualPin = pin ?: currentPin
+                    if (actualPin == null) {
+                        Toast.makeText(applicationContext, "WPS pin is null", Toast.LENGTH_SHORT).show()
+                        return
+                    }
                     wpsConnecting = true
                     pd = ProgressDialog(this@WPSActivity)
                     pd.setProgressStyle(ProgressDialog.STYLE_SPINNER)
@@ -132,7 +136,7 @@ class WPSActivity : Activity() {
                     var title = getString(R.string.dialog_title_error_occurred)
                     val errorMessage: String
                     when (reason) {
-                        0 -> if (wpsLastPin!!.isEmpty()) {
+                        0 -> if (currentPin!!.isEmpty()) {
                             title = getString(R.string.dialog_title_wps_failed)
                             errorMessage = getString(R.string.dialog_message_not_support_empty)
                         } else {
@@ -155,9 +159,9 @@ class WPSActivity : Activity() {
                     }
                     val builder = AlertDialog.Builder(this@WPSActivity)
                     builder.setTitle(title)
-                            .setMessage(errorMessage)
-                            .setCancelable(false)
-                            .setPositiveButton(getString(R.string.ok)) { dialog, id -> dialog.dismiss() }
+                        .setMessage(errorMessage)
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.ok)) { dialog, id -> dialog.dismiss() }
                     val alert = builder.create()
                     alert.show()
                 }
@@ -181,6 +185,7 @@ class WPSActivity : Activity() {
         AsyncInitActivity().execute(bssdWPS)
     }
 
+
     private fun setAppTheme() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)
@@ -198,29 +203,7 @@ class WPSActivity : Activity() {
         dialogBuilder.setTitle(getString(R.string.selected_pin) + spin)
         dialogBuilder.setItems(listContextMenuItems) { dialog, item ->
             when (item) {
-                0 -> {
-                    if (!wifiMgr.isWifiEnabled) {
-                        val toast = Toast.makeText(applicationContext,
-                            getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT)
-                        toast.show()
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        val wpsInfo = WpsInfo()
-                        wpsInfo.BSSID = BSSID
-                        wpsInfo.pin = pin
-                        wpsInfo.setup = WpsInfo.KEYPAD
-                        wpsLastPin = pin
-                        wifiMgr.startWps(wpsInfo, wpsCallback)
-                    } else {
-                        val builder = AlertDialog.Builder(this@WPSActivity)
-                        builder.setTitle(getString(R.string.dialog_title_unsupported_android))
-                            .setMessage(getString(R.string.dialog_message_unsupported_android))
-                            .setCancelable(false)
-                            .setPositiveButton(getString(R.string.ok)) { dialog, id -> dialog.dismiss() }
-                        val alert = builder.create()
-                        alert.show()
-                    }
-                }
+                0 -> connectWithoutRoot(BSSID, pin)
                 1 -> {
                     Toast.makeText(applicationContext, String.format(getString(R.string.toast_pin_copied), pin), Toast.LENGTH_SHORT).show()
                     try {
@@ -230,12 +213,42 @@ class WPSActivity : Activity() {
                     } catch (e: Exception) {
                     }
                 }
-                2 -> {
-                    connectWithWpsRoot(BSSID, pin)
-                }
+                2 -> connectWithWpsRoot(BSSID, pin)
             }
         }
         dialogBuilder.show()
+    }
+
+    private fun connectWithoutRoot(BSSID: String?, pin: String?) {
+        if (!wifiMgr.isWifiEnabled) {
+            Toast.makeText(applicationContext, getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (pin.isNullOrEmpty()) {
+            Toast.makeText(applicationContext, "Pin is null or empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val wpsInfo = WpsInfo().apply {
+                this.BSSID = BSSID
+                this.pin = pin
+                this.setup = WpsInfo.KEYPAD
+            }
+            currentPin = pin
+            if (wpsInfo.pin.isNullOrEmpty()) {
+                Toast.makeText(applicationContext, "WPS pin is null or empty before calling startWps", Toast.LENGTH_SHORT).show()
+                return
+            }
+            wifiMgr.startWps(wpsInfo, wpsCallback)
+        } else {
+            val builder = AlertDialog.Builder(this@WPSActivity)
+            builder.setTitle(getString(R.string.dialog_title_unsupported_android))
+                .setMessage(getString(R.string.dialog_message_unsupported_android))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.ok)) { dialog, id -> dialog.dismiss() }
+            val alert = builder.create()
+            alert.show()
+        }
     }
 
     private fun connectWithWpsRoot(BSSID: String?, pin: String?) {
