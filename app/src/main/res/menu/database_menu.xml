@@ -39,4 +39,12 @@
     <item
         android:id="@+id/import_from_csv"
         android:title="@string/import_from_csv"/>
+
+    <item
+        android:id="@+id/backup_database"
+        android:title="@string/backup_database"/>
+
+    <item
+        android:id="@+id/restore_database"
+        android:title="@string/restore_database"/>
 </menu>

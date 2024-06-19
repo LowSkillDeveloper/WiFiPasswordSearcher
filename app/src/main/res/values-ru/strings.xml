@@ -25,6 +25,21 @@
         <item>Подключится через WPS… (используя root)</item>
     </string-array>
 
+
+        <string name="backup_database">Резервное копирование базы данных</string>
+        <string name="restore_database">Восстановление базы данных</string>
+        <string name="select_sqlite_file">Выберите файл SQLite</string>
+        <string name="restore_database_confirmation">Вы уверены, что хотите восстановить базу данных? Это перезапишет текущую базу данных.</string>
+        <string name="backup_failed">Резервное копирование не удалось: %1$s</string>
+        <string name="backup_successful">База данных успешно сохранена: %1$s</string>
+        <string name="restore_failed">Восстановление не удалось: %1$s</string>
+        <string name="restore_successful">База данных успешно восстановлена</string>
+        <string name="restore_database_title">Восстановление базы данных</string>
+        <string name="database_optimized">База данных оптимизирована</string>
+        <string name="duplicates_removed">Дубликаты удалены</string>
+
+
+
     <string name="wps_connection_initiated_success">Соединение WPS успешно инициировано</string>
     <string name="error_executing_wps_command">Ошибка выполнения команды подключения WPS</string>
     <string name="root_access_unavailable">Доступ к Root-правам недоступен</string>

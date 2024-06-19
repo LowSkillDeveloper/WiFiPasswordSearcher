@@ -64,16 +64,16 @@ private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
 class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        private const val DATABASE_VERSION = 2
-        private const val DATABASE_NAME = "mylocalwifi.db"
-        public const val TABLE_NAME = "WiFiNetworks"
-        private const val COLUMN_ID = "ID"
+        const val DATABASE_VERSION = 2
+        const val DATABASE_NAME = "mylocalwifi.db" // Всегда должна быть публичной!
+        const val TABLE_NAME = "WiFiNetworks"
+        const val COLUMN_ID = "ID"
         const val COLUMN_WIFI_NAME = "WiFiName"
-        public const val COLUMN_MAC_ADDRESS = "MACAddress"
+        const val COLUMN_MAC_ADDRESS = "MACAddress"
         const val COLUMN_WIFI_PASSWORD = "WiFiPassword"
         const val COLUMN_WPS_CODE = "WPSCode"
-        private const val COLUMN_ADMIN_LOGIN = "AdminLogin"
-        private const val COLUMN_ADMIN_PASS = "AdminPass"
+        const val COLUMN_ADMIN_LOGIN = "AdminLogin"
+        const val COLUMN_ADMIN_PASS = "AdminPass"
     }
 
     fun getNetworksCursor(): Cursor {

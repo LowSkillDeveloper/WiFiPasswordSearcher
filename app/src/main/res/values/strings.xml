@@ -17,6 +17,19 @@
         <item>Logout</item>
     </string-array>
 
+        <string name="backup_database">Backup Database</string>
+        <string name="restore_database">Restore Database</string>
+        <string name="select_sqlite_file">Select SQLite File</string>
+        <string name="restore_database_confirmation">Are you sure you want to restore the database? This will overwrite the current database.</string>
+        <string name="backup_failed">Backup failed: %1$s</string>
+        <string name="backup_successful">Database backed up to: %1$s</string>
+        <string name="restore_failed">Restore failed: %1$s</string>
+        <string name="restore_successful">Database restored successfully</string>
+        <string name="restore_database_title">Restore Database</string>
+        <string name="database_optimized">Database Optimized</string>
+        <string name="duplicates_removed">Duplicates Removed</string>
+
+
     <string name="copy_api_keys">Copy API Keys</string>
     <string name="dark_mode">Dark mode</string>
     <string name="action_view_db">View local database</string>

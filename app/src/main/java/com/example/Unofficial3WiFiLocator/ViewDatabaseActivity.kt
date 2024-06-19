@@ -51,6 +51,7 @@ class ViewDatabaseActivity : Activity() {
         private const val REQUEST_CODE_IMPORT_DB = 1
         private const val REQUEST_CODE_IMPORT_ROUTERSCAN = 2
         private const val REQUEST_CODE_IMPORT_CSV = 3
+        private const val REQUEST_CODE_RESTORE_DB = 4
     }
     private lateinit var listView: ListView
     private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
@@ -329,13 +330,13 @@ class ViewDatabaseActivity : Activity() {
                 }
                 R.id.optimize_database -> {
                     wifiDatabaseHelper.vacuumDatabase()
-                    Toast.makeText(this, "Database Optimized", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.database_optimized), Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.remove_duplicates -> {
                     wifiDatabaseHelper.removeDuplicates()
                     displayDatabaseInfo()
-                    Toast.makeText(this, "Duplicates Removed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.duplicates_removed), Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.export_to_csv -> {
@@ -346,11 +347,68 @@ class ViewDatabaseActivity : Activity() {
                     selectImportFileCSV()
                     true
                 }
+                R.id.backup_database -> {
+                    backupDatabase()
+                    true
+                }
+                R.id.restore_database -> {
+                    selectRestoreFile()
+                    true
+                }
                 else -> false
             }
         }
         popupMenu.show()
     }
+
+
+    private fun backupDatabase() {
+        val backupDBPath = getDatabasePath(WiFiDatabaseHelper.DATABASE_NAME).absolutePath
+        val backupFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "wifi_database_backup.db")
+
+        try {
+            File(backupDBPath).copyTo(backupFile, overwrite = true)
+            Toast.makeText(this, getString(R.string.backup_successful, backupFile.absolutePath), Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, getString(R.string.backup_failed, e.message), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun selectRestoreFile() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "*/*"
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.select_sqlite_file)), REQUEST_CODE_RESTORE_DB)
+    }
+
+    private fun restoreDatabase(uri: Uri) {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.restore_database_title))
+            .setMessage(getString(R.string.restore_database_confirmation))
+            .setPositiveButton(getString(R.string.dialog_yes)) { dialog, _ ->
+                try {
+                    val backupDBPath = getDatabasePath(WiFiDatabaseHelper.DATABASE_NAME).absolutePath
+                    
+                    wifiDatabaseHelper.close()
+
+                    contentResolver.openInputStream(uri)?.use { inputStream ->
+                        File(backupDBPath).outputStream().use { outputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
+                    }
+
+                    wifiDatabaseHelper = WiFiDatabaseHelper(this)
+
+                    Toast.makeText(this, getString(R.string.restore_successful), Toast.LENGTH_LONG).show()
+                    displayDatabaseInfo()
+                } catch (e: Exception) {
+                    Toast.makeText(this, getString(R.string.restore_failed, e.message), Toast.LENGTH_LONG).show()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.dialog_no), null)
+            .show()
+    }
+
 
     private fun selectImportFileCSV() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
@@ -383,7 +441,7 @@ class ViewDatabaseActivity : Activity() {
                     inputStream?.bufferedReader()?.use { reader ->
                         val csvReader = CSVReader(reader)
                         var nextLine: Array<String>?
-                        csvReader.readNext() // пропускаем заголовок
+                        csvReader.readNext()
                         while (csvReader.readNext().also { nextLine = it } != null) {
                             nextLine?.let { line ->
                                 val essid = line[0]
@@ -541,12 +599,10 @@ class ViewDatabaseActivity : Activity() {
             val adminLogin = adminLoginInput.text.toString()
             val adminPass = adminPassInput.text.toString()
 
-            // Проверяем, что хотя бы одно из полей SSID или BSSID заполнено
             if (ssid.isNotEmpty() || bssid.isNotEmpty()) {
                 wifiDatabaseHelper.addNetwork(ssid, bssid, password, wps, adminLogin, adminPass)
                 displayDatabaseInfo()
             } else {
-                // Показать сообщение об ошибке, если оба поля пусты
                 Toast.makeText(this, getString(R.string.error_empty_ssid_bssid), Toast.LENGTH_LONG).show()
             }
             dialog.dismiss()
@@ -584,6 +640,11 @@ class ViewDatabaseActivity : Activity() {
                 REQUEST_CODE_IMPORT_CSV -> {
                     data?.data?.also { uri ->
                         importDatabaseFromCSV(uri)
+                    }
+                }
+                REQUEST_CODE_RESTORE_DB -> {
+                    data?.data?.also { uri ->
+                        restoreDatabase(uri)
                     }
                 }
             }
