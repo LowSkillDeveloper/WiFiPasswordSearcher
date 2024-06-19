@@ -831,7 +831,6 @@ class MyActivity : AppCompatActivity() {
                 refreshNetworkList()
             }
             R.id.action_router_keygen -> {
-                //checkNetworksWithRouterKeygen()
                 Toast.makeText(this, getString(R.string.wip_router_keygen), Toast.LENGTH_LONG).show()
                 return true
             }
@@ -862,6 +861,33 @@ class MyActivity : AppCompatActivity() {
                         }
                     } else {
                         Toast.makeText(this, getString(R.string.enter_bssid), Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                dialog.show()
+            }
+            R.id.action_open_fetchEssid -> {
+                val dialogView = layoutInflater.inflate(R.layout.dialog_fetch_essid, null)
+                val essidEditText = dialogView.findViewById<EditText>(R.id.essidEditText)
+                val submitButton = dialogView.findViewById<Button>(R.id.submitButton)
+                val resultTextView = dialogView.findViewById<TextView>(R.id.resultTextView)
+
+                resultTextView.movementMethod = LinkMovementMethod.getInstance()
+
+                val dialog = AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.search_by_essid))
+                    .setView(dialogView)
+                    .create()
+
+                submitButton.setOnClickListener {
+                    val essid = essidEditText.text.toString()
+                    if (essid.isNotEmpty()) {
+                        fetchEssidData(essid) { result ->
+                            resultTextView.visibility = View.VISIBLE
+                            resultTextView.text = result
+                        }
+                    } else {
+                        Toast.makeText(this, getString(R.string.enter_essid), Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -911,6 +937,7 @@ class MyActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+
 
     private fun fetchBssidData(bssid: String, callback: (String) -> Unit) {
         val thread = Thread {
@@ -965,6 +992,61 @@ class MyActivity : AppCompatActivity() {
         }
         thread.start()
     }
+
+    private fun fetchEssidData(essid: String, callback: (String) -> Unit) {
+        val thread = Thread {
+            try {
+                val apiKey = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "")
+                val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
+                val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
+
+                val url = URL("$serverURI/api/apiquery")
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.doOutput = true
+                connection.setRequestProperty("Content-Type", "application/json")
+
+                if (useCustomHost && serverURI == "http://134.0.119.34") {
+                    connection.setRequestProperty("Host", "3wifi.stascorp.com")
+                }
+
+                val jsonRequest = JSONObject().apply {
+                    put("key", apiKey)
+                    put("essid", JSONArray().put(essid))
+                }
+
+                val outputStream = DataOutputStream(connection.outputStream)
+                outputStream.writeBytes(jsonRequest.toString())
+                outputStream.flush()
+                outputStream.close()
+
+                val responseCode = connection.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val inputStream = BufferedReader(InputStreamReader(connection.inputStream))
+                    val response = StringBuilder()
+                    var inputLine: String?
+                    while (inputStream.readLine().also { inputLine = it } != null) {
+                        response.append(inputLine)
+                    }
+                    inputStream.close()
+                    runOnUiThread {
+                        callback(handleApiResponse(response.toString()).toString())
+                    }
+                } else {
+                    runOnUiThread {
+                        callback(getString(R.string.error_request) + responseCode)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                runOnUiThread {
+                    callback(getString(R.string.error_generic) + e.message)
+                }
+            }
+        }
+        thread.start()
+    }
+
 
     private fun copyToClipboard(text: String) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

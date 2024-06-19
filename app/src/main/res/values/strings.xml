@@ -28,6 +28,9 @@
         <string name="restore_database_title">Restore Database</string>
         <string name="database_optimized">Database Optimized</string>
         <string name="duplicates_removed">Duplicates Removed</string>
+        <string name="warning_essid_not_supported">Not all servers support ESSID search.</string>
+        <string name="search_by_essid">Search by ESSID</string>
+        <string name="enter_essid">Enter ESSID</string>
 
 
     <string name="copy_api_keys">Copy API Keys</string>
@@ -124,6 +127,7 @@
     <string name="unable_save_api_key">Unable to save API key</string>
     <string name="open_3wifi_webview">Open 3WiFi site in WebView</string>
     <string name="fetchBssid">Finding BSSID in the 3WiFi</string>
+    <string name="fetchEssid">Finding ESSID in the 3WiFi</string>
     <string name="Search_in_3WiFi">Search in 3WiFi</string>
     <string name="error_request">Error in request: </string>
     <string name="error_generic">Error: </string>

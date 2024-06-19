@@ -37,8 +37,9 @@
         <string name="restore_database_title">Восстановление базы данных</string>
         <string name="database_optimized">База данных оптимизирована</string>
         <string name="duplicates_removed">Дубликаты удалены</string>
-
-
+        <string name="warning_essid_not_supported">Не все сервера поддерживают поиск по ESSID.</string>
+        <string name="search_by_essid">Поиск по ESSID</string>
+        <string name="enter_essid">Введите ESSID</string>
 
     <string name="wps_connection_initiated_success">Соединение WPS успешно инициировано</string>
     <string name="error_executing_wps_command">Ошибка выполнения команды подключения WPS</string>
@@ -140,6 +141,7 @@
     <string name="unable_save_api_key">Невозможно сохранить API ключ</string>
     <string name="open_3wifi_webview">Открыть сайт 3WiFi в WebView</string>
     <string name="fetchBssid">Найти BSSID в 3WiFi</string>
+    <string name="fetchEssid">Найти ESSID в 3WiFi</string>
     <string name="Search_in_3WiFi">Поиск в 3WiFi</string>
     <string name="error_request">Ошибка запроса: </string>
     <string name="error_generic">Ошибка: </string>

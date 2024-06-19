@@ -29,6 +29,11 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_open_fetchEssid"
+        android:title="@string/fetchEssid"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_gps_sniff"
         android:icon="@drawable/ic_map_black_24dp"
         android:title="@string/button_gps_sniff"
