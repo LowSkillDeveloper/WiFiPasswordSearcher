@@ -3,7 +3,7 @@
     <string name="app_name">3WiFi Локатор V2 Unofficial</string>
     <string-array name="strings_settings_rows">
         <item>Настройки приложения</item>
-        <item>Причие настройки</item>
+        <item>Прочие настройки</item>
         <item>О приложении</item>
         <item>Страница проекта GitHub</item>
         <item>Проверить наличие обновлений</item>
