@@ -150,6 +150,7 @@
     <string name="search_by_bssid">Поиск по BSSID</string>
     <string name="enter_bssid">Введите BSSID</string>
     <string name="loading">Загрузка…</string>
+    <string name="no_map_app">Картографическое приложение не найдено</string>
 
     <string name="label_start">Проект RouterScan будет жить вечно</string>
     <string name="button_3wifi">3WiFi</string>

@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.location.LocationManager
+import android.net.Uri
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -31,6 +32,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -939,7 +941,7 @@ class MyActivity : AppCompatActivity() {
     }
 
 
-    private fun fetchBssidData(bssid: String, callback: (String) -> Unit) {
+    private fun fetchBssidData(bssid: String, callback: (CharSequence) -> Unit) {
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage(getString(R.string.loading))
         progressDialog.setCancelable(false)
@@ -982,7 +984,7 @@ class MyActivity : AppCompatActivity() {
                     inputStream.close()
                     runOnUiThread {
                         progressDialog.dismiss()
-                        callback(handleApiResponse(response.toString()).toString())
+                        callback(handleBssidApiResponse(response.toString()))
                     }
                 } else {
                     runOnUiThread {
@@ -1001,7 +1003,7 @@ class MyActivity : AppCompatActivity() {
         thread.start()
     }
 
-    private fun fetchEssidData(essid: String, callback: (String) -> Unit) {
+    private fun fetchEssidData(essid: String, callback: (CharSequence) -> Unit) {
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage(getString(R.string.loading))
         progressDialog.setCancelable(false)
@@ -1013,44 +1015,37 @@ class MyActivity : AppCompatActivity() {
                 val serverURI = mSettings.AppSettings!!.getString(Settings.APP_SERVER_URI, resources.getString(R.string.SERVER_URI_DEFAULT))
                 val useCustomHost = mSettings.AppSettings!!.getBoolean("USE_CUSTOM_HOST", false)
 
-                val url = URL("$serverURI/api/apiquery")
+                val urlStr = "$serverURI/api/apiquery?bssid=*&essid=$essid"
+                val url = URL(urlStr)
+                Log.d("fetchEssidData", "Request URL: $urlStr")
+
                 val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "POST"
-                connection.doOutput = true
+                connection.requestMethod = "GET"
                 connection.setRequestProperty("Content-Type", "application/json")
 
                 if (useCustomHost && serverURI == "http://134.0.119.34") {
                     connection.setRequestProperty("Host", "3wifi.stascorp.com")
                 }
 
-                val jsonRequest = JSONObject().apply {
-                    put("key", apiKey)
-                    put("essid", JSONArray().put(essid))
-                }
-
-                val outputStream = DataOutputStream(connection.outputStream)
-                outputStream.writeBytes(jsonRequest.toString())
-                outputStream.flush()
-                outputStream.close()
-
                 val responseCode = connection.responseCode
+                val response = StringBuilder()
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     val inputStream = BufferedReader(InputStreamReader(connection.inputStream))
-                    val response = StringBuilder()
                     var inputLine: String?
                     while (inputStream.readLine().also { inputLine = it } != null) {
                         response.append(inputLine)
                     }
                     inputStream.close()
-                    runOnUiThread {
-                        progressDialog.dismiss()
-                        callback(handleApiResponse(response.toString()).toString())
-                    }
                 } else {
-                    runOnUiThread {
-                        progressDialog.dismiss()
-                        callback(getString(R.string.error_request) + responseCode)
-                    }
+                    response.append("Error: ").append(responseCode)
+                }
+
+                val responseBody = response.toString()
+                Log.d("fetchEssidData", "Response: $responseBody")
+
+                runOnUiThread {
+                    progressDialog.dismiss()
+                    callback(handleEssidApiResponse(responseBody))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -1063,6 +1058,8 @@ class MyActivity : AppCompatActivity() {
         thread.start()
     }
 
+
+
     private fun copyToClipboard(text: String) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("Copied Text", text)
@@ -1070,13 +1067,28 @@ class MyActivity : AppCompatActivity() {
         Toast.makeText(this, getString(R.string.toast_copied), Toast.LENGTH_SHORT).show()
     }
 
-    private fun handleApiResponse(response: String): CharSequence {
+    private fun handleBssidApiResponse(response: String): CharSequence {
         return try {
             val jsonResponse = JSONObject(response)
             val result = jsonResponse.getBoolean("result")
 
             if (result) {
-                formatApiResponse(jsonResponse.getJSONObject("data"))
+                formatBssidApiResponse(jsonResponse.getJSONObject("data"))
+            } else {
+                getString(R.string.data_not_found)
+            }
+        } catch (e: JSONException) {
+            getString(R.string.error_processing_response) + e.message
+        }
+    }
+
+    private fun handleEssidApiResponse(response: String): CharSequence {
+        return try {
+            val jsonResponse = JSONObject(response)
+            val result = jsonResponse.getBoolean("result")
+
+            if (result) {
+                formatEssidApiResponse(jsonResponse.getJSONObject("data"))
             } else {
                 getString(R.string.data_not_found)
             }
@@ -1086,7 +1098,7 @@ class MyActivity : AppCompatActivity() {
     }
 
 
-    private fun formatApiResponse(jsonResponse: JSONObject): SpannableStringBuilder {
+    private fun formatBssidApiResponse(jsonResponse: JSONObject): SpannableStringBuilder {
         val formattedText = SpannableStringBuilder()
         val keys = jsonResponse.keys()
 
@@ -1098,22 +1110,59 @@ class MyActivity : AppCompatActivity() {
                 val entry = entries.getJSONObject(i)
                 val essid = entry.getString("essid")
                 val key = entry.getString("key")
-                val wps = entry.getString("wps")
+                val wps = entry.optString("wps", "N/A")
+                val lat = entry.optDouble("lat", Double.NaN)
+                val lon = entry.optDouble("lon", Double.NaN)
+                val hasValidCoordinates = !lat.isNaN() && !lon.isNaN()
 
                 formattedText.append("BSSID: $bssid\n")
                 formattedText.append("ESSID: $essid\n")
-                formattedText.append(makeSpannable("Key: $key\n") {
-                    copyToClipboard(key)
-                })
-                formattedText.append(makeSpannable("WPS: $wps\n\n") {
-                    copyToClipboard(wps)
-                })
+                formattedText.append("Key: $key\n")
+                formattedText.append("WPS: $wps\n")
+                if (hasValidCoordinates) {
+                    formattedText.append(makeSpannable("Show on Map\n") {
+                        showOnMap(lat, lon)
+                    })
+                }
+                formattedText.append("\n")
             }
         }
 
         return formattedText
     }
 
+    private fun formatEssidApiResponse(jsonResponse: JSONObject): SpannableStringBuilder {
+        val formattedText = SpannableStringBuilder()
+        val keys = jsonResponse.keys()
+
+        while (keys.hasNext()) {
+            val essid = keys.next()
+            val entries = jsonResponse.getJSONArray(essid)
+
+            for (i in 0 until entries.length()) {
+                val entry = entries.getJSONObject(i)
+                val bssid = entry.getString("bssid")
+                val key = entry.getString("key")
+                val wps = entry.optString("wps", "N/A")
+                val lat = entry.optDouble("lat", Double.NaN)
+                val lon = entry.optDouble("lon", Double.NaN)
+                val hasValidCoordinates = !lat.isNaN() && !lon.isNaN()
+
+                formattedText.append("BSSID: $bssid\n")
+                formattedText.append("ESSID: $essid\n")
+                formattedText.append("Key: $key\n")
+                formattedText.append("WPS: $wps\n")
+                if (hasValidCoordinates) {
+                    formattedText.append(makeSpannable("Show on Map\n") {
+                        showOnMap(lat, lon)
+                    })
+                }
+                formattedText.append("\n")
+            }
+        }
+
+        return formattedText
+    }
 
     private fun makeSpannable(text: String, onClick: () -> Unit): SpannableString {
         val spannable = SpannableString(text)
@@ -1123,6 +1172,18 @@ class MyActivity : AppCompatActivity() {
             }
         }, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         return spannable
+    }
+
+    private fun showOnMap(lat: Double, lon: Double) {
+        val uri = Uri.parse("geo:$lat,$lon?q=$lat,$lon")
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            setPackage("com.google.android.apps.maps")
+        }
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, getString(R.string.no_map_app), Toast.LENGTH_SHORT).show()
+        }
     }
 
 

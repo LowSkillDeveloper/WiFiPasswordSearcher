@@ -136,6 +136,7 @@
     <string name="search_by_bssid">Search by BSSID</string>
     <string name="enter_bssid">Enter BSSID</string>
     <string name="loading">Loading…</string>
+    <string name="no_map_app">No map application found</string>
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>
