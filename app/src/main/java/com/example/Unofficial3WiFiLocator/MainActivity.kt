@@ -940,6 +940,11 @@ class MyActivity : AppCompatActivity() {
 
 
     private fun fetchBssidData(bssid: String, callback: (String) -> Unit) {
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage(getString(R.string.loading))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
         val thread = Thread {
             try {
                 val apiKey = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "")
@@ -976,16 +981,19 @@ class MyActivity : AppCompatActivity() {
                     }
                     inputStream.close()
                     runOnUiThread {
+                        progressDialog.dismiss()
                         callback(handleApiResponse(response.toString()).toString())
                     }
                 } else {
                     runOnUiThread {
+                        progressDialog.dismiss()
                         callback(getString(R.string.error_request) + responseCode)
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 runOnUiThread {
+                    progressDialog.dismiss()
                     callback(getString(R.string.error_generic) + e.message)
                 }
             }
@@ -994,6 +1002,11 @@ class MyActivity : AppCompatActivity() {
     }
 
     private fun fetchEssidData(essid: String, callback: (String) -> Unit) {
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage(getString(R.string.loading))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
         val thread = Thread {
             try {
                 val apiKey = mSettings.AppSettings!!.getString(Settings.API_READ_KEY, "")
@@ -1030,23 +1043,25 @@ class MyActivity : AppCompatActivity() {
                     }
                     inputStream.close()
                     runOnUiThread {
+                        progressDialog.dismiss()
                         callback(handleApiResponse(response.toString()).toString())
                     }
                 } else {
                     runOnUiThread {
+                        progressDialog.dismiss()
                         callback(getString(R.string.error_request) + responseCode)
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 runOnUiThread {
+                    progressDialog.dismiss()
                     callback(getString(R.string.error_generic) + e.message)
                 }
             }
         }
         thread.start()
     }
-
 
     private fun copyToClipboard(text: String) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
