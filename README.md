@@ -23,6 +23,7 @@ Descriptions and instructions for my added new functions can be found on the Wik
   - Added import and export in .csv file
   - Manually adding wifi to the database
   - Import txt file from RouterScan to local DB (or myuploads.txt from 3wifi)
+  - Added ability to backup SQLite file and restore database from it.
 - Added links to the start menu
 - Added a local database search button next to the search button in the online 3wifi database
 - Added the ability to download wpspin.html to the phone
@@ -30,7 +31,9 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Added the ability to login using only the API key
 - Ability to open 3wifi website in WebView
 - Added the ability to manually search by BSSID in the 3WiFi database
+- Added the ability to manually search by ESSID in the 3WiFi database
 - Added WPS connection via Root
+- Added button to display Wi-Fi point location on Google Map if coordinates are returned by server.
     
 ## Updated Features:
 - Offline mode button.
@@ -55,6 +58,10 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Fixed offline wps generation from wpspin.html file (The problem exists in all versions from drygdryg, which migrated from java to kotlin, but I no longer have it)
 - Fixed Error when trying to save an empty network profile after checking in the database
 - Added multidex to the application because the application hit the limit of methods.
+- Fixed WPS connection without root permissions.
+- Fixed overlap of the last item in Wi-Fi networks list.
+- Fixed crash when clicking on a list item after searching in local database.
+- Fixed adding server URL with '/' at the end.
 
 
 # Screenshots
