@@ -252,9 +252,14 @@ class WPSActivity : Activity() {
     }
 
     private fun connectWithWpsRoot(BSSID: String?, pin: String?) {
+        if (pin == null) {
+            Toast.makeText(applicationContext, "Pin is null", Toast.LENGTH_SHORT).show()
+            return
+        }
+        currentPin = pin
         val cliHelper = CliHelper(applicationContext)
         if (Shell.SU.available()) {
-            val command = CliHelper.CLI_PATH + CliHelper.CLI_NAME + " -i wlan0 wps_pin $BSSID $pin"
+            val command = "${CliHelper.CLI_PATH}${CliHelper.CLI_NAME} -i wlan0 wps_pin $BSSID $pin"
             val result = Shell.SU.run(arrayOf(command))
 
             if (result != null && result.isNotEmpty()) {
