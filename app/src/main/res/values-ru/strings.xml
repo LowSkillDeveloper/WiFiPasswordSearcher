@@ -218,7 +218,7 @@
     <string name="button_revert">Откатить</string>
     <string name="button_update">Обновить</string>
     <string name="dialog_message_another_transaction">Другая транзакция WPS находится в процессе выполнения.</string>
-    <string name="dialog_message_generic_failure">Общий сбой — что-то пошло не так. Попробуйте выключить и включить Wi-Fi, а затем повторите попытку. Если это не поможет, попробуйте перезагрузить устройство.</string>
+    <string name="dialog_message_generic_failure">Общий сбой — что-то пошло не так. Попробуйте выключить и включить Wi-Fi, а затем повторите попытку. Если это не поможет, попробуйте перезагрузить устройство. Также, возможно в вашей прошивке отсутствует возможность подключения по WPS, начиная с 10 версии андроида многие производители убрали эту функцию.</string>
     <string name="dialog_message_network_did_not_respond">Сеть не отвечает из-за низкого сигнала или по каким-то другим причинам. Вы можете попробовать еще раз.</string>
     <string name="dialog_message_not_support_empty">Ваше устройство не поддерживает подключение с пустым пин-кодом WPS. Вы можете попробовать еще раз или использовать root-режим.</string>
     <string name="dialog_message_operation_in_progress">В настоящее время операция продолжается.</string>

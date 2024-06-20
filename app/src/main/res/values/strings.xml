@@ -261,7 +261,7 @@
     <string name="dialog_title_error_occurred">An error occurred</string>
     <string name="dialog_title_wps_failed">WPS connection failed</string>
     <string name="dialog_message_not_support_empty">Your device does not support entering &lt;empty&gt; pin via WPS. You could try again, or use root mode.</string>
-    <string name="dialog_message_generic_failure">Generic failure — something went wrong. Try turning your Wi-Fi interface off and on, then try again. If this doesn\'t help, try restarting your device.</string>
+    <string name="dialog_message_generic_failure">Generic failure — something went wrong. Try turning your Wi-Fi interface off and on, then try again. If this doesn\'t help, try restarting your device. Also, your firmware may not have the ability to connect via WPS; starting with version 10 of Android, many manufacturers have removed this function.</string>
     <string name="dialog_message_operation_in_progress">Operation currently in progress.</string>
     <string name="dialog_message_wifi_busy">Wi-Fi interface is busy.</string>
     <string name="dialog_message_another_transaction">Another WPS transaction is in progress.</string>
