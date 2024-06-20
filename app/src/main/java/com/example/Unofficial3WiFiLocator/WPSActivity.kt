@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.EditText
 import android.widget.Toast
 import com.example.Unofficial3WiFiLocator.databinding.ActivityWpsBinding
+import eu.chainfire.libsuperuser.Shell
 import org.apache.http.HttpRequestInterceptor
 import org.apache.http.client.ResponseHandler
 import org.apache.http.client.methods.HttpGet
@@ -41,7 +42,6 @@ import org.jsoup.Jsoup
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Locale
-import eu.chainfire.libsuperuser.Shell
 
 
 data class WPSPin (var mode: Int, var name: String, var pin: String = "", var sugg: Boolean = false)

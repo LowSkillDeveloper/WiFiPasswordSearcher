@@ -137,6 +137,10 @@
     <string name="enter_bssid">Enter BSSID</string>
     <string name="loading">Loading…</string>
     <string name="no_map_app">No map application found</string>
+    <string name="add_to_local_db">Add to Local DB</string>
+    <string name="network_added">Network added to local DB.</string>
+    <string name="show_on_map">Show on map</string>
+
 
     <string name="api_txt">API Keys</string>
     <string name="logout_txt">Change your account:</string>

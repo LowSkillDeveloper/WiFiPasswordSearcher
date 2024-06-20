@@ -40,6 +40,10 @@
         <string name="warning_essid_not_supported">Не все сервера поддерживают поиск по ESSID.</string>
         <string name="search_by_essid">Поиск по ESSID</string>
         <string name="enter_essid">Введите ESSID</string>
+    <string name="add_to_local_db">Добавить в локальную БД</string>
+    <string name="network_added">Сеть добавлена в локальную базу данных.</string>
+    <string name="show_on_map">Показать на карте</string>
+
 
     <string name="wps_connection_initiated_success">Соединение WPS успешно инициировано</string>
     <string name="error_executing_wps_command">Ошибка выполнения команды подключения WPS</string>

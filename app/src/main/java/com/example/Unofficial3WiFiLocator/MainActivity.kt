@@ -30,6 +30,7 @@ import android.text.InputType
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
@@ -47,6 +48,7 @@ import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.Unofficial3WiFiLocator.databinding.ActivityMainBinding
 import com.larvalabs.svgandroid.SVG
 import com.larvalabs.svgandroid.SVGParser
@@ -1058,15 +1060,6 @@ class MyActivity : AppCompatActivity() {
         thread.start()
     }
 
-
-
-    private fun copyToClipboard(text: String) {
-        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("Copied Text", text)
-        clipboardManager.setPrimaryClip(clipData)
-        Toast.makeText(this, getString(R.string.toast_copied), Toast.LENGTH_SHORT).show()
-    }
-
     private fun handleBssidApiResponse(response: String): CharSequence {
         return try {
             val jsonResponse = JSONObject(response)
@@ -1097,7 +1090,6 @@ class MyActivity : AppCompatActivity() {
         }
     }
 
-
     private fun formatBssidApiResponse(jsonResponse: JSONObject): SpannableStringBuilder {
         val formattedText = SpannableStringBuilder()
         val keys = jsonResponse.keys()
@@ -1120,11 +1112,17 @@ class MyActivity : AppCompatActivity() {
                 formattedText.append("Key: $key\n")
                 formattedText.append("WPS: $wps\n")
                 if (hasValidCoordinates) {
-                    formattedText.append(makeSpannable("Show on Map\n") {
+                    formattedText.append(makeSpannable(getString(R.string.show_on_map)) {
                         showOnMap(lat, lon)
                     })
                 }
                 formattedText.append("\n")
+                formattedText.append(makeSpannable(getString(R.string.add_to_local_db)) {
+                    addToLocalDatabase(essid, bssid, key, wps)
+                })
+                formattedText.append("\n\n")
+                formattedText.append("------------")
+                formattedText.append("\n\n")
             }
         }
 
@@ -1153,11 +1151,17 @@ class MyActivity : AppCompatActivity() {
                 formattedText.append("Key: $key\n")
                 formattedText.append("WPS: $wps\n")
                 if (hasValidCoordinates) {
-                    formattedText.append(makeSpannable("Show on Map\n") {
+                    formattedText.append(makeSpannable(getString(R.string.show_on_map)) {
                         showOnMap(lat, lon)
                     })
                 }
                 formattedText.append("\n")
+                formattedText.append(makeSpannable(getString(R.string.add_to_local_db)) {
+                    addToLocalDatabase(essid, bssid, key, wps)
+                })
+                formattedText.append("\n\n")
+                formattedText.append("------------\n")
+                formattedText.append("\n\n")
             }
         }
 
@@ -1170,6 +1174,10 @@ class MyActivity : AppCompatActivity() {
             override fun onClick(widget: View) {
                 onClick()
             }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.isUnderlineText = false  }
         }, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         return spannable
     }
@@ -1186,6 +1194,12 @@ class MyActivity : AppCompatActivity() {
         }
     }
 
+    private fun addToLocalDatabase(essid: String, bssid: String, password: String, wps: String) {
+        wifiDatabaseHelper.addNetwork(essid, bssid, password, wps, "", "")
+        runOnUiThread {
+            Toast.makeText(this, getString(R.string.network_added), Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun Context.toast(message: CharSequence) {
         val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
