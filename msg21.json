@@ -1,13 +1,17 @@
 {
-  "id": 0,
+  "id": 2,
   "messages": {
     "en": {
-      "title": "Empty",
-      "message": "Empty"
+   "title": "Important! You are using the BETA version of the locator",
+  "message": "A new stable version is available, we strongly recommend switching to it.\n\n ✅ Added ability to view saved passwords on your phone (root only)\n✅ Added search by ESSID on custom servers.\n✅ Added button to display Wi-Fi point location on Google Map if coordinates are returned by server (in manual search)\n✅ Added ability to backup SQLite file and restore local database\n✅ Added import and export in CSV format.\n✅ Added Connection via WPS button\n\n🔴 Fully fixed WPS connection with root and without root\n🔴 Fixed overlap on the last item in Wi-Fi networks list.\n🔴 Fixed crash when clicking on a list item after searching in local db.\n🔴 Fixed detection of WPA3 networks.\n🔴 Fixed typos in text.\n🔴 Fixed import from txt RS files.\n🔴 Fixed import from JSON.\n🔴 Fixed adding server URL with '/' at the end.\n\n🔵 Optimized library imports.\n🔵 Updated libraries.\n🔵 Enabled multidex.",
+  "button_text": "Download new version",
+  "download_url": "https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/releases/download/3WiFiLocator-v2.2-Unofficial/3WiFiLocator-v2.2-Unofficial.apk"
     },
     "ru": {
-      "title": "Empty",
-      "message": "Empty"
+   "title": "Важно! Вы используете БЕТА версию локатора",
+  "message": "Доступна новая стабильная версия, настоятельно рекомендуем перейти на неё.\n\n ✅ Добавлена возможность просмотра сохраненных паролей на вашем телефоне (только для root)\n✅ Добавлен поиск по ESSID на пользовательских серверах.\n✅ Добавлена кнопка для отображения местоположения Wi-Fi точки на Google Карте, если координаты возвращены сервером (в ручном поиске)\n✅ Добавлена возможность создания резервной копии файла SQLite и восстановления локальной базы данных\n✅ Добавлен импорт и экспорт в формате CSV.\n✅ Добавлена кнопка подключения через WPS\n\n🔴 Полностью исправлено подключение через WPS с root и без root\n🔴 Исправлено наложение на последний элемент в списке Wi-Fi сетей.\n🔴 Исправлен сбой при нажатии на элемент списка после поиска в локальной базе данных.\n🔴 Исправлено обнаружение сетей WPA3.\n🔴 Исправлены опечатки в тексте.\n🔴 Исправлен импорт из txt RS файлов.\n🔴 Исправлен импорт из JSON.\n🔴 Исправлено добавление URL сервера с '/' в конце.\n\n🔵 Оптимизированы импортируемые библиотеки.\n🔵 Обновлены библиотеки.\n🔵 Включен multidex.",
+  "button_text": "Скачать новую версию",
+  "download_url": "https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/releases/download/3WiFiLocator-v2.2-Unofficial/3WiFiLocator-v2.2-Unofficial.apk"
     }
   }
 }
