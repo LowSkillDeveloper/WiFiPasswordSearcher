@@ -11,6 +11,8 @@ This is a new version of 3wifi locator, which is based on the version from drygd
 Descriptions and instructions for my added new functions can be found on the Wiki Github page: https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/wiki
 
 ## Added Features:
+- Added ability to view saved passwords on your phone (root only)
+- Added Connection via WPS button
 - Added the ability to connect to the 3wifi server directly by IP address (No longer need a proxy server for redirection)
 - Server list URLs in the start menu.
   - Functionality to load server list from online sources (working mirrors or proxy servers).
