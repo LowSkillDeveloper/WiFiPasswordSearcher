@@ -20,6 +20,7 @@ import android.location.LocationManager
 import android.net.Uri
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
+import android.net.wifi.WpsInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -672,6 +673,31 @@ class MyActivity : AppCompatActivity() {
                     }
                     wpsGenStart(essdWps, bssdWps)
                 }
+                6 -> run {
+                    if (!scanResult.capabilities!!.contains("WPS")) {
+                        val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> scanResult.bssid?.let { connectUsingWPSButton(it) }
+                                DialogInterface.BUTTON_NEGATIVE -> {
+                                }
+                            }
+                            dialog.dismiss()
+                        }
+                        val builder = AlertDialog.Builder(this@MyActivity)
+                        builder.setTitle(getString(R.string.dialog_are_you_sure))
+                            .setMessage(String.format(getString(R.string.dialog_wps_disabled), scanResult.essid))
+                            .setPositiveButton(getString(R.string.dialog_yes), dialogClickListener)
+                            .setNegativeButton(getString(R.string.dialog_no), dialogClickListener).show()
+                        return@run
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        scanResult.bssid?.let { connectUsingWPSButton(it) }
+                    } else {
+                        val toast = Toast.makeText(applicationContext,
+                            getString(R.string.dialog_message_unsupported_android), Toast.LENGTH_LONG)
+                        toast.show()
+                    }
+                }
             }
             if (needToast) {
                 val toast = Toast.makeText(applicationContext,
@@ -681,6 +707,29 @@ class MyActivity : AppCompatActivity() {
             dialog.dismiss()
         })
         dialogBuilder.show()
+    }
+
+
+    private fun connectUsingWPSButton(bssid: String) {
+        val wpsConfig = WpsInfo()
+        wpsConfig.setup = WpsInfo.PBC
+        wpsConfig.BSSID = bssid
+
+        val wpsCallback = object : WifiManager.WpsCallback() {
+            override fun onStarted(pin: String?) {
+                Toast.makeText(applicationContext, "WPS started.", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onSucceeded() {
+                Toast.makeText(applicationContext, "WPS succeeded", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onFailed(reason: Int) {
+                Toast.makeText(applicationContext, "WPS failed. Reason: $reason", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        wifiMgr.startWps(wpsConfig, wpsCallback)
     }
 
     private fun wpsGenStart(essdWps: String, bssdWps: String) {

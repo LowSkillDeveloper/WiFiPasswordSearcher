@@ -17,6 +17,7 @@
         <item>Скопировать пароль</item>
         <item>Сохранить wifi в настройках телефона</item>
         <item>Сгенерировать пин-код WPS</item>
+        <item>Подключиться с помощью кнопки WPS на устройстве</item>
     </string-array>
 
     <string-array name="menu_wps_pin">

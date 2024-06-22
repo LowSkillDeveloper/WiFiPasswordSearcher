@@ -182,6 +182,7 @@
         <item>Copy network key</item>
         <item>Store network profile</item>
         <item>Generate WPS PIN</item>
+        <item>Connect using the WPS button on device</item>
     </string-array>
 
     <string name="status_searching">Searching in 3WiFi…</string>
