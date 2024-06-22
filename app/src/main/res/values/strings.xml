@@ -206,6 +206,11 @@
     <string name="copy_ssid">Copy SSID</string>
     <string name="share">Share</string>
     <string name="add_to_db">Add to local database</string>
+    <string name="pin_null_or_empty">Pin is null or empty</string>
+    <string name="wps_pin_null_or_empty">WPS pin is null or empty before calling startWps</string>
+    <string name="connected_to_target_network">Successfully connected to target network: %1$s</string>
+    <string name="connected_to_different_network">Connected to a different network. Expected BSSID: %1$s, but connected to BSSID: %2$s</string>
+    <string name="not_connected_to_wifi">Not connected to any Wi-Fi network.</string>
 
 
     <!-- UserManager strings -->

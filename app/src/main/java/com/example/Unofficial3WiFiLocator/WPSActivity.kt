@@ -227,7 +227,7 @@ class WPSActivity : Activity() {
             return
         }
         if (pin.isNullOrEmpty()) {
-            Toast.makeText(applicationContext, "Pin is null or empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.pin_null_or_empty), Toast.LENGTH_SHORT).show()
             return
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -238,10 +238,23 @@ class WPSActivity : Activity() {
             }
             currentPin = pin
             if (wpsInfo.pin.isNullOrEmpty()) {
-                Toast.makeText(applicationContext, "WPS pin is null or empty before calling startWps", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.wps_pin_null_or_empty), Toast.LENGTH_LONG).show()
                 return
             }
-            wifiMgr.startWps(wpsInfo, wpsCallback)
+            wifiMgr.startWps(wpsInfo, object : WifiManager.WpsCallback() {
+                override fun onStarted(pin: String?) {
+                    Toast.makeText(applicationContext, "WPS started", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onSucceeded() {
+                    Toast.makeText(applicationContext, "WPS succeeded", Toast.LENGTH_LONG).show()
+                    checkWiFiConnectionStatus(BSSID!!)
+                }
+
+                override fun onFailed(reason: Int) {
+                    Toast.makeText(applicationContext, "WPS failed with reason: $reason", Toast.LENGTH_LONG).show()
+                }
+            })
         } else {
             val builder = AlertDialog.Builder(this@WPSActivity)
             builder.setTitle(getString(R.string.dialog_title_unsupported_android))
@@ -337,7 +350,7 @@ class WPSActivity : Activity() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 runOnUiThread {
-                    Toast.makeText(applicationContext, "Error executing WPS command", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Error executing WPS command", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -350,16 +363,16 @@ class WPSActivity : Activity() {
             val currentBSSID = wifiInfo.bssid
             if (currentBSSID.equals(expectedBSSID, ignoreCase = true)) {
                 runOnUiThread {
-                    Toast.makeText(applicationContext, "Successfully connected to target network: ${wifiInfo.ssid}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, String.format(getString(R.string.connected_to_target_network), wifiInfo.ssid), Toast.LENGTH_LONG).show()
                 }
             } else {
                 runOnUiThread {
-                    Toast.makeText(applicationContext, "Connected to a different network. Expected BSSID: $expectedBSSID, but connected to BSSID: $currentBSSID", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, String.format(getString(R.string.connected_to_different_network), expectedBSSID, currentBSSID), Toast.LENGTH_LONG).show()
                 }
             }
         } else {
             runOnUiThread {
-                Toast.makeText(applicationContext, "Not connected to any Wi-Fi network.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.not_connected_to_wifi), Toast.LENGTH_LONG).show()
             }
         }
     }
