@@ -18,6 +18,8 @@ import android.net.wifi.WpsInfo
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.StrictMode
 import android.preference.PreferenceManager
 import android.text.InputType
@@ -39,6 +41,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.jsoup.Jsoup
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Locale
@@ -250,24 +253,114 @@ class WPSActivity : Activity() {
         }
     }
 
+    private fun isSystemWpaCliAvailable(): Boolean {
+        return try {
+            val process = Runtime.getRuntime().exec("wpa_cli -v")
+            val exitCode = process.waitFor()
+            exitCode == 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun getWpaCliPath(): String {
+        if (isSystemWpaCliAvailable()) {
+            return "wpa_cli"
+        }
+
+        val fileName = "wpa_cli"
+        val filePath = File(filesDir, fileName).absolutePath
+
+        val file = File(filePath)
+        if (file.exists()) {
+            return filePath
+        }
+
+        val resourceId = when (Build.VERSION.SDK_INT) {
+            in 14..15 -> R.raw.wpa_cli_14
+            in 16..18 -> R.raw.wpa_cli_16
+            19 -> R.raw.wpa_cli_19
+            else -> R.raw.wpa_cli_23
+        }
+
+        try {
+            val inputStream = resources.openRawResource(resourceId)
+            val buffer = ByteArray(inputStream.available())
+            inputStream.read(buffer)
+            inputStream.close()
+
+            val fos = openFileOutput(fileName, Context.MODE_PRIVATE)
+            fos.write(buffer)
+            fos.close()
+
+            file.setExecutable(true)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return filePath
+    }
+
     private fun connectWithWpsRoot(BSSID: String?, pin: String?) {
-        if (pin == null) {
-            Toast.makeText(applicationContext, "Pin is null", Toast.LENGTH_SHORT).show()
+        if (BSSID.isNullOrEmpty()) {
+            Toast.makeText(applicationContext, "BSSID is null or empty", Toast.LENGTH_SHORT).show()
             return
         }
-        currentPin = pin
-        val cliHelper = CliHelper(applicationContext)
-        if (Shell.SU.available()) {
-            val command = "${CliHelper.CLI_PATH}${CliHelper.CLI_NAME} -i wlan0 wps_pin $BSSID $pin"
-            val result = Shell.SU.run(arrayOf(command))
 
-            if (result != null && result.isNotEmpty()) {
-                Toast.makeText(applicationContext, getString(R.string.wps_connection_initiated_success), Toast.LENGTH_SHORT).show()
+        if (!wifiMgr.isWifiEnabled) {
+            Toast.makeText(applicationContext, getString(R.string.toast_wifi_disabled), Toast.LENGTH_SHORT).show()
+            wifiMgr.isWifiEnabled = true
+        }
+
+        val wpaCliPath = getWpaCliPath()
+
+        val file = File(wpaCliPath)
+        if (!file.exists() || !file.canExecute()) {
+            runOnUiThread {
+                Toast.makeText(applicationContext, "wpa_cli file does not exist or is not executable", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        val command = if (!pin.isNullOrEmpty()) {
+            "$wpaCliPath IFNAME=wlan0 wps_reg $BSSID $pin"
+        } else {
+            "$wpaCliPath IFNAME=wlan0 wps_reg $BSSID"
+        }
+
+        AsyncTask.execute {
+            try {
+                val result = Shell.SU.run(command)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    checkWiFiConnectionStatus(BSSID)
+                }, 15000)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                runOnUiThread {
+                    Toast.makeText(applicationContext, "Error executing WPS command", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun checkWiFiConnectionStatus(expectedBSSID: String) {
+        val wifiInfo = wifiMgr.connectionInfo
+        val networkInfo = (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo
+        if (networkInfo != null && networkInfo.isConnected && networkInfo.type == ConnectivityManager.TYPE_WIFI) {
+            val currentBSSID = wifiInfo.bssid
+            if (currentBSSID.equals(expectedBSSID, ignoreCase = true)) {
+                runOnUiThread {
+                    Toast.makeText(applicationContext, "Successfully connected to target network: ${wifiInfo.ssid}", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                Toast.makeText(applicationContext, getString(R.string.error_executing_wps_command), Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    Toast.makeText(applicationContext, "Connected to a different network. Expected BSSID: $expectedBSSID, but connected to BSSID: $currentBSSID", Toast.LENGTH_SHORT).show()
+                }
             }
         } else {
-            Toast.makeText(applicationContext, getString(R.string.root_access_unavailable), Toast.LENGTH_SHORT).show()
+            runOnUiThread {
+                Toast.makeText(applicationContext, "Not connected to any Wi-Fi network.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
