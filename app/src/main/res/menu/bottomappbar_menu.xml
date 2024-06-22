@@ -21,7 +21,7 @@
     <item
         android:id="@+id/action_open_webview"
         android:title="@string/open_3wifi_webview"
-    app:showAsAction="never"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_open_fetchBssid"
@@ -32,6 +32,11 @@
         android:id="@+id/action_open_fetchEssid"
         android:title="@string/fetchEssid"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_view_wifi_passwords"
+        android:title="@string/action_view_wifi_passwords"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_gps_sniff"

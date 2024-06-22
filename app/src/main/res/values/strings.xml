@@ -201,7 +201,13 @@
     <string name="dialog_are_you_sure">Are you sure?</string>
     <string name="dialog_already_stored">Network "%s" is already stored %d times.</string>
     <string name="dialog_wps_disabled">Network "%s" is not WPS enabled.</string>
-    
+    <string name="action_view_wifi_passwords">Saved WiFi Passwords (Root)</string>
+    <string name="no_wifi_passwords_found">No Wi-Fi passwords found</string>
+    <string name="copy_ssid">Copy SSID</string>
+    <string name="share">Share</string>
+    <string name="add_to_db">Add to local database</string>
+
+
     <!-- UserManager strings -->
     <string name="error_database_maintenance">Database maintenance, try again later</string>
     <string name="error_incorrect_credentials">Username or password incorrect</string>

@@ -185,7 +185,6 @@ class WPSActivity : Activity() {
         AsyncInitActivity().execute(bssdWPS)
     }
 
-
     private fun setAppTheme() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val isDarkMode = sharedPref.getBoolean("DARK_MODE", false)

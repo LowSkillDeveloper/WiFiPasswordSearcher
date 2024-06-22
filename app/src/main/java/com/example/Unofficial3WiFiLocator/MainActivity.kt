@@ -833,6 +833,7 @@ class MyActivity : AppCompatActivity() {
             }
             R.id.action_refresh -> {
                 refreshNetworkList()
+                return true
             }
             R.id.action_router_keygen -> {
                 Toast.makeText(this, getString(R.string.wip_router_keygen), Toast.LENGTH_LONG).show()
@@ -869,6 +870,7 @@ class MyActivity : AppCompatActivity() {
                 }
 
                 dialog.show()
+                return true
             }
             R.id.action_open_fetchEssid -> {
                 val dialogView = layoutInflater.inflate(R.layout.dialog_fetch_essid, null)
@@ -896,6 +898,7 @@ class MyActivity : AppCompatActivity() {
                 }
 
                 dialog.show()
+                return true
             }
             R.id.action_gps_sniff -> {
                 Toast.makeText(this, getString(R.string.wip_gps_sniff), Toast.LENGTH_LONG).show()
@@ -932,15 +935,23 @@ class MyActivity : AppCompatActivity() {
                 }
                 alert.setNegativeButton(getString(R.string.cancel)) { dialog, which -> dialog.cancel() }
                 alert.show()
+                return true
             }
             R.id.app_bar_settings -> {
                 val intent = Intent(this@MyActivity, SettingsActivity::class.java)
                 startActivity(intent)
+                return true
+            }
+            R.id.action_view_wifi_passwords -> {
+                val intent = Intent(this, ViewWifiPasswordsActivity::class.java)
+                startActivity(intent)
+                return true
             }
         }
 
         return super.onOptionsItemSelected(item)
     }
+
 
 
     private fun fetchBssidData(bssid: String, callback: (CharSequence) -> Unit) {
