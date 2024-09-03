@@ -45,6 +45,8 @@
     <string name="network_added">Сеть добавлена в локальную базу данных.</string>
     <string name="show_on_map">Показать на карте</string>
     <string name="switch_mode_text">Искать по имени</string>
+    <string name="search_enabled_message">Включен поиск по BSSID и ESSID в локальной БД</string>
+    <string name="search_disabled_message">Поиск только по BSSID</string>
 
     <string name="action_view_wifi_passwords">Сохранённые пароли WiFi (Root)</string>
     <string name="no_wifi_passwords_found">Пароли Wi-Fi не найдены</string>

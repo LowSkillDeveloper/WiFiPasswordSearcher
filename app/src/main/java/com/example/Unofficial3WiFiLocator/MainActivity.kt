@@ -97,6 +97,40 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         db.close()
     }
 
+    fun getNetworksByBssidOrEssid(bssidList: List<String>, essidList: List<String>): Map<String, List<APData>> {
+        val db = this.readableDatabase
+        val result = mutableMapOf<String, MutableList<APData>>()
+
+        val bssidPlaceholders = bssidList.map { "?" }.joinToString(", ")
+        val essidPlaceholders = essidList.map { "?" }.joinToString(", ")
+        val query = """
+        SELECT * FROM ${WiFiDatabaseHelper.TABLE_NAME} 
+        WHERE ${WiFiDatabaseHelper.COLUMN_MAC_ADDRESS} IN ($bssidPlaceholders) 
+        OR ${WiFiDatabaseHelper.COLUMN_WIFI_NAME} IN ($essidPlaceholders)
+    """
+
+        val selectionArgs = bssidList + essidList
+
+        db.rawQuery(query, selectionArgs.toTypedArray()).use { cursor ->
+            while (cursor.moveToNext()) {
+                val bssid = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_MAC_ADDRESS))
+                val essid = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_NAME))
+                val apData = APData().apply {
+                    this.essid = essid
+                    this.bssid = bssid
+                    keys = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_PASSWORD)))
+                    wps = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WPS_CODE)))
+                    adminLogin = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_ADMIN_LOGIN))
+                    adminPass = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_ADMIN_PASS))
+                }
+                result.getOrPut(bssid) { mutableListOf() }.add(apData)
+                result.getOrPut(essid) { mutableListOf() }.add(apData)
+            }
+        }
+
+        return result
+    }
+
     fun getNetworksByBssidList(bssidList: List<String>): Map<String, List<APData>> {
         val db = this.readableDatabase
         val result = mutableMapOf<String, MutableList<APData>>()
@@ -890,9 +924,9 @@ class MyActivity : AppCompatActivity() {
         val switchMode = findViewById<SwitchMaterial>(R.id.switch_mode)
         switchMode.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                // Режим включен
+                Toast.makeText(this, getString(R.string.search_enabled_message), Toast.LENGTH_SHORT).show()
             } else {
-                // Режим выключен
+                Toast.makeText(this, getString(R.string.search_disabled_message), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -1710,13 +1744,27 @@ class MyActivity : AppCompatActivity() {
             try {
                 withContext(Dispatchers.IO) {
                     val bssidList = WiFiScanResult?.mapNotNull { it.bssid?.toUpperCase() } ?: emptyList()
-                    val networkMap = wifiDatabaseHelper.getNetworksByBssidList(bssidList)
+                    val essidList = WiFiScanResult?.mapNotNull { it.essid } ?: emptyList()
+
+                    val searchByEssid = binding.switchMode.isChecked
+                    val networkMap = if (searchByEssid) {
+                        wifiDatabaseHelper.getNetworksByBssidOrEssid(bssidList, essidList)
+                    } else {
+                        wifiDatabaseHelper.getNetworksByBssidList(bssidList)
+                    }
 
                     val list = WiFiScanResult?.mapIndexed { index, result ->
                         val bssid = result.bssid?.toUpperCase()
-                        val apData = bssid?.let { networkMap[it]?.firstOrNull() } ?: APData()
+                        val essid = result.essid
+                        val apData = if (searchByEssid) {
+                            (bssid?.let { networkMap[it] } ?: emptyList()) +
+                                    (essid?.let { networkMap[it] } ?: emptyList())
+                        } else {
+                            bssid?.let { networkMap[it] }
+                        }?.firstOrNull() ?: APData()
+
                         val elemWiFi = HashMap<String, String?>().apply {
-                            put("ESSID", result.essid)
+                            put("ESSID", essid)
                             put("BSSID", bssid)
                             put("SIGNAL", getStrSignal(result.level))
                             put("CAPABILITY", result.capabilities)
