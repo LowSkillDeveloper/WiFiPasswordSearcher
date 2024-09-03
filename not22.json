@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "messages": {
+    "en": {
+      "title": "Update Available!",
+      "message": "A new version of 3WiFi Locator is available. Would you like to download it now?",
+      "button_text": "Download",
+      "download_url": "https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/releases/latest"
+    },
+    "ru": {
+      "title": "Доступно обновление!",
+      "message": "Доступна новая версия 3WiFi Locator. Хотите скачать её сейчас?",
+      "button_text": "Скачать",
+      "download_url": "https://github.com/LowSkillDeveloper/3WiFiLocator-Unofficial/releases/latest"
+    }
+  }
+}
