@@ -387,7 +387,7 @@ class StartActivity : Activity() {
             return@launch
         }
 
-        val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg22.json")
+        val url = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg23.json")
         val connection = url.openConnection() as HttpURLConnection
         try {
             connection.apply {

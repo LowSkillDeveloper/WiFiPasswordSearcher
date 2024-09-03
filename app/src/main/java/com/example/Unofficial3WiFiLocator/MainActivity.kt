@@ -972,7 +972,7 @@ class MyActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val jsonString = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg22.json").readText()
+                val jsonString = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg23.json").readText()
                 val json = JSONObject(jsonString)
                 val id = json.getInt("id")
 
