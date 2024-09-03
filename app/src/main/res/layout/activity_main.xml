@@ -6,6 +6,45 @@
 	android:layout_height="match_parent"
 	tools:context=".MyActivity">
 
+	<com.google.android.material.card.MaterialCardView
+		android:id="@+id/notification_card"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:visibility="gone"
+		app:cardElevation="4dp">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="16dp">
+
+			<TextView
+				android:id="@+id/notification_text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textSize="16sp" />
+
+			<Button
+				android:id="@+id/notification_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="8dp"
+				android:visibility="gone" />
+
+			<ImageButton
+				android:id="@+id/close_notification"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="end"
+				android:background="?attr/selectableItemBackgroundBorderless"
+				android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+		</LinearLayout>
+
+	</com.google.android.material.card.MaterialCardView>
+
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">

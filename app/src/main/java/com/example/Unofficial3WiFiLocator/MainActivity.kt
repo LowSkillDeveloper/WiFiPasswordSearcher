@@ -921,6 +921,12 @@ class MyActivity : AppCompatActivity() {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
+        loadNotification()
+
+        binding.closeNotification.setOnClickListener {
+            binding.notificationCard.visibility = View.GONE
+        }
+
         val switchMode = findViewById<SwitchMaterial>(R.id.switch_mode)
         switchMode.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -958,7 +964,43 @@ class MyActivity : AppCompatActivity() {
         scanAndShowWiFi()
     }
 
+    private fun loadNotification() {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val jsonString = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/not22.json").readText()
+                val json = JSONObject(jsonString)
+                val id = json.getInt("id")
+                if (id != 0) {
+                    val messages = json.getJSONObject("messages")
+                    val lang = resources.configuration.locales[0].language
+                    val message = if (messages.has(lang)) messages.getJSONObject(lang) else messages.getJSONObject("en")
 
+                    val title = message.getString("title")
+                    val messageText = message.getString("message")
+                    val buttonText = message.optString("button_text")
+                    val downloadUrl = message.optString("download_url")
+
+                    runOnUiThread {
+                        binding.notificationText.text = "$title\n\n$messageText"
+                        binding.notificationCard.visibility = View.VISIBLE
+
+                        if (buttonText.isNotEmpty() && downloadUrl.isNotEmpty()) {
+                            binding.notificationButton.text = buttonText
+                            binding.notificationButton.visibility = View.VISIBLE
+                            binding.notificationButton.setOnClickListener {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
+                                startActivity(intent)
+                            }
+                        } else {
+                            binding.notificationButton.visibility = View.GONE
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     private fun configureButtons() {
         val primaryButtonIsLocalDb = mSettings.AppSettings!!.getBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", false)
