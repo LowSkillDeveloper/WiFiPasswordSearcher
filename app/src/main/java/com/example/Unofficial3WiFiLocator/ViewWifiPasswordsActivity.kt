@@ -29,32 +29,18 @@ class ViewWifiPasswordsActivity : AppCompatActivity() {
 
         val listView: ListView = findViewById(R.id.listViewWifiPasswords)
 
-        val result = Shell.SU.run("cat /data/misc/wifi/*.conf")
         val wifiList = mutableListOf<String>()
+        val oldConfig = Shell.SU.run("cat /data/misc/wifi/*.conf")
 
-        if (result != null && result.isNotEmpty()) {
-            val regexSSID = Regex("""ssid="(.+?)"""")
-            val regexPSK = Regex("""psk="(.+?)"""")
-
-            var ssid: String? = null
-            var psk: String? = null
-
-            for (line in result) {
-                regexSSID.find(line)?.let {
-                    ssid = it.groupValues[1]
-                }
-                regexPSK.find(line)?.let {
-                    psk = it.groupValues[1]
-                }
-
-                if (ssid != null && psk != null) {
-                    wifiList.add("SSID: $ssid\nPassword: $psk")
-                    ssid = null
-                    psk = null
-                }
-            }
+        if (oldConfig != null && oldConfig.isNotEmpty()) {
+            parseOldFormat(oldConfig, wifiList)
         } else {
-            wifiList.add(getString(R.string.no_wifi_passwords_found))
+            val newConfig = Shell.SU.run("cat /data/misc/wifi/WifiConfigStore.xml")
+            if (newConfig != null && newConfig.isNotEmpty()) {
+                parseNewFormat(newConfig, wifiList)
+            } else {
+                wifiList.add(getString(R.string.no_wifi_passwords_found))
+            }
         }
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, wifiList)
@@ -66,6 +52,52 @@ class ViewWifiPasswordsActivity : AppCompatActivity() {
             val password = selected.substringAfter("Password: ")
 
             showPopupMenu(view, ssid, password)
+        }
+    }
+
+    private fun parseOldFormat(result: List<String>, wifiList: MutableList<String>) {
+        val regexSSID = Regex("""ssid="(.+?)"""")
+        val regexPSK = Regex("""psk="(.+?)"""")
+
+        var ssid: String? = null
+        var psk: String? = null
+
+        for (line in result) {
+            regexSSID.find(line)?.let {
+                ssid = it.groupValues[1]
+            }
+            regexPSK.find(line)?.let {
+                psk = it.groupValues[1]
+            }
+
+            if (ssid != null && psk != null) {
+                wifiList.add("SSID: $ssid\nPassword: $psk")
+                ssid = null
+                psk = null
+            }
+        }
+    }
+
+    private fun parseNewFormat(result: List<String>, wifiList: MutableList<String>) {
+        val regexSSID = Regex("""<string name="SSID">(.*?)</string>""")
+        val regexPSK = Regex("""<string name="PreSharedKey">(.*?)</string>""")
+
+        var ssid: String? = null
+        var psk: String? = null
+
+        for (line in result) {
+            regexSSID.find(line)?.let {
+                ssid = it.groupValues[1]
+            }
+            regexPSK.find(line)?.let {
+                psk = it.groupValues[1]
+            }
+
+            if (ssid != null && psk != null) {
+                wifiList.add("SSID: $ssid\nPassword: $psk")
+                ssid = null
+                psk = null
+            }
         }
     }
 
