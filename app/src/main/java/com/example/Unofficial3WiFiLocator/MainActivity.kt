@@ -49,7 +49,6 @@ import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.Unofficial3WiFiLocator.databinding.ActivityMainBinding
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -59,7 +58,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.apache.commons.lang3.exception.ExceptionUtils.isChecked
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
