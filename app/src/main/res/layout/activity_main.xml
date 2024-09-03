@@ -39,8 +39,22 @@
 			app:fabCradleRoundedCornerRadius="28dp"
 			app:fabCradleVerticalOffset="10dp"
 			app:hideOnScroll="true"/>
-
 	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<com.google.android.material.switchmaterial.SwitchMaterial
+			android:id="@+id/switch_mode"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom|start"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+			android:layout_marginBottom="6dp"
+			android:title="@string/switch_mode_text" />
+	</FrameLayout>
 
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/btnCheckFromBase"

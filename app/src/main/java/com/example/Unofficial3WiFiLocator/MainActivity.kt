@@ -52,12 +52,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.Unofficial3WiFiLocator.databinding.ActivityMainBinding
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.larvalabs.svgandroid.SVG
 import com.larvalabs.svgandroid.SVGParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.commons.lang3.exception.ExceptionUtils.isChecked
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -885,6 +887,15 @@ class MyActivity : AppCompatActivity() {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
+        val switchMode = findViewById<SwitchMaterial>(R.id.switch_mode)
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Режим включен
+            } else {
+                // Режим выключен
+            }
+        }
+
         APP_VERSION = resources.getString(R.string.app_version)
         mSettings = Settings(applicationContext)
         user = UserManager(applicationContext)
@@ -912,6 +923,8 @@ class MyActivity : AppCompatActivity() {
         }
         scanAndShowWiFi()
     }
+
+
 
     private fun configureButtons() {
         val primaryButtonIsLocalDb = mSettings.AppSettings!!.getBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", false)
