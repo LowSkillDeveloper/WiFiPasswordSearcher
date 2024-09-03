@@ -10,7 +10,8 @@
         android:id="@+id/action_router_keygen"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/action_router_keygen"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never"
+        android:visible="false" />
     <item
         android:id="@+id/action_check_local_db"
         android:icon="@drawable/ic_search_black_24dp"
@@ -42,7 +43,8 @@
         android:id="@+id/action_gps_sniff"
         android:icon="@drawable/ic_map_black_24dp"
         android:title="@string/button_gps_sniff"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"
+        android:visible="false"/>
     <item
         android:id="@+id/action_view_db"
         android:title="@string/action_view_db"
