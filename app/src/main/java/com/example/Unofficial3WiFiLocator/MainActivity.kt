@@ -964,12 +964,30 @@ class MyActivity : AppCompatActivity() {
         scanAndShowWiFi()
     }
 
+
     private fun loadNotification() {
+        val sharedPrefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val lastDismissTime = sharedPrefs.getLong("last_dismiss_time", 0)
+        val lastNotificationId = sharedPrefs.getInt("last_notification_id", -1)
+        val currentTime = System.currentTimeMillis()
+        val sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000
+
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val jsonString = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/not22.json").readText()
+                val jsonString = URL("https://raw.githubusercontent.com/LowSkillDeveloper/3WiFiLocator-Unofficial/master-v2/msg22.json").readText()
                 val json = JSONObject(jsonString)
                 val id = json.getInt("id")
+
+                if (id != 0 && id != lastNotificationId) {
+                    sharedPrefs.edit().remove("last_dismiss_time").apply()
+                }
+
+                sharedPrefs.edit().putInt("last_notification_id", id).apply()
+
+                if (currentTime - lastDismissTime < sevenDaysInMillis && id == lastNotificationId) {
+                    return@launch
+                }
+
                 if (id != 0) {
                     val messages = json.getJSONObject("messages")
                     val lang = resources.configuration.locales[0].language
@@ -994,6 +1012,22 @@ class MyActivity : AppCompatActivity() {
                         } else {
                             binding.notificationButton.visibility = View.GONE
                         }
+
+                        val daysToHide = 7
+                        val checkBoxText = getString(R.string.dont_show_again, daysToHide)
+                        binding.dontShowAgainCheckbox.text = checkBoxText
+
+                        binding.dontShowAgainCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                            if (isChecked) {
+                                sharedPrefs.edit().putLong("last_dismiss_time", currentTime).apply()
+                            } else {
+                                sharedPrefs.edit().remove("last_dismiss_time").apply()
+                            }
+                        }
+
+                        binding.closeNotification.setOnClickListener {
+                            binding.notificationCard.visibility = View.GONE
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -1001,6 +1035,7 @@ class MyActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun configureButtons() {
         val primaryButtonIsLocalDb = mSettings.AppSettings!!.getBoolean("PRIMARY_BUTTON_IS_LOCAL_DB", false)

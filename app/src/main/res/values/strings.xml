@@ -34,6 +34,7 @@
         <string name="switch_mode_text">Search by name</string>
     <string name="search_enabled_message">Search by BSSID and ESSID enabled in local DB</string>
     <string name="search_disabled_message">Search only by BSSID</string>
+    <string name="dont_show_again">Temporarily do not show (%1$d дней)</string>
 
 
     <string name="copy_api_keys">Copy API Keys</string>
