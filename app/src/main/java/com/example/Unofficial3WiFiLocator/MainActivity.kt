@@ -50,9 +50,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.Unofficial3WiFiLocator.databinding.ActivityMainBinding
 import com.larvalabs.svgandroid.SVG
 import com.larvalabs.svgandroid.SVGParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -88,6 +93,31 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         val db = this.writableDatabase
         db.delete(TABLE_NAME, null, null)
         db.close()
+    }
+
+    fun getNetworksByBssidList(bssidList: List<String>): Map<String, List<APData>> {
+        val db = this.readableDatabase
+        val result = mutableMapOf<String, MutableList<APData>>()
+
+        val placeholders = bssidList.map { "?" }.joinToString(", ")
+        val query = "SELECT * FROM ${WiFiDatabaseHelper.TABLE_NAME} WHERE ${WiFiDatabaseHelper.COLUMN_MAC_ADDRESS} IN ($placeholders)"
+
+        db.rawQuery(query, bssidList.toTypedArray()).use { cursor ->
+            while (cursor.moveToNext()) {
+                val bssid = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_MAC_ADDRESS))
+                val apData = APData().apply {
+                    essid = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_NAME))
+                    this.bssid = bssid
+                    keys = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WIFI_PASSWORD)))
+                    wps = arrayListOf(cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_WPS_CODE)))
+                    adminLogin = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_ADMIN_LOGIN))
+                    adminPass = cursor.getString(cursor.getColumnIndex(WiFiDatabaseHelper.COLUMN_ADMIN_PASS))
+                }
+                result.getOrPut(bssid) { mutableListOf() }.add(apData)
+            }
+        }
+
+        return result
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -1655,51 +1685,53 @@ class MyActivity : AppCompatActivity() {
     }
 
     private fun checkFromLocalDb() {
-        val list = ArrayList<HashMap<String, String?>?>()
-        var i = 0
+        var progressDialog: ProgressDialog? = null
 
-        for (result in WiFiScanResult!!) {
-            val apData = APData()
-            val networksInDb = wifiDatabaseHelper.getNetworksByBssid(result.bssid!!.toUpperCase())
-            val elemWiFi = HashMap<String, String?>()
-            elemWiFi["ESSID"] = result.essid
-            elemWiFi["BSSID"] = result.bssid!!.toUpperCase()
-            elemWiFi["SIGNAL"] = getStrSignal(result.level)
-            elemWiFi["CAPABILITY"] = result.capabilities
-            elemWiFi["LOCAL_DB"] = ""
-
-            if (networksInDb.isNotEmpty()) {
-                val firstNetwork = networksInDb.first()
-                val keysCount = firstNetwork.keys?.size ?: 0
-                val keyColor = if (keysCount > 0) "*[color:green]*" else "*[color:gray]*"
-                apData.keys = firstNetwork.keys
-                apData.wps = firstNetwork.wps
-                apData.generated = ArrayList<Boolean>().apply {
-                    repeat(apData.keys?.size ?: 0) { add(false) }
-                }
-
-                elemWiFi["KEY"] = keyColor + (firstNetwork.keys?.firstOrNull() ?: "[unknown]")
-                elemWiFi["WPS"] = "*[color:blue]*" + (firstNetwork.wps?.firstOrNull() ?: "[unknown]")
-                elemWiFi["LOCAL_DB"] = getString(R.string.found_in_local_db)
-                elemWiFi["KEYSCOUNT"] = keyColor + keysCount.toString()
-            } else {
-                apData.keys = ArrayList<String>()
-                apData.wps = ArrayList<String>()
-                apData.generated = ArrayList<Boolean>()
-                elemWiFi["KEY"] = "*[color:gray]*[unknown]"
-                elemWiFi["WPS"] = "*[color:gray]*[unknown]"
-                elemWiFi["KEYSCOUNT"] = "*[color:gray]*0"
+        lifecycleScope.launch(Dispatchers.Main) {
+            progressDialog = ProgressDialog(this@MyActivity).apply {
+                setMessage(getString(R.string.start_check_local_db))
+                setCancelable(false)
+                show()
             }
-            list.add(elemWiFi)
-            WiFiKeys!!.add(i, apData)
-            i++
-        }
 
-        runOnUiThread {
-            adapter = WiFiListSimpleAdapter(activity, list, R.layout.row, arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY", "LOCAL_DB"), intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount, R.id.localDbStatus))
-            binding.WiFiList.adapter = adapter
-            binding.btnCheckFromBase.isEnabled = true
-            binding.btnCheckFromLocalBase.isEnabled = true
+            try {
+                withContext(Dispatchers.IO) {
+                    val bssidList = WiFiScanResult?.mapNotNull { it.bssid?.toUpperCase() } ?: emptyList()
+                    val networkMap = wifiDatabaseHelper.getNetworksByBssidList(bssidList)
+
+                    val list = WiFiScanResult?.mapIndexed { index, result ->
+                        val bssid = result.bssid?.toUpperCase()
+                        val apData = bssid?.let { networkMap[it]?.firstOrNull() } ?: APData()
+                        val elemWiFi = HashMap<String, String?>().apply {
+                            put("ESSID", result.essid)
+                            put("BSSID", bssid)
+                            put("SIGNAL", getStrSignal(result.level))
+                            put("CAPABILITY", result.capabilities)
+                            put("LOCAL_DB", if (apData.keys?.isNotEmpty() == true) getString(R.string.found_in_local_db) else "")
+                            put("KEY", apData.keys?.firstOrNull()?.let { "*[color:green]*$it" } ?: "*[color:gray]*[unknown]")
+                            put("WPS", apData.wps?.firstOrNull()?.let { "*[color:blue]*$it" } ?: "*[color:gray]*[unknown]")
+                            put("KEYSCOUNT", "*[color:${if (apData.keys?.isNotEmpty() == true) "green" else "gray"}]*${apData.keys?.size ?: 0}")
+                        }
+                        WiFiKeys?.add(index, apData)
+                        elemWiFi
+                    } ?: emptyList()
+
+                    withContext(Dispatchers.Main) {
+                        adapter = WiFiListSimpleAdapter(this@MyActivity, list, R.layout.row,
+                            arrayOf("ESSID", "BSSID", "KEY", "WPS", "SIGNAL", "KEYSCOUNT", "CAPABILITY", "LOCAL_DB"),
+                            intArrayOf(R.id.ESSID, R.id.BSSID, R.id.KEY, R.id.txtWPS, R.id.txtSignal, R.id.txtKeysCount, R.id.localDbStatus))
+                        binding.WiFiList.adapter = adapter
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MyActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            } finally {
+                progressDialog?.dismiss()
+                binding.btnCheckFromBase.isEnabled = true
+                binding.btnCheckFromLocalBase.isEnabled = true
+            }
         }
     }
 
