@@ -53,8 +53,6 @@ import androidx.core.content.ContextCompat
 import com.example.Unofficial3WiFiLocator.databinding.ActivityMainBinding
 import com.larvalabs.svgandroid.SVG
 import com.larvalabs.svgandroid.SVGParser
-import kotlinx.android.synthetic.main.activity_main.bottomAppBar
-import kotlinx.android.synthetic.main.activity_main.swipeRefreshLayout
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -808,7 +806,7 @@ class MyActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         MyActivity.WiFiList = binding.WiFiList
-        setSupportActionBar(bottomAppBar)
+        setSupportActionBar(binding.bottomAppBar)
         listContextMenuItems = resources.getStringArray(R.array.menu_network)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -821,7 +819,7 @@ class MyActivity : AppCompatActivity() {
         API_KEYS_VALID = mSettings.AppSettings!!.getBoolean(Settings.API_KEYS_VALID, false)
         binding.swipeRefreshLayout.setOnRefreshListener {
             refreshNetworkList()
-            swipeRefreshLayout?.isRefreshing = false
+            binding.swipeRefreshLayout?.isRefreshing = false
         }
         wifiDatabaseHelper = WiFiDatabaseHelper(this)
         wifiMgr = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
