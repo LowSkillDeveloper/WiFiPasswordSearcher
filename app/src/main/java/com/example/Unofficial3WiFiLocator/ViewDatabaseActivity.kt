@@ -53,6 +53,7 @@ class ViewDatabaseActivity : Activity() {
         private const val REQUEST_CODE_IMPORT_CSV = 3
         private const val REQUEST_CODE_RESTORE_DB = 4
     }
+    private lateinit var searchField: EditText
     private lateinit var listView: ListView
     private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,12 +63,13 @@ class ViewDatabaseActivity : Activity() {
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            Toast.makeText(this, "Not working (WIP)", Toast.LENGTH_SHORT).show()
+            performSearch()
         }
 
 
         listView = findViewById(R.id.list_view_database)
         wifiDatabaseHelper = WiFiDatabaseHelper(this)
+        searchField = findViewById(R.id.search_field)
 
         val menuButton: ImageButton = findViewById(R.id.menu_button)
         menuButton.setOnClickListener { view ->
@@ -98,22 +100,21 @@ class ViewDatabaseActivity : Activity() {
             }
         }
 
-        val searchField = findViewById<EditText>(R.id.search_field)
-        searchField.addTextChangedListener(object : TextWatcher {
-            private var searchJob: Job? = null
+        searchField = findViewById<EditText>(R.id.search_field)
 
-            override fun afterTextChanged(s: Editable?) {
-                searchJob?.cancel()
-                searchJob = GlobalScope.launch(Dispatchers.Main) {
-                    delay(400) // Задержка 400 мс
-                    filterData(s.toString())
-                }
-            }
+    }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
+    private fun performSearch() {
+        val searchQuery = searchField.text.toString()
+        val filteredList = wifiDatabaseHelper.getAllNetworks().filter {
+            it.essid?.contains(searchQuery, ignoreCase = true) == true ||
+                    it.bssid?.contains(searchQuery, ignoreCase = true) == true ||
+                    it.keys?.any { key -> key.contains(searchQuery, ignoreCase = true) } == true ||
+                    it.wps?.any { pin -> pin.contains(searchQuery, ignoreCase = true) } == true ||
+                    it.adminLogin?.contains(searchQuery, ignoreCase = true) == true ||
+                    it.adminPass?.contains(searchQuery, ignoreCase = true) == true
+        }
+        updateListView(filteredList)
     }
 
     private class WiFiCursorAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
