@@ -101,6 +101,8 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
                 $COLUMN_ADMIN_LOGIN TEXT,
                 $COLUMN_ADMIN_PASS TEXT
             )
+            
+            
         """.trimIndent()
         db.execSQL(createTableStatement)
     }
@@ -257,6 +259,48 @@ class WiFiDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         db.close()
         return exists
     }
+
+
+    fun searchNetworks(query: String, limit: Int = 50, offset: Int = 0): List<APData> {
+        val db = this.readableDatabase
+        val networks = mutableListOf<APData>()
+
+        val searchQuery = "%$query%"
+        val selectQuery = """
+            SELECT * FROM $TABLE_NAME 
+            WHERE $COLUMN_WIFI_NAME LIKE ? 
+            OR $COLUMN_MAC_ADDRESS LIKE ? 
+            OR $COLUMN_WIFI_PASSWORD LIKE ? 
+            OR $COLUMN_WPS_CODE LIKE ? 
+            OR $COLUMN_ADMIN_LOGIN LIKE ? 
+            OR $COLUMN_ADMIN_PASS LIKE ?
+            LIMIT ? OFFSET ?
+        """
+
+        val cursor = db.rawQuery(selectQuery, arrayOf(
+            searchQuery, searchQuery, searchQuery, searchQuery, searchQuery, searchQuery,
+            limit.toString(), offset.toString()
+        ))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val network = APData().apply {
+                    id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID))
+                    essid = cursor.getString(cursor.getColumnIndex(COLUMN_WIFI_NAME))
+                    bssid = cursor.getString(cursor.getColumnIndex(COLUMN_MAC_ADDRESS))
+                    keys = arrayListOf(cursor.getString(cursor.getColumnIndex(COLUMN_WIFI_PASSWORD)))
+                    wps = arrayListOf(cursor.getString(cursor.getColumnIndex(COLUMN_WPS_CODE)))
+                    adminLogin = cursor.getString(cursor.getColumnIndex(COLUMN_ADMIN_LOGIN))
+                    adminPass = cursor.getString(cursor.getColumnIndex(COLUMN_ADMIN_PASS))
+                }
+                networks.add(network)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return networks
+    }
+
+
 }
 
 class APData {

@@ -22,6 +22,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.CursorAdapter
 import android.widget.EditText
@@ -53,6 +54,12 @@ class ViewDatabaseActivity : Activity() {
         private const val REQUEST_CODE_IMPORT_CSV = 3
         private const val REQUEST_CODE_RESTORE_DB = 4
     }
+
+    private var currentPage = 0
+    private val itemsPerPage = 50
+    private var isLoading = false
+    private var hasMoreData = true
+
     private lateinit var searchField: EditText
     private lateinit var listView: ListView
     private lateinit var wifiDatabaseHelper: WiFiDatabaseHelper
@@ -77,6 +84,18 @@ class ViewDatabaseActivity : Activity() {
         }
 
         displayDatabaseInfo()
+
+
+        listView.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+                if (firstVisibleItem + visibleItemCount >= totalItemCount && !isLoading && hasMoreData) {
+                    loadMoreData()
+                }
+            }
+
+            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {}
+        })
+
 
         listView.setOnItemClickListener { _, _, position, _ ->
             val adapter = listView.adapter
@@ -105,16 +124,33 @@ class ViewDatabaseActivity : Activity() {
     }
 
     private fun performSearch() {
+        currentPage = 0
+        hasMoreData = true
         val searchQuery = searchField.text.toString()
-        val filteredList = wifiDatabaseHelper.getAllNetworks().filter {
-            it.essid?.contains(searchQuery, ignoreCase = true) == true ||
-                    it.bssid?.contains(searchQuery, ignoreCase = true) == true ||
-                    it.keys?.any { key -> key.contains(searchQuery, ignoreCase = true) } == true ||
-                    it.wps?.any { pin -> pin.contains(searchQuery, ignoreCase = true) } == true ||
-                    it.adminLogin?.contains(searchQuery, ignoreCase = true) == true ||
-                    it.adminPass?.contains(searchQuery, ignoreCase = true) == true
+        val results = wifiDatabaseHelper.searchNetworks(searchQuery, itemsPerPage, currentPage * itemsPerPage)
+        updateListView(results)
+        currentPage++
+        hasMoreData = results.size == itemsPerPage
+    }
+
+    private fun loadMoreData() {
+        if (isLoading) return
+        isLoading = true
+
+        val searchQuery = searchField.text.toString()
+        val newResults = wifiDatabaseHelper.searchNetworks(searchQuery, itemsPerPage, currentPage * itemsPerPage)
+
+        if (newResults.isNotEmpty()) {
+            val currentAdapter = listView.adapter as WiFiNetworkAdapter
+            currentAdapter.addAll(newResults)
+            currentAdapter.notifyDataSetChanged()
+            currentPage++
+            hasMoreData = newResults.size == itemsPerPage
+        } else {
+            hasMoreData = false
         }
-        updateListView(filteredList)
+
+        isLoading = false
     }
 
     private class WiFiCursorAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
@@ -152,7 +188,7 @@ class ViewDatabaseActivity : Activity() {
     }
 
     private fun updateListView(networks: List<APData>) {
-        val adapter = WiFiNetworkAdapter(this, networks)
+        val adapter = WiFiNetworkAdapter(this, networks.toMutableList())
         listView.adapter = adapter
     }
 
@@ -849,8 +885,10 @@ class ViewDatabaseActivity : Activity() {
         listView.adapter = adapter
     }
 
-    private class WiFiNetworkAdapter(context: Activity, wifiNetworks: List<APData>) :
-        ArrayAdapter<APData>(context, 0, wifiNetworks) {
+    class WiFiNetworkAdapter(
+        context: Context,
+        private val networks: MutableList<APData>
+    ) : ArrayAdapter<APData>(context, 0, networks) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var listItemView = convertView
@@ -860,25 +898,32 @@ class ViewDatabaseActivity : Activity() {
 
             val currentNetwork = getItem(position)
 
-            val ssidTextView = listItemView!!.findViewById<TextView>(R.id.ssid_text_view)
-            ssidTextView.text = currentNetwork?.essid
+            currentNetwork?.let {
+                val ssidTextView = listItemView?.findViewById<TextView>(R.id.ssid_text_view)
+                ssidTextView?.text = it.essid
 
-            val bssidTextView = listItemView.findViewById<TextView>(R.id.bssid_text_view)
-            bssidTextView.text = currentNetwork?.bssid
+                val bssidTextView = listItemView?.findViewById<TextView>(R.id.bssid_text_view)
+                bssidTextView?.text = it.bssid
 
-            val passwordTextView = listItemView.findViewById<TextView>(R.id.password_text_view)
-            passwordTextView.text = currentNetwork?.keys?.joinToString(", ")
+                val passwordTextView = listItemView?.findViewById<TextView>(R.id.password_text_view)
+                passwordTextView?.text = it.keys?.joinToString(", ")
 
-            val wpsTextView = listItemView.findViewById<TextView>(R.id.wps_text_view)
-            wpsTextView.text = currentNetwork?.wps?.joinToString(", ")
+                val wpsTextView = listItemView?.findViewById<TextView>(R.id.wps_text_view)
+                wpsTextView?.text = it.wps?.joinToString(", ")
 
-            val adminLoginTextView = listItemView.findViewById<TextView>(R.id.admin_login_text_view)
-            adminLoginTextView.text = currentNetwork?.adminLogin
+                val adminLoginTextView = listItemView?.findViewById<TextView>(R.id.admin_login_text_view)
+                adminLoginTextView?.text = it.adminLogin
 
-            val adminPassTextView = listItemView.findViewById<TextView>(R.id.admin_pass_text_view)
-            adminPassTextView.text = currentNetwork?.adminPass
+                val adminPassTextView = listItemView?.findViewById<TextView>(R.id.admin_pass_text_view)
+                adminPassTextView?.text = it.adminPass
+            }
 
-            return listItemView
+            return listItemView!!
+        }
+
+        fun addAll(newNetworks: List<APData>) {
+            networks.addAll(newNetworks)
+            notifyDataSetChanged()
         }
     }
 
