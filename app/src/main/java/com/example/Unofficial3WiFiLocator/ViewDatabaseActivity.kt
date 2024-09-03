@@ -8,6 +8,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
@@ -31,6 +32,7 @@ import android.widget.ListView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.opencsv.CSVReader
 import com.opencsv.CSVWriter
@@ -886,39 +888,98 @@ class ViewDatabaseActivity : Activity() {
     }
 
     class WiFiNetworkAdapter(
-        context: Context,
+        private val context: Context,
         private val networks: MutableList<APData>
     ) : ArrayAdapter<APData>(context, 0, networks) {
 
+        private class ViewHolder {
+            lateinit var ssidTextView: TextView
+            lateinit var bssidTextView: TextView
+            lateinit var passwordTextView: TextView
+            lateinit var wpsTextView: TextView
+            lateinit var adminLoginTextView: TextView
+            lateinit var adminPassTextView: TextView
+        }
+
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            var listItemView = convertView
-            if (listItemView == null) {
-                listItemView = LayoutInflater.from(context).inflate(R.layout.wifi_network_item, parent, false)
+            val view: View
+            val holder: ViewHolder
+
+            if (convertView == null) {
+                view = LayoutInflater.from(context).inflate(R.layout.wifi_network_item, parent, false)
+                holder = ViewHolder()
+                holder.ssidTextView = view.findViewById(R.id.ssid_text_view)
+                holder.bssidTextView = view.findViewById(R.id.bssid_text_view)
+                holder.passwordTextView = view.findViewById(R.id.password_text_view)
+                holder.wpsTextView = view.findViewById(R.id.wps_text_view)
+                holder.adminLoginTextView = view.findViewById(R.id.admin_login_text_view)
+                holder.adminPassTextView = view.findViewById(R.id.admin_pass_text_view)
+                view.tag = holder
+            } else {
+                view = convertView
+                holder = view.tag as ViewHolder
             }
 
             val currentNetwork = getItem(position)
-
             currentNetwork?.let {
-                val ssidTextView = listItemView?.findViewById<TextView>(R.id.ssid_text_view)
-                ssidTextView?.text = it.essid
-
-                val bssidTextView = listItemView?.findViewById<TextView>(R.id.bssid_text_view)
-                bssidTextView?.text = it.bssid
-
-                val passwordTextView = listItemView?.findViewById<TextView>(R.id.password_text_view)
-                passwordTextView?.text = it.keys?.joinToString(", ")
-
-                val wpsTextView = listItemView?.findViewById<TextView>(R.id.wps_text_view)
-                wpsTextView?.text = it.wps?.joinToString(", ")
-
-                val adminLoginTextView = listItemView?.findViewById<TextView>(R.id.admin_login_text_view)
-                adminLoginTextView?.text = it.adminLogin
-
-                val adminPassTextView = listItemView?.findViewById<TextView>(R.id.admin_pass_text_view)
-                adminPassTextView?.text = it.adminPass
+                bindViewHolder(holder, it)
             }
 
-            return listItemView!!
+            return view
+        }
+
+        private fun bindViewHolder(holder: ViewHolder, network: APData) {
+            holder.ssidTextView.text = network.essid ?: "Unknown"
+
+            holder.bssidTextView.apply {
+                text = network.bssid ?: "Unknown"
+                setTextColor(getBssidColor(network.bssid))
+            }
+
+            holder.passwordTextView.apply {
+                val password = network.keys?.firstOrNull() ?: "Not available"
+                text = password
+                setTextColor(getPasswordColor(password))
+            }
+
+            holder.wpsTextView.apply {
+                val wpsPin = network.wps?.firstOrNull() ?: "Not available"
+                text = wpsPin
+                setTextColor(getWpsPinColor(wpsPin))
+            }
+
+            holder.adminLoginTextView.text = network.adminLogin ?: "Not available"
+            holder.adminPassTextView.text = network.adminPass ?: "Not available"
+        }
+
+        private fun getBssidColor(bssid: String?): Int {
+            return if (isValidBssid(bssid)) {
+                ContextCompat.getColor(context, R.color.bssid_color) // Добавьте этот цвет в colors.xml
+            } else {
+                Color.parseColor("#A0A0A0")
+            }
+        }
+
+        private fun isValidBssid(bssid: String?): Boolean {
+            val pattern = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$".toRegex()
+            return bssid != null && bssid != "00:00:00:00:00:00" && pattern.matches(bssid)
+        }
+
+        private fun getPasswordColor(password: String): Int {
+            return when {
+                password == "<empty>" -> Color.GREEN
+                password == "Not available" -> ContextCompat.getColor(context, R.color.password_color)
+                password.length < 8 -> ContextCompat.getColor(context, android.R.color.holo_orange_dark)
+                else -> ContextCompat.getColor(context, R.color.password_color)
+            }
+        }
+
+        private fun getWpsPinColor(pin: String): Int {
+            return when {
+                pin == "Not available" -> ContextCompat.getColor(context, R.color.wps_color)
+                pin.length != 8 || !pin.all { it.isDigit() } -> Color.RED
+                else -> ContextCompat.getColor(context, R.color.wps_color)
+            }
         }
 
         fun addAll(newNetworks: List<APData>) {

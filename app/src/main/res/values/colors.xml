@@ -10,4 +10,8 @@
     <color name="dark_primary_text">#FFFFFF</color>
     <color name="dark_secondary_text">#BDBDBD</color>
     <color name="orange">#D38800</color>
+
+    <color name="password_color">#009688</color>
+    <color name="wps_color">#3F51B5</color>
+    <color name="bssid_color">#666666</color>
 </resources>

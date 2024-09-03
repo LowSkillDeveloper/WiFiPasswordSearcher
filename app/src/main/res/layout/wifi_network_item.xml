@@ -5,39 +5,91 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/ssid_text_view"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/bssid_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        <TextView
+            android:id="@+id/ssid_text_view"
+            style="@style/NetworkItemValue"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/password_text_view"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/wps_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        <TextView
+            style="@style/NetworkItemLabel"
+            android:text="BSSID:"/>
 
-    <TextView
-        android:id="@+id/admin_login_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        <TextView
+            android:id="@+id/bssid_text_view"
+            style="@style/NetworkItemValue"
+            android:textColor="#666666"/>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/admin_pass_text_view"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/NetworkItemLabel"
+            android:text="Password:"/>
+
+        <TextView
+            android:id="@+id/password_text_view"
+            style="@style/NetworkItemValue"
+            android:textColor="#009688"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/NetworkItemLabel"
+            android:text="WPS PIN:"/>
+
+        <TextView
+            android:id="@+id/wps_text_view"
+            style="@style/NetworkItemValue"
+            android:textColor="#3F51B5"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/NetworkItemLabel"
+            android:text="Admin Login:"/>
+
+        <TextView
+            android:id="@+id/admin_login_text_view"
+            style="@style/NetworkItemValue"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/NetworkItemLabel"
+            android:text="Admin Password:"/>
+
+        <TextView
+            android:id="@+id/admin_pass_text_view"
+            style="@style/NetworkItemValue"
+            />
+    </LinearLayout>
+
 </LinearLayout>
