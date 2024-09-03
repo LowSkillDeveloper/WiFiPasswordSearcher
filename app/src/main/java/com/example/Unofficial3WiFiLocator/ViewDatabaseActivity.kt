@@ -129,10 +129,15 @@ class ViewDatabaseActivity : Activity() {
         currentPage = 0
         hasMoreData = true
         val searchQuery = searchField.text.toString()
-        val results = wifiDatabaseHelper.searchNetworks(searchQuery, itemsPerPage, currentPage * itemsPerPage)
-        updateListView(results)
-        currentPage++
-        hasMoreData = results.size == itemsPerPage
+        GlobalScope.launch(Dispatchers.IO) {
+            val results = wifiDatabaseHelper.searchNetworks(searchQuery, itemsPerPage, currentPage * itemsPerPage)
+
+            withContext(Dispatchers.Main) {
+                updateListView(results)
+                currentPage++
+                hasMoreData = results.size == itemsPerPage
+            }
+        }
     }
 
     private fun loadMoreData() {
@@ -140,19 +145,22 @@ class ViewDatabaseActivity : Activity() {
         isLoading = true
 
         val searchQuery = searchField.text.toString()
-        val newResults = wifiDatabaseHelper.searchNetworks(searchQuery, itemsPerPage, currentPage * itemsPerPage)
+        GlobalScope.launch(Dispatchers.IO) {
+            val newResults = wifiDatabaseHelper.searchNetworks(searchQuery, itemsPerPage, currentPage * itemsPerPage)
 
-        if (newResults.isNotEmpty()) {
-            val currentAdapter = listView.adapter as WiFiNetworkAdapter
-            currentAdapter.addAll(newResults)
-            currentAdapter.notifyDataSetChanged()
-            currentPage++
-            hasMoreData = newResults.size == itemsPerPage
-        } else {
-            hasMoreData = false
+            withContext(Dispatchers.Main) {
+                if (newResults.isNotEmpty()) {
+                    val currentAdapter = listView.adapter as WiFiNetworkAdapter
+                    currentAdapter.addAll(newResults)
+                    currentAdapter.notifyDataSetChanged()
+                    currentPage++
+                    hasMoreData = newResults.size == itemsPerPage
+                } else {
+                    hasMoreData = false
+                }
+                isLoading = false
+            }
         }
-
-        isLoading = false
     }
 
     private class WiFiCursorAdapter(context: Context, cursor: Cursor) : CursorAdapter(context, cursor, 0) {
@@ -882,9 +890,12 @@ class ViewDatabaseActivity : Activity() {
     }
 
     private fun displayDatabaseInfo() {
-        val cursor = wifiDatabaseHelper.getNetworksCursor()
-        val adapter = WiFiCursorAdapter(this, cursor)
-        listView.adapter = adapter
+        currentPage = 0
+        hasMoreData = true
+        val results = wifiDatabaseHelper.searchNetworks("", itemsPerPage, currentPage * itemsPerPage)
+        updateListView(results)
+        currentPage++
+        hasMoreData = results.size == itemsPerPage
     }
 
     class WiFiNetworkAdapter(
