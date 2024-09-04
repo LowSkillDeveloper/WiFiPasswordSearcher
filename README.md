@@ -12,6 +12,8 @@ Descriptions and instructions for my added new functions can be found on the Wik
 
 ## Added Features:
 - Added ability to view saved passwords on your phone (root only)
+- Added switch to enable search by ESSID on the scanning page.
+- Added primitive validation for WPS PIN and password on the local database page.
 - Added Connection via WPS button
 - Added the ability to connect to the 3wifi server directly by IP address (No longer need a proxy server for redirection)
 - Server list URLs in the start menu.
@@ -36,9 +38,11 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Added the ability to manually search by ESSID in the 3WiFi database
 - Added WPS connection via Root
 - Added button to display Wi-Fi point location on Google Map if coordinates are returned by server.
+-  Added styling on the local database page
     
 ## Updated Features:
 - Offline mode button.
+- Kotlin updated to version 2.0.20
 - Upgraded the SDK version
 - In network security definition, WPA3 definition has been added
 - Feature for checking application updates.
@@ -49,9 +53,11 @@ Descriptions and instructions for my added new functions can be found on the Wik
 - Updated the way to grant permissions due to the requirements of the new SDK
 - Optimization of wps pin generation initialization (Now PIN code generation loads faster.)
 - Minor updates to the section with detailed information about the network
+- Enabled minify during compilation
 
 ## Fixed Issues:
 - Getting online vendor information from wpsfinder.
+- Fixed crash when searching in the local database
 - Remade some hardcoded lines
 - Visibility of some objects
 - Fixed a crash when switching passwords (The problem exists in all versions from drygdryg, which migrated from java to kotlin, but I no longer have it)
