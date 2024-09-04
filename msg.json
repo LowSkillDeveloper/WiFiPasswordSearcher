@@ -3,11 +3,11 @@
   "messages": {
     "en": {
       "title": "Important! New version is available",
-      "message": "You are using a very old version of the locator, which contains many unfixed bugs. For example, the connection via wps does not work, crashes when working with a local database. And also there are no new functions, such as searching by ESSID, viewing saved passwords, backup and restore of the database and etc. The new version uses new libraries, uses kotlin 2.0, and also multidex and minify. A new version can be downloaded from the GitHub page of this project."
+      "message": "You are using a very old version of the locator, which contains many unfixed bugs. For example, the connection via wps does not work, crashes when working with a local database. And also there are no new functions, such as searching by ESSID, viewing saved passwords, backup and restore of the database and etc. The new version uses new libraries, uses kotlin 2.0, and also multidex and minify. A new version can be downloaded from the GitHub page of this project. \n\n❗ Before installing a new version, you need to remove the old version."
     },
     "ru": {
       "title": "Важно! Доступна новая версия",
-      "message": "Вы используете очень старую версию локатора, которая содержит много неисправленных ошибок. Например, не работает подключение по wps, вылетает при работе с локальной базой данных. А также нет новых функций, таких как поиск по ESSID, просмотр сохраненных паролей, резервное копирование и восстановление базы данных и т. д. Новая версия использует новые библиотеки, использует kotlin 2.0, а также multidex и minify. Новую версию можно скачать со страницы GitHub этого проекта."
+      "message": "Вы используете очень старую версию локатора, которая содержит много неисправленных ошибок. Например, не работает подключение по wps, вылетает при работе с локальной базой данных. А также нет новых функций, таких как поиск по ESSID, просмотр сохраненных паролей, резервное копирование и восстановление базы данных и т. д. Новая версия использует новые библиотеки, использует kotlin 2.0, а также multidex и minify. Новую версию можно скачать со страницы GitHub этого проекта. \n\n❗Перед установкой новой версии необходимо удалить старую версию."
     }
   }
 }
